@@ -1,0 +1,87 @@
+{
+	"name": "discord.js",
+	"version": "13.0.0-dev",
+	"description": "A powerful library for interacting with the Discord API",
+	"contributors": [
+		"Amish Shah <amishshah.2k@gmail.com>",
+		"Crawl <icrawltogo@gmail.com>",
+		"SpaceEEC <spaceeec@yahoo.com>",
+		"Vlad Frangu <kingdgrizzle@gmail.com>"
+	],
+	"license": "Apache-2.0",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/discordjs/discord.js-next.git"
+	},
+	"bugs": {
+		"url": "https://github.com/discordjs/discord.js-next/issues"
+	},
+	"homepage": "https://github.com/discordjs/discord.js-next#readme",
+	"keywords": [
+		"discord",
+		"api",
+		"bot",
+		"client",
+		"node",
+		"discordapp"
+	],
+	"devDependencies": {
+		"@commitlint/cli": "^8.3.5",
+		"@commitlint/config-angular": "^8.3.4",
+		"@typescript-eslint/eslint-plugin": "^2.22.0",
+		"@typescript-eslint/parser": "^2.22.0",
+		"eslint": "^6.8.0",
+		"eslint-config-marine": "^6.0.0",
+		"eslint-config-prettier": "^6.10.0",
+		"eslint-plugin-import": "^2.20.1",
+		"eslint-plugin-prettier": "^3.1.2",
+		"husky": "^4.2.3",
+		"lerna": "^3.20.2",
+		"lint-staged": "^10.0.8",
+		"prettier": "^1.19.1",
+		"typescript": "^3.8.3"
+	},
+	"engines": {
+		"node": ">=12.0.0"
+	},
+	"eslintConfig": {
+		"extends": "marine/prettier/node"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged",
+			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+		}
+	},
+	"lint-staged": {
+		"*.ts": [
+			"eslint --fix",
+			"prettier --write --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
+		]
+	},
+	"commitlint": {
+		"extends": [
+			"@commitlint/config-angular"
+		],
+		"rules": {
+			"type-enum": [
+				2,
+				"always",
+				[
+					"chore",
+					"build",
+					"ci",
+					"docs",
+					"feat",
+					"fix",
+					"perf",
+					"refactor",
+					"revert",
+					"style",
+					"test"
+				]
+			]
+		}
+	}
+}
