@@ -79,7 +79,9 @@
 					"refactor",
 					"revert",
 					"style",
-					"test"
+					"test",
+					"types",
+					"wip"
 				]
 			]
 		}
