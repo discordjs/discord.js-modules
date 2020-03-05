@@ -20,11 +20,13 @@
 - If fixing bug:
 
   - If you are resolving a special issue, add `fix/close #xxxx[,#xxxx]` (#xxxx is the issue id) in your PR body for a better release log, e.g.
+
   ```
   fix(Guild): handle events correctly
 
   close #28
   ```
+
   - Provide a detailed description of the bug in the PR. Live demo preferred.
 
 - It's OK to have multiple small commits as you work on the PR - GitHub can automatically squash them before merging.

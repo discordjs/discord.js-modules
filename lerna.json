@@ -1,11 +1,9 @@
 {
-	"version": "13.0.0-dev",
-	"command": {
-		"publish": {
-			"message": "chore(release): publish"
-		}
-	},
-	"packages": [
-		"packages/*"
-	]
+  "version": "13.0.0-dev",
+  "command": {
+    "publish": {
+      "message": "chore(release): publish"
+    }
+  },
+  "packages": ["packages/*"]
 }
