@@ -20,3 +20,4 @@ typings/
 
 # Miscellaneous
 .tmp/
+coverage/

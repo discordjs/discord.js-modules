@@ -74,4 +74,4 @@ This repository employs a [monorepo](https://en.wikipedia.org/wiki/Monorepo) set
 
 ## Contributing Tests
 
-Unit tests are collocated with the code being tested in each package, inside directories named `test`. Consult the [Jest docs](https://jestjs.io/docs/en/using-matchers) and existing test cases for how to write new test specs.
+Unit tests are collocated with the code being tested in each package, inside directories named `__tests__`. Consult the [Jest docs](https://jestjs.io/docs/en/using-matchers) and existing test cases for how to write new test specs.

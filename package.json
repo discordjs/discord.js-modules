@@ -12,7 +12,8 @@
 	"license": "Apache-2.0",
 	"private": true,
 	"scripts": {
-		"test": "jest --verbose --passWithNoTests",
+		"test": "jest --collect-coverage",
+		"test:ci": "jest --verbose --ci --no-stack-trace --collect-coverage",
 		"lint": "eslint packages --ext .ts",
 		"lint:fix": "eslint packages --ext .ts --fix",
 		"prettier": "prettier --write --use-tabs --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
@@ -61,6 +62,20 @@
 	"jest": {
 		"preset": "ts-jest",
 		"testEnvironment": "node",
+		"coverageDirectory": "coverage",
+		"coverageReporters": [
+			"text",
+			"lcov",
+			"html"
+		],
+		"coverageThreshold": {
+			"global": {
+				"branches": 80,
+				"functions": 80,
+				"lines": 80,
+				"statements": 80
+			}
+		},
 		"roots": [
 			"<rootDir>packages"
 		],
