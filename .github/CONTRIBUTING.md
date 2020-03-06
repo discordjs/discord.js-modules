@@ -14,10 +14,10 @@
 
 - If adding a new feature:
 
-  - Add accompanying test case.
+  - Add an accompanying test case.
   - Provide a convincing reason to add this feature. Ideally, you should open a suggestion issue first and have it approved before working on it.
 
-- If fixing bug:
+- If fixing a bug:
 
   - If you are resolving a special issue, add `fix/close #xxxx[,#xxxx]` (#xxxx is the issue id) in your PR body for a better release log, e.g.
   ```
