@@ -1,4 +1,4 @@
-name: CI Lint Cron
+name: Lint Cron
 on:
   schedule:
     - cron: '0 */12 * * *'

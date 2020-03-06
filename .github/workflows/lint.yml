@@ -1,4 +1,4 @@
-name: CI Lint
+name: Lint
 on: [push, pull_request]
 jobs:
   lint:
