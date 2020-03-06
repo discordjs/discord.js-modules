@@ -1,7 +1,7 @@
 {
-	"name": "@discordjs/voice",
+	"name": "@discordjs/ws",
 	"version": "13.0.0-dev",
-	"description": "The voice system for Discord.js",
+	"description": "The WebSocket for Discord.js",
 	"contributors": [
 		"Amish Shah <amishshah.2k@gmail.com>",
 		"Crawl <icrawltogo@gmail.com>",
@@ -19,12 +19,12 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-next/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/voice#readme",
+	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/ws#readme",
 	"keywords": [
 		"discord",
 		"api",
-		"voice",
-		"audio",
+		"websocket",
+		"ws",
 		"discordapp"
 	],
 	"main": "dist/index.js",
