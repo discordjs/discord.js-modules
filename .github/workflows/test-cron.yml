@@ -1,10 +1,10 @@
-name: Testing Cron
+name: CI Test Cron
 on:
   schedule:
     - cron: '0 */12 * * *'
 jobs:
-  lint:
-    name: ESLint
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -15,16 +15,8 @@ jobs:
         with:
           node-version: 12
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run Tests
+        run: npm test
