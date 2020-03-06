@@ -3,7 +3,6 @@
 **Status**
 
 - [ ] Code changes have been tested against the Discord API, or there are no code changes
-- [ ] I know how to update typings and have done so, or typings don't need updating
 
 **Semantic versioning classification:**
 
