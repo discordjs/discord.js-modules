@@ -3,6 +3,7 @@
 	"version": "13.0.0-dev",
 	"command": {
 		"publish": {
+			"ignoreChanges": ["*.md"],
 			"message": "chore(release): publish"
 		},
 		"bootstrap": {
