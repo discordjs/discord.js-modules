@@ -5,7 +5,5 @@
 			"message": "chore(release): publish"
 		}
 	},
-	"packages": [
-		"packages/*"
-	]
+	"packages": ["packages/*"]
 }

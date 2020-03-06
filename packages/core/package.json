@@ -1,7 +1,7 @@
 {
-	"name": "@discordjs/voice",
+	"name": "@discordjs/core",
 	"version": "13.0.0-dev",
-	"description": "The voice system for Discord.js",
+	"description": "The core for Discord.js",
 	"contributors": [
 		"Amish Shah <amishshah.2k@gmail.com>",
 		"Crawl <icrawltogo@gmail.com>",
@@ -19,12 +19,11 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-next/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/voice#readme",
+	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/core#readme",
 	"keywords": [
 		"discord",
 		"api",
-		"voice",
-		"audio",
+		"core",
 		"discordapp"
 	],
 	"main": "dist/index.js",

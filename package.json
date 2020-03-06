@@ -12,7 +12,8 @@
 	"private": true,
 	"scripts": {
 		"lint": "eslint packages --ext .ts",
-		"lint:fix": "eslint packages --ext .ts --fix"
+		"lint:fix": "eslint packages --ext .ts --fix",
+		"prettier": "prettier --write --use-tabs --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
 	},
 	"repository": {
 		"type": "git",
@@ -61,7 +62,10 @@
 	"lint-staged": {
 		"*.ts": [
 			"eslint --fix",
-			"prettier --write --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
+			"prettier --write --use-tabs --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
+		],
+		"*.{json,yml,yaml}": [
+			"prettier --write --use-tabs --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
 		]
 	},
 	"commitlint": {

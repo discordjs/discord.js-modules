@@ -2,9 +2,15 @@
 	"compilerOptions": {
 		"strict": true,
 		"moduleResolution": "node",
-		"declaration": false,
+		"declaration": true,
+		"sourceMap": true,
 		"removeComments": false,
 		"alwaysStrict": true,
-		"pretty": true
+		"pretty": true,
+		"outDir": "dist",
+		"incremental": true,
+		"noEmitHelpers": true,
+		"importHelpers": true,
+		"skipLibCheck": true
 	}
 }
