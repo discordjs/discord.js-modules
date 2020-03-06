@@ -1,8 +1,10 @@
-name: CI Test
-on: [push, pull_request]
+name: CI Lint Cron
+on:
+  schedule:
+    - cron: '0 */12 * * *'
 jobs:
-  test:
-    name: Test
+  lint:
+    name: ESLint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,5 +18,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Tests
-        run: npm test
+      - name: Run ESLint
+        run: npm run lint
