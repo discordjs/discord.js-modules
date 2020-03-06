@@ -1,11 +1,11 @@
 ---
-
 name: Bug report
 about: Report incorrect or unexpected behaviour of discord.js
 title: ''
 labels: 's: unverified, type: bug'
 assignees: ''
 ---
+
 <!--
 If you need help with discord.js installation or usage, please go to the discord.js Discord server instead:
   https://discord.gg/bRCvFy9
