@@ -10,6 +10,10 @@
 	],
 	"license": "Apache-2.0",
 	"private": true,
+	"scripts": {
+		"lint": "eslint packages --ext .ts",
+		"lint:fix": "eslint packages --ext .ts --fix"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/discordjs/discord.js-next.git"
