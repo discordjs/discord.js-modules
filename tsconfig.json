@@ -2,6 +2,9 @@
 	"compilerOptions": {
 		"strict": true,
 		"moduleResolution": "node",
+		"module": "commonjs",
+		"target": "es2019",
+		"lib": ["esnext", "esnext.array", "esnext.asynciterable", "esnext.intl", "esnext.symbol"],
 		"declaration": true,
 		"sourceMap": true,
 		"removeComments": false,
