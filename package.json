@@ -14,6 +14,7 @@
 	"scripts": {
 		"test": "jest --collect-coverage",
 		"test:ci": "jest --verbose --ci --no-stack-trace --collect-coverage",
+		"docs": "typedoc --name discord.js --exclude **/index.ts --exclude **/*.test.ts --includeVersion --json docs/docs.json",
 		"lint": "eslint packages --ext .ts",
 		"lint:fix": "eslint packages --ext .ts --fix",
 		"prettier": "prettier --write --use-tabs --single-quote --print-width 120 --trailing-comma all --end-of-line lf"
@@ -51,6 +52,8 @@
 		"lint-staged": "^10.0.8",
 		"prettier": "^1.19.1",
 		"ts-jest": "^25.2.1",
+		"typedoc": "^0.16.11",
+		"typedoc-plugin-lerna-packages": "^0.3.0",
 		"typescript": "^3.8.3"
 	},
 	"engines": {
