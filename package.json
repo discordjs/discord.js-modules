@@ -131,7 +131,6 @@
 		}
 	},
 	"dependencies": {
-		"@discordjs/collection": "^0.1.5",
 		"node-fetch": "^2.6.0"
 	}
 }
