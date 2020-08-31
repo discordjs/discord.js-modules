@@ -1,13 +1,10 @@
 {
 	"$schema": "http://json.schemastore.org/lerna",
-	"version": "13.0.0-dev",
+	"version": "independent",
 	"command": {
 		"publish": {
 			"ignoreChanges": ["*.md"],
 			"message": "chore(release): publish"
-		},
-		"bootstrap": {
-			"npmClientArgs": ["--no-package-lock"]
 		}
 	},
 	"packages": ["packages/*"]

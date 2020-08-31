@@ -5,7 +5,7 @@ beforeEach(() => {
 	coll = new Collection();
 });
 
-let object: object;
+let object: unknown;
 let string: string;
 let boolean: boolean;
 let symbol: symbol;
@@ -255,8 +255,8 @@ describe('randomKey', () => {
 
 describe('find', () => {
 	test('find an item in the collection', () => {
-		expect(coll.find(x => x === 1)).toBe(1);
-		expect(coll.find(x => x === 10)).toBeUndefined();
+		expect(coll.find((x) => x === 1)).toBe(1);
+		expect(coll.find((x) => x === 10)).toBeUndefined();
 	});
 
 	test('find thisArg', () => {
@@ -296,8 +296,8 @@ describe('find', () => {
 
 describe('findKey', () => {
 	test('find a key in the collection', () => {
-		expect(coll.findKey(x => x === 1)).toBe('a');
-		expect(coll.findKey(x => x === 'c')).toBeUndefined();
+		expect(coll.findKey((x) => x === 1)).toBe('a');
+		expect(coll.findKey((x) => x === 'c')).toBeUndefined();
 	});
 
 	test('findKey thisArg', () => {
@@ -341,10 +341,10 @@ describe('sweep', () => {
 		coll.set('a', 1);
 		coll.set('b', 2);
 		coll.set('c', 3);
-		const n1 = coll.sweep(x => x === 2);
+		const n1 = coll.sweep((x) => x === 2);
 		expect(n1).toBe(1);
 		expect(coll.array()).toStrictEqual([1, 3]);
-		const n2 = coll.sweep(x => x === 4);
+		const n2 = coll.sweep((x) => x === 4);
 		expect(n2).toBe(0);
 		expect(coll.array()).toStrictEqual([1, 3]);
 	});
@@ -390,7 +390,7 @@ describe('filter', () => {
 		coll.set('a', 1);
 		coll.set('b', 2);
 		coll.set('c', 3);
-		const filtered = coll.filter(x => x % 2 === 1);
+		const filtered = coll.filter((x) => x % 2 === 1);
 		expect(coll.size).toBe(3);
 		expect(filtered.size).toBe(2);
 		expect(filtered.array()).toStrictEqual([1, 3]);
@@ -440,7 +440,7 @@ describe('partition', () => {
 		coll.set('d', 4);
 		coll.set('e', 5);
 		coll.set('f', 6);
-		const [even, odd] = coll.partition(x => x % 2 === 0);
+		const [even, odd] = coll.partition((x) => x % 2 === 0);
 		expect(even.array()).toStrictEqual([2, 4, 6]);
 		expect(odd.array()).toStrictEqual([1, 3, 5]);
 	});
@@ -494,7 +494,7 @@ describe('flatMap', () => {
 		coll3.set('v', 4);
 		coll.set('a', { a: coll2 });
 		coll.set('b', { a: coll3 });
-		const mapped = coll.flatMap(x => x.a);
+		const mapped = coll.flatMap((x) => x.a);
 		expect(mapped.array()).toStrictEqual([1, 2, 3, 4]);
 	});
 });
@@ -601,7 +601,7 @@ describe('some', () => {
 		coll.set('a', 1);
 		coll.set('b', 2);
 		coll.set('c', 3);
-		expect(coll.some(x => x === 2)).toBeTruthy();
+		expect(coll.some((x) => x === 2)).toBeTruthy();
 	});
 
 	test('some thisArg', () => {
@@ -641,11 +641,11 @@ describe('some', () => {
 
 describe('every', () => {
 	test('check if every item pass a predicate', () => {
-		expect(coll.every(x => x === 2)).toBeFalsy();
+		expect(coll.every((x) => x === 2)).toBeFalsy();
 		coll.clear();
 		coll.set('a', 1);
 		coll.set('b', 1);
-		expect(coll.every(x => x === 1)).toBeTruthy();
+		expect(coll.every((x) => x === 1)).toBeTruthy();
 	});
 
 	test('every thisArg', () => {
@@ -730,7 +730,7 @@ describe('each', () => {
 
 describe('tap', () => {
 	test('tap the collection', () => {
-		coll.tap(c => expect(c).toBe(coll));
+		coll.tap((c) => expect(c).toBe(coll));
 	});
 
 	test('tap thisArg', () => {
@@ -801,7 +801,7 @@ describe('equals', () => {
 	});
 
 	test('check equality without collection bypassing tsc', () => {
-		// @ts-ignore
+		// @ts-expect-error
 		expect(coll.equals()).toBeFalsy();
 	});
 
