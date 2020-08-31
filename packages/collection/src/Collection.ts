@@ -495,6 +495,8 @@ export class Collection<K, V> extends Map<K, V> {
 	 * @returns Whether the collections have identical contents
 	 */
 	public equals(collection: Collection<K, V>): boolean {
+		// TODO: remove this whenever
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (!collection) return false;
 		if (this === collection) return true;
 		if (this.size !== collection.size) return false;
