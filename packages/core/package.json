@@ -38,7 +38,6 @@
 	"dependencies": {
 		"tslib": "^2.0.1"
 	},
-	"devDependencies": {},
 	"engines": {
 		"node": ">=14.0.0"
 	}
