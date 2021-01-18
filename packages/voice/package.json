@@ -11,7 +11,8 @@
 	],
 	"license": "Apache-2.0",
 	"scripts": {
-		"test": "echo \"Error: run tests from root\" && exit 1"
+		"test": "echo \"Error: run tests from root\" && exit 1",
+		"build": "tsc"
 	},
 	"repository": {
 		"type": "git",
@@ -37,7 +38,7 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "^2.0.1"
+		"tslib": "^2.1.0"
 	},
 	"engines": {
 		"node": ">=14.0.0"
