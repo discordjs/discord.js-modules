@@ -3,11 +3,11 @@ interface DiscordErrorFieldInformation {
 	message: string;
 }
 
-interface DiscordErrorInternalErrors {
-	_errors: DiscordErrorFieldInformation[];
+interface DiscordErrorGroupWrapper {
+	_errors: DiscordError[];
 }
 
-type DiscordError = DiscordErrorInternalErrors | DiscordErrorFieldInformation | { [k: string]: DiscordError } | string;
+type DiscordError = DiscordErrorGroupWrapper | DiscordErrorFieldInformation | { [k: string]: DiscordError } | string;
 
 export interface DiscordErrorData {
 	code: number;
@@ -15,7 +15,7 @@ export interface DiscordErrorData {
 	errors?: DiscordError;
 }
 
-function isErrorInternalErrors(error: any): error is DiscordErrorInternalErrors {
+function isErrorGroupWrapper(error: any): error is DiscordErrorGroupWrapper {
 	return Reflect.has(error, '_errors');
 }
 
@@ -63,17 +63,17 @@ export class DiscordAPIError extends Error {
 	}
 
 	private static *flattenDiscordError(obj: DiscordError, key = ''): IterableIterator<string> {
-		for (const [k, v] of Object.entries(obj)) {
-			if (k === 'message') continue;
+		if (isErrorResponse(obj)) {
+			return yield `${obj.code ? `${obj.code}: ` : ''}${obj.message}`.trim();
+		}
 
+		for (const [k, v] of Object.entries(obj)) {
 			const newKey = key ? (Number.isNaN(Number(k)) ? `${key}.${k}` : `${key}[${k}]`) : k;
 
 			if (typeof v === 'string') {
 				yield v;
-			} else if (isErrorInternalErrors(v)) {
-				yield `${newKey}: ${v._errors.map((e) => `[${e.code}]: ${e.message}`).join(' ')}`;
-			} else if (isErrorResponse(v)) {
-				yield `${v.code ? `${v.code}: ` : ''}${v.message}`.trim();
+			} else if (isErrorGroupWrapper(v)) {
+				for (const error of v._errors) yield* this.flattenDiscordError(error, newKey);
 			} else {
 				yield* this.flattenDiscordError(v, newKey);
 			}

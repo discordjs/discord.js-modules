@@ -1,7 +1,8 @@
 import nock from 'nock';
-import { REST, DefaultRestOptions, DiscordAPIError, HTTPError } from '../src';
+import { DefaultRestOptions, DiscordAPIError, HTTPError, REST } from '../src';
 
 const api = new REST({ timeout: 2000 }).setToken('A-Very-Fake-Token');
+const invalidAuthApi = new REST({ timeout: 2000 }).setToken('Definitely-Not-A-Fake-Token');
 
 let resetAfter = 0;
 let serverOutage = true;
@@ -111,6 +112,8 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.reply(200)
 	.get('/badRequest')
 	.reply(403, { message: 'Missing Permissions', code: 50013 })
+	.get('/unauthorized')
+	.reply(401, { message: '401: Unauthorized', code: 0 })
 	.get('/malformedRequest')
 	.reply(601);
 
@@ -164,6 +167,12 @@ test('server responding too slow', async () => {
 test('Bad Request', async () => {
 	const promise = api.get('/badRequest');
 	await expect(promise).rejects.toThrowError('Missing Permissions');
+	await expect(promise).rejects.toBeInstanceOf(DiscordAPIError);
+});
+
+test('Unauthorized', async () => {
+	const promise = invalidAuthApi.get('/unauthorized');
+	await expect(promise).rejects.toThrowError('401: Unauthorized');
 	await expect(promise).rejects.toBeInstanceOf(DiscordAPIError);
 });
 

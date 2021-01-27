@@ -207,7 +207,7 @@ export class SequentialHandler {
 			if (res.status >= 400 && res.status < 500) {
 				// If we receive this status code, it means the token we had is no longer valid.
 				if (res.status === 401) {
-					this.manager.setToken(null as any);
+					this.manager.setToken(null!);
 				}
 				// The request will not succeed for some reason, parse the error returned from the api
 				const data = (await parseResponse(res)) as DiscordErrorData;

@@ -1,12 +1,12 @@
-import { Agent } from 'https';
 import { Collection } from '@discordjs/collection';
-import type { REST } from './REST';
-import type { IHandler } from './handlers/IHandler';
-import { DiscordSnowflake } from '@sapphire/snowflake';
-import { SequentialHandler } from './handlers/SequentialHandler';
-import type { RequestInit } from 'node-fetch';
-import { DefaultUserAgent } from './utils/constants';
 import FormData from '@discordjs/form-data';
+import { DiscordSnowflake } from '@sapphire/snowflake';
+import { Agent } from 'https';
+import type { RequestInit } from 'node-fetch';
+import type { IHandler } from './handlers/IHandler';
+import { SequentialHandler } from './handlers/SequentialHandler';
+import type { REST } from './REST';
+import { DefaultUserAgent } from './utils/constants';
 
 const agent = new Agent({ keepAlive: true });
 
