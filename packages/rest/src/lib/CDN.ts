@@ -1,3 +1,5 @@
+import { DefaultRestOptions } from './utils/constants';
+
 const ALLOWED_EXTENSIONS = ['webp', 'png', 'jpg', 'jpeg', 'gif'] as const;
 const ALLOWED_SIZES = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096] as const;
 
@@ -14,7 +16,7 @@ export interface ImageURLOptions {
  * The CDN link builder
  */
 export class CDN {
-	public constructor(private readonly base: string) {}
+	public constructor(private readonly base: string = DefaultRestOptions.cdn) {}
 
 	/**
 	 * Generates an app asset URL for a client's asset.
