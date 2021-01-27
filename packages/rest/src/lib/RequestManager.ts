@@ -148,7 +148,7 @@ export class RequestManager extends EventEmitter {
 			this.handlers.get(`${hash}:${routeID.majorParameter}`) ?? this.createHandler(hash, routeID.majorParameter);
 
 		// Resolve the request into usable fetch/node-fetch options
-		const { url, fetchOptions } = await this.resolveRequest(request);
+		const { url, fetchOptions } = this.resolveRequest(request);
 
 		// Queue the request
 		return handler.queueRequest(routeID, url, fetchOptions);
@@ -173,7 +173,7 @@ export class RequestManager extends EventEmitter {
 	 * Formats the request data to a usable format for fetch
 	 * @param request The request data
 	 */
-	private resolveRequest(request: InternalRequest): Promise<{ url: string; fetchOptions: RequestInit }> {
+	private resolveRequest(request: InternalRequest): { url: string; fetchOptions: RequestInit } {
 		const { options } = this;
 
 		let query = '';
@@ -181,21 +181,15 @@ export class RequestManager extends EventEmitter {
 		// If a query option is passed, use it
 		if (request.query) query = `?${request.query.toString() as string}`;
 
-		// Format the full request URL (api base, optional version, endpoint, optional querystring)
-		const url = `${options.api}${request.versioned === false ? '' : `/v${options.version}`}${
-			request.fullRoute
-		}${query}`;
-
 		// Create the required headers
 		const headers: RequestHeaders = {
 			'User-Agent': `${DefaultUserAgent} ${options.userAgentAppendix}`.trim(),
 		};
 
 		// If this request requires authorization (allowing non-"authorized" requests for webhooks)
-		if (request.auth === undefined || request.auth) {
+		if (request.auth !== false) {
 			// If we haven't received a token, throw an error
-			if (!this.#token)
-				return Promise.reject(new Error('Expected token to be set for this request, but none was present'));
+			if (!this.#token) throw new Error('Expected token to be set for this request, but none was present');
 
 			headers.Authorization = `${request.authPrefix ?? 'Bot'} ${this.#token}`;
 		}
@@ -204,6 +198,11 @@ export class RequestManager extends EventEmitter {
 		if (request.reason?.length) {
 			headers['X-Audit-Log-Reason'] = encodeURIComponent(request.reason);
 		}
+
+		// Format the full request URL (api base, optional version, endpoint, optional querystring)
+		const url = `${options.api}${request.versioned === false ? '' : `/v${options.version}`}${
+			request.fullRoute
+		}${query}`;
 
 		let finalBody: RequestInit['body'];
 		let additionalHeaders: Record<string, string> = {};
@@ -241,7 +240,7 @@ export class RequestManager extends EventEmitter {
 			method: request.method,
 		};
 
-		return Promise.resolve({ url, fetchOptions });
+		return { url, fetchOptions };
 	}
 
 	/**
