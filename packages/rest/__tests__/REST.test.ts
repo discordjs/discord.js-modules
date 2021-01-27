@@ -147,10 +147,10 @@ test('postEcho', async () => {
 	expect(await api.post('/postEcho', { body: { foo: 'bar' } })).toEqual({ foo: 'bar' });
 });
 
-test('Old Message Delete Edge-Case:old message', async () => {
+test('Old Message Delete Edge-Case: Old message', async () => {
 	expect(await api.delete(Routes.channelMessage('339942739275677727', '392063687801700356'))).toEqual({ test: true });
 });
 
-test('Old Message Delete Edge-Case:new message', async () => {
+test('Old Message Delete Edge-Case: New message', async () => {
 	expect(await api.delete(Routes.channelMessage('339942739275677727', newSnowflake))).toEqual({ test: true });
 });
