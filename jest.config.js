@@ -1,3 +1,6 @@
+/**
+ * @type {import('@jest/types').Config.InitialOptions}
+ */
 module.exports = {
 	testMatch: ['**/+(*.)+(spec|test).+(ts|js)?(x)'],
 	testEnvironment: 'node',
@@ -14,4 +17,8 @@ module.exports = {
 		},
 	},
 	roots: ['<rootDir>packages/'],
+	coveragePathIgnorePatterns: [
+		'/node_modules/', //
+		'<rootDir>/packages/rest/src/index.ts',
+	],
 };

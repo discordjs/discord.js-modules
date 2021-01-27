@@ -180,7 +180,7 @@ export class RequestManager {
 		let query = '';
 
 		// If a query option is passed, use it
-		if (request.query) query = request.query.toString();
+		if (request.query) query = `?${request.query.toString() as string}`;
 
 		// Format the full request URL (api base, optional version, endpoint, optional querystring)
 		const url = `${options.api}${request.versioned === false ? '' : `/v${options.version}`}${
@@ -266,7 +266,7 @@ export class RequestManager {
 		let exceptions = '';
 
 		// Hard-Code Old Message Deletion Exception (2 week+ old messages are a different bucket)
-		// https://github.com/discordapp/discord-api-docs/issues/1295
+		// https://github.com/discord/discord-api-docs/issues/1295
 		if (method === RequestMethod.Delete && baseRoute === '/channels/:id/messages/:id') {
 			const id = /\d{16,19}$/.exec(endpoint)![0];
 			const snowflake = DiscordSnowflake.deconstruct(id);
