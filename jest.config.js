@@ -7,11 +7,11 @@ module.exports = {
 	collectCoverage: true,
 	coverageProvider: 'v8',
 	coverageDirectory: 'coverage',
-	coverageReporters: ['text', 'lcov', 'clover'],
+	coverageReporters: ['html', 'text', 'clover'],
 	coverageThreshold: {
 		global: {
 			branches: 80,
-			functions: 80,
+			functions: 70,
 			lines: 80,
 			statements: 80,
 		},
