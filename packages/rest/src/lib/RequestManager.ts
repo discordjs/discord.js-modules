@@ -35,7 +35,7 @@ export interface RequestData {
 	/**
 	 * The authorization prefix to use for this request, useful if you use this with bearer tokens
 	 *
-	 * @default "Bot"
+	 * @default 'Bot'
 	 */
 	authPrefix?: 'Bot' | 'Bearer';
 	/**
