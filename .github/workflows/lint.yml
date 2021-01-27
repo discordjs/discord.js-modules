@@ -16,5 +16,8 @@ jobs:
       - name: Install dependencies
         run: npm ci && npx lerna bootstrap
 
+      - name: Build TypeScript
+        run: npm run build
+
       - name: Run ESLint
         run: npm run lint
