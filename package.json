@@ -29,7 +29,7 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-next/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next#readme",
+	"homepage": "https://github.com/discordjs/discord.js-next",
 	"keywords": [
 		"discord",
 		"api",

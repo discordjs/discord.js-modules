@@ -15,7 +15,10 @@
 		"noEmitHelpers": true,
 		"importHelpers": true,
 		"skipLibCheck": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"preserveConstEnums": true,
+		"resolveJsonModule": true,
+		"importsNotUsedAsValues": "error"
 	},
 	"exclude": ["**/*.test.ts"]
 }
