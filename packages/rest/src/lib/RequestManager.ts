@@ -33,6 +33,12 @@ export interface RequestData {
 	 */
 	auth?: boolean;
 	/**
+	 * The authorization prefix to use for this request, useful if you use this with bearer tokens
+	 *
+	 * @default "Bot"
+	 */
+	authPrefix?: 'Bot' | 'Bearer';
+	/**
 	 * The body to send to this request
 	 */
 	body?: unknown;
@@ -192,7 +198,7 @@ export class RequestManager {
 			if (!this.#token)
 				return Promise.reject(new Error('Expected token to be set for this request, but none was present'));
 
-			headers.Authorization = `Bot ${this.#token}`;
+			headers.Authorization = `${request.authPrefix ?? 'Bot'} ${this.#token}`;
 		}
 
 		// If a reason was set, set it's appropriate header

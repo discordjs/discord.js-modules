@@ -97,7 +97,7 @@
 		}
 	},
 	"lint-staged": {
-		"*.{js,ts}": [
+		"*.{mjs,js,ts}": [
 			"eslint --ext .ts --fix"
 		],
 		"*.{json,yml,yaml}": [
@@ -127,6 +127,11 @@
 					"types",
 					"wip"
 				]
+			],
+			"scope-case": [
+				1,
+				"always",
+				"pascal-case"
 			]
 		}
 	}
