@@ -29,20 +29,20 @@ function isErrorResponse(error: any): error is DiscordErrorFieldInformation {
  */
 export class DiscordAPIError extends Error {
 	/**
-	 * @param message The error message reported by discord
-	 * @param code The error code reported by discord
+	 * @param rawError The error reported by Discord
+	 * @param code The error code reported by Discord
 	 * @param status The status code of the response
 	 * @param method The method of the request that erred
 	 * @param url The url of the request that erred
 	 */
 	public constructor(
-		jsonBody: DiscordErrorData,
+		public rawError: DiscordErrorData,
 		public code: number,
 		public status: number,
 		public method: string,
 		public url: string,
 	) {
-		super(DiscordAPIError.getMessage(jsonBody));
+		super(DiscordAPIError.getMessage(rawError));
 	}
 
 	/**
@@ -64,18 +64,18 @@ export class DiscordAPIError extends Error {
 
 	private static *flattenDiscordError(obj: DiscordError, key = ''): IterableIterator<string> {
 		if (isErrorResponse(obj)) {
-			return yield `${obj.code ? `${obj.code}: ` : ''}${obj.message}`.trim();
+			return yield `${key.length ? `${key}[${obj.code}]` : `${obj.code}`}: ${obj.message}`.trim();
 		}
 
 		for (const [k, v] of Object.entries(obj)) {
-			const newKey = key ? (Number.isNaN(Number(k)) ? `${key}.${k}` : `${key}[${k}]`) : k;
+			const nextKey = k.startsWith('_') ? key : key ? (Number.isNaN(Number(k)) ? `${key}.${k}` : `${key}[${k}]`) : k;
 
 			if (typeof v === 'string') {
 				yield v;
 			} else if (isErrorGroupWrapper(v)) {
-				for (const error of v._errors) yield* this.flattenDiscordError(error, newKey);
+				for (const error of v._errors) yield* this.flattenDiscordError(error, nextKey);
 			} else {
-				yield* this.flattenDiscordError(v, newKey);
+				yield* this.flattenDiscordError(v, nextKey);
 			}
 		}
 	}
