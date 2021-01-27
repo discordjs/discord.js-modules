@@ -2,11 +2,11 @@ import { sleep } from '@discordjs/core';
 import { AsyncQueue } from '@sapphire/async-queue';
 import AbortController from 'abort-controller';
 import fetch, { RequestInit, Response } from 'node-fetch';
-import { parseResponse } from '../utils/utils';
 import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
-import { RESTEvents } from '../REST';
 import type { RequestManager, RouteData } from '../RequestManager';
+import { RESTEvents } from '../REST';
+import { parseResponse } from '../utils/utils';
 
 /**
  * The structure used to handle requests for a given bucket
@@ -77,7 +77,7 @@ export class SequentialHandler {
 	 * @param message The message to debug
 	 */
 	private debug(message: string) {
-		this.manager.rest.emit(RESTEvents.Debug, `[REST ${this.id}] ${message}`);
+		this.manager.emit(RESTEvents.Debug, `[REST ${this.id}] ${message}`);
 	}
 
 	/**
@@ -94,7 +94,7 @@ export class SequentialHandler {
 			// Check if this request handler is currently rate limited
 			if (this.limited) {
 				// Let library users know they have hit a rate limit
-				this.manager.rest.emit(RESTEvents.RateLimited, {
+				this.manager.emit(RESTEvents.RateLimited, {
 					timeToReset: this.timeToReset,
 					limit: this.limit,
 					method: options.method,
@@ -123,14 +123,14 @@ export class SequentialHandler {
 	 */
 	private async runRequest(routeID: RouteData, url: string, options: RequestInit, retries = 0): Promise<unknown> {
 		const controller = new AbortController();
-		const timeout = setTimeout(() => controller.abort(), this.manager.rest.options.timeout);
+		const timeout = setTimeout(() => controller.abort(), this.manager.options.timeout);
 		let res: Response;
 
 		try {
 			res = await fetch(url, { ...options, signal: controller.signal });
 		} catch (error) {
 			// Retry the specified number of times for possible timed out requests
-			if (error.name === 'AbortError' && retries !== this.manager.rest.options.retries)
+			if (error.name === 'AbortError' && retries !== this.manager.options.retries)
 				return this.runRequest(routeID, url, options, ++retries);
 			throw error;
 		} finally {
@@ -151,10 +151,10 @@ export class SequentialHandler {
 		// Update the number of remaining requests that can be made before the rate limit resets
 		this.remaining = remaining ? Number(remaining) : 1;
 		// Update the time when this rate limit resets (reset-after is in seconds)
-		this.reset = reset ? Number(reset) * 1000 + Date.now() + this.manager.rest.options.offset : Date.now();
+		this.reset = reset ? Number(reset) * 1000 + Date.now() + this.manager.options.offset : Date.now();
 
 		// Amount of time in milliseconds until we should retry if rate limited (globally or otherwise)
-		if (retry) retryAfter = Number(retry) * 1000 + this.manager.rest.options.offset;
+		if (retry) retryAfter = Number(retry) * 1000 + this.manager.options.offset;
 
 		// Handle buckets via the hash header retroactively
 		if (hash && hash !== this.hash) {
@@ -199,7 +199,7 @@ export class SequentialHandler {
 			return this.runRequest(routeID, url, options, retries);
 		} else if (res.status >= 500 && res.status < 600) {
 			// Retry the specified number of times for possible server side issues
-			if (retries !== this.manager.rest.options.retries) return this.runRequest(routeID, url, options, ++retries);
+			if (retries !== this.manager.options.retries) return this.runRequest(routeID, url, options, ++retries);
 			// We are out of retries, throw an error
 			throw new HTTPError(res.statusText, res.constructor.name, res.status, method, url);
 		} else {

@@ -71,7 +71,7 @@ export class REST extends EventEmitter {
 		this.options.offset = Math.max(0, this.options.offset);
 
 		this.cdn = new CDN(this.options.cdn);
-		this.requestManager = new RequestManager(this);
+		this.requestManager = new RequestManager(this.options);
 	}
 
 	public setToken(token: string) {

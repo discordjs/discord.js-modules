@@ -1,11 +1,12 @@
 import { Collection } from '@discordjs/collection';
 import FormData from '@discordjs/form-data';
 import { DiscordSnowflake } from '@sapphire/snowflake';
+import { EventEmitter } from 'events';
 import { Agent } from 'https';
 import type { RequestInit } from 'node-fetch';
 import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
-import type { REST } from './REST';
+import type { RESTOptions } from './REST';
 import { DefaultUserAgent } from './utils/constants';
 
 const agent = new Agent({ keepAlive: true });
@@ -105,7 +106,7 @@ export interface RouteData {
 /**
  * Represents the class that manages handlers for endpoints
  */
-export class RequestManager {
+export class RequestManager extends EventEmitter {
 	/**
 	 * A timeout promise that is set when we hit the global rate limit
 	 *
@@ -123,13 +124,11 @@ export class RequestManager {
 	 */
 	public readonly handlers = new Collection<string, IHandler>();
 
-	public readonly rest: REST;
-
 	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
 	#token: string | null = null;
 
-	public constructor(rest: REST) {
-		this.rest = rest;
+	public constructor(public readonly options: RESTOptions) {
+		super();
 	}
 
 	public setToken(token: string) {
@@ -175,7 +174,7 @@ export class RequestManager {
 	 * @param request The request data
 	 */
 	private resolveRequest(request: InternalRequest): Promise<{ url: string; fetchOptions: RequestInit }> {
-		const { options } = this.rest;
+		const { options } = this;
 
 		let query = '';
 
