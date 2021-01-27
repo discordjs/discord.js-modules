@@ -41,9 +41,9 @@
 	"dependencies": {
 		"@discordjs/collection": "^13.0.0-dev",
 		"@discordjs/core": "^13.0.0-dev",
-		"@sapphire/async-queue": "^1.0.1",
+		"@sapphire/async-queue": "^1.0.2",
 		"@sapphire/snowflake": "^1.2.4",
-		"@sapphire/utilities": "^1.4.3",
+		"@sapphire/utilities": "^1.4.4",
 		"abort-controller": "^3.0.0",
 		"discord-api-types": "^0.12.1",
 		"form-data": "^3.0.0",
