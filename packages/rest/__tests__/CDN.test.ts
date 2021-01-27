@@ -4,7 +4,7 @@ const base = 'https://discord.com';
 const id = '123456';
 const hash = 'abcdef';
 const animatedHash = 'a_bcdef';
-const discriminator = 1234;
+const defaultAvatar = 1234 % 5;
 
 const cdn = new CDN(base);
 
@@ -17,7 +17,7 @@ test('appIcon default', () => {
 });
 
 test('defaultAvatar default', () => {
-	expect(cdn.defaultAvatar(discriminator)).toBe(`${base}/embed/avatars/${discriminator}.png`);
+	expect(cdn.defaultAvatar(defaultAvatar)).toBe(`${base}/embed/avatars/${defaultAvatar}.png`);
 });
 
 test('discoverySplash default', () => {
