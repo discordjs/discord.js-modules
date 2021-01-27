@@ -126,7 +126,6 @@ export class REST extends EventEmitter {
 
 	/**
 	 * Runs a request from the api
-	 * @param fullRoute The full route to query
 	 * @param options Request options
 	 */
 	public request(options: InternalRequest) {
