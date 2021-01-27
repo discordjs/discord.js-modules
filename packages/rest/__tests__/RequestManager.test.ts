@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { REST, DefaultRestOptions } from '../src';
+import { DefaultRestOptions, REST } from '../src';
 
 const api = new REST();
 
