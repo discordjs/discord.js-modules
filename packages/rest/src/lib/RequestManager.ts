@@ -6,7 +6,7 @@ import { DiscordSnowflake } from '@sapphire/snowflake';
 import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RequestInit } from 'node-fetch';
 import { DefaultUserAgent } from './utils/constants';
-import FormData from 'form-data';
+import FormData from '@discordjs/form-data';
 
 const agent = new Agent({ keepAlive: true });
 
