@@ -116,7 +116,7 @@ export class CDN {
 	 * @param options Optional options for the avatar
 	 */
 	public userAvatar(userID: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
-		if (dynamic) options.extension = avatarHash.startsWith('a_') ? 'gif' : options.extension;
+		if (dynamic && avatarHash.startsWith('a_')) options.extension = 'gif';
 		return this.makeURL(`/avatars/${userID}/${avatarHash}`, options);
 	}
 
