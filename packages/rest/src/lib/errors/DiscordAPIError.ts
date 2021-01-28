@@ -20,7 +20,7 @@ function isErrorGroupWrapper(error: any): error is DiscordErrorGroupWrapper {
 }
 
 function isErrorResponse(error: any): error is DiscordErrorFieldInformation {
-	return typeof error.message === 'string';
+	return typeof Reflect.get(error, 'message') === 'string';
 }
 
 /**
