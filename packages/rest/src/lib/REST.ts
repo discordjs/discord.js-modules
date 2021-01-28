@@ -1,4 +1,4 @@
-import { mergeDefault } from '@sapphire/utilities';
+import { deepClone, mergeDefault } from '@sapphire/utilities';
 import { EventEmitter } from 'events';
 import { CDN } from './CDN';
 import { InternalRequest, RequestData, RequestManager, RequestMethod } from './RequestManager';
@@ -67,7 +67,7 @@ export class REST extends EventEmitter {
 
 	public constructor(options: Partial<RESTOptions> = {}) {
 		super();
-		this.options = mergeDefault(DefaultRestOptions, options);
+		this.options = mergeDefault(DefaultRestOptions, deepClone(options));
 		this.options.offset = Math.max(0, this.options.offset);
 
 		this.cdn = new CDN(this.options.cdn);
