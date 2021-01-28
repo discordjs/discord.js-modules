@@ -2,7 +2,7 @@ import { deepClone, mergeDefault } from '@sapphire/utilities';
 import { EventEmitter } from 'events';
 import { CDN } from './CDN';
 import { InternalRequest, RequestData, RequestManager, RequestMethod } from './RequestManager';
-import { DefaultRestOptions } from './utils/constants';
+import { DefaultRestOptions, RESTEvents } from './utils/constants';
 
 /**
  * Options to be passed when creating the REST instance
@@ -57,7 +57,9 @@ export class REST extends EventEmitter {
 		this.options.offset = Math.max(0, this.options.offset);
 
 		this.cdn = new CDN(this.options.cdn);
-		this.requestManager = new RequestManager(this.options);
+		this.requestManager = new RequestManager(this.options)
+			.on(RESTEvents.Debug, this.emit.bind(this, RESTEvents.Debug))
+			.on(RESTEvents.RateLimited, this.emit.bind(this, RESTEvents.RateLimited));
 	}
 
 	/**
