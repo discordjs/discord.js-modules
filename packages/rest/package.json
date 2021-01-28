@@ -44,7 +44,6 @@
 		"@discordjs/form-data": "^3.0.1",
 		"@sapphire/async-queue": "^1.0.2",
 		"@sapphire/snowflake": "^1.2.4",
-		"@sapphire/utilities": "^1.4.4",
 		"abort-controller": "^3.0.0",
 		"discord-api-types": "^0.12.1",
 		"node-fetch": "^2.6.1",

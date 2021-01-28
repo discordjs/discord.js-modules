@@ -7,7 +7,7 @@ import type { RequestInit } from 'node-fetch';
 import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RESTOptions } from './REST';
-import { DefaultUserAgent } from './utils/constants';
+import { DefaultRestOptions, DefaultUserAgent } from './utils/constants';
 
 const agent = new Agent({ keepAlive: true });
 
@@ -124,8 +124,12 @@ export class RequestManager extends EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
 	#token: string | null = null;
 
-	public constructor(public readonly options: RESTOptions) {
+	public readonly options: RESTOptions;
+
+	public constructor(options: Partial<RESTOptions>) {
 		super();
+		this.options = { ...DefaultRestOptions, ...options };
+		this.options.offset = Math.max(0, this.options.offset);
 	}
 
 	/**
