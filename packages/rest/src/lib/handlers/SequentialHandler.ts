@@ -5,7 +5,7 @@ import fetch, { RequestInit, Response } from 'node-fetch';
 import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
 import type { RequestManager, RouteData } from '../RequestManager';
-import { RESTEvents } from '../REST';
+import { RESTEvents } from '../utils/constants';
 import { parseResponse } from '../utils/utils';
 
 /**
@@ -23,12 +23,12 @@ export class SequentialHandler {
 	private reset = -1;
 
 	/**
-	 * The remaining requests that can be made before we are ratelimited
+	 * The remaining requests that can be made before we are rate limited
 	 */
 	private remaining = 1;
 
 	/**
-	 * The total number of requests that can be made before we are ratelimited
+	 * The total number of requests that can be made before we are rate limited
 	 */
 	private limit = Infinity;
 
@@ -39,9 +39,9 @@ export class SequentialHandler {
 	#asyncQueue = new AsyncQueue();
 
 	/**
-	 * @param manager The rest manager
+	 * @param manager The request manager
 	 * @param hash The hash that this RequestHandler handles
-	 * @param token The bot token used to make requests
+	 * @param majorParameter The major parameter for this handler
 	 */
 	public constructor(
 		private readonly manager: RequestManager,
@@ -82,8 +82,9 @@ export class SequentialHandler {
 
 	/**
 	 * Queues a request to be sent
-	 * @param route The generalized api route with literal ids for major parameters
-	 * @param request All the information needed to make a request
+	 * @param routeID The generalized api route with literal ids for major parameters
+	 * @param url The url to do the request on
+	 * @param options All the information needed to make a request
 	 */
 	public async queueRequest(routeID: RouteData, url: string, options: RequestInit): Promise<unknown> {
 		// Wait for any previous requests to be completed before this one is run
@@ -116,7 +117,7 @@ export class SequentialHandler {
 
 	/**
 	 * The method that actually makes the request to the api, and updates info about the bucket accordingly
-	 * @param route The generalized api route with literal ids for major parameters
+	 * @param routeID The generalized api route with literal ids for major parameters
 	 * @param url The fully resolved url to make the request to
 	 * @param options The node-fetch options needed to make the request
 	 * @param retries The number of retries this request has already attempted (recursion)

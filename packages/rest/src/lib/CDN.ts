@@ -1,10 +1,4 @@
-import { DefaultRestOptions } from './utils/constants';
-
-const ALLOWED_EXTENSIONS = ['webp', 'png', 'jpg', 'jpeg', 'gif'] as const;
-const ALLOWED_SIZES = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096] as const;
-
-export type ImageExtension = typeof ALLOWED_EXTENSIONS[number];
-export type ImageSize = typeof ALLOWED_SIZES[number];
+import { ALLOWED_EXTENSIONS, ALLOWED_SIZES, DefaultRestOptions, ImageExtension, ImageSize } from './utils/constants';
 
 export interface ImageURLOptions {
 	extension?: ImageExtension;

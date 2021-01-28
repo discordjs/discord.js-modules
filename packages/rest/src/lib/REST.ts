@@ -5,45 +5,32 @@ import { InternalRequest, RequestData, RequestManager, RequestMethod } from './R
 import { DefaultRestOptions } from './utils/constants';
 
 /**
- * The events that the REST manager emits
- */
-export const enum RESTEvents {
-	Debug = 'restDebug',
-	RateLimited = 'rateLimited',
-}
-
-/**
  * Options to be passed when creating the REST instance
  */
 export interface RESTOptions {
 	/**
 	 * The base api path, without version
-	 *
 	 * @default 'https://discord.com/api'
 	 */
 	api: string;
 	/**
 	 * The cdn path
-	 *
 	 * @default 'https://cdn.discordapp.com'
 	 */
 	cdn: string;
 	/**
-	 * The extra offset to add to ratelimits in milliseconds
-	 *
+	 * The extra offset to add to rate limits in milliseconds
 	 * @default 50
 	 */
 	offset: number;
 	/**
 	 * The number of retries for errors with the 500 code, or errors
 	 * that timeout
-	 *
 	 * @default 3
 	 */
 	retries: number;
 	/**
 	 * The time to wait in milliseconds before a request is aborted
-	 *
 	 * @default 15_000
 	 */
 	timeout: number;
@@ -54,7 +41,6 @@ export interface RESTOptions {
 	userAgentAppendix: string;
 	/**
 	 * The version of the API to use
-	 *
 	 * @default '8'
 	 */
 	version: string;
@@ -74,6 +60,10 @@ export class REST extends EventEmitter {
 		this.requestManager = new RequestManager(this.options);
 	}
 
+	/**
+	 * Sets the authorization token that should be used for requests
+	 * @param token The authorization token to use
+	 */
 	public setToken(token: string) {
 		this.requestManager.setToken(token);
 		return this;
@@ -129,6 +119,6 @@ export class REST extends EventEmitter {
 	 * @param options Request options
 	 */
 	public request(options: InternalRequest) {
-		return this.requestManager.queueRequest({ ...options });
+		return this.requestManager.queueRequest(options);
 	}
 }

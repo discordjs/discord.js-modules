@@ -29,13 +29,11 @@ export interface RequestData {
 	attachments?: RawAttachment[];
 	/**
 	 * If this request needs the `Authorization` header
-	 *
 	 * @default true
 	 */
 	auth?: boolean;
 	/**
 	 * The authorization prefix to use for this request, useful if you use this with bearer tokens
-	 *
 	 * @default 'Bot'
 	 */
 	authPrefix?: 'Bot' | 'Bearer';
@@ -109,7 +107,6 @@ export interface RouteData {
 export class RequestManager extends EventEmitter {
 	/**
 	 * A timeout promise that is set when we hit the global rate limit
-	 *
 	 * @default null
 	 */
 	public globalTimeout: Promise<void> | null = null;
@@ -131,11 +128,20 @@ export class RequestManager extends EventEmitter {
 		super();
 	}
 
+	/**
+	 * Sets the authorization token that should be used for requests
+	 * @param token The authorization token to use
+	 */
 	public setToken(token: string) {
 		this.#token = token;
 		return this;
 	}
 
+	/**
+	 * Queues a request to be sent
+	 * @param request All the information needed to make a request
+	 * @returns The response from the api request
+	 */
 	public async queueRequest(request: InternalRequest): Promise<unknown> {
 		// Generalize the endpoint to its route data
 		const routeID = RequestManager.generateRouteData(request.fullRoute, request.method);
