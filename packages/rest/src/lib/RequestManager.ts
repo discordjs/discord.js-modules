@@ -87,7 +87,7 @@ export const enum RequestMethod {
  */
 export interface InternalRequest extends RequestData {
 	method: RequestMethod;
-	fullRoute: string;
+	fullRoute: `/${string}`;
 }
 
 /**

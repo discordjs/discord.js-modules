@@ -71,7 +71,7 @@ export class REST extends EventEmitter {
 	 * @param fullRoute The full route to query
 	 * @param options Optional request options
 	 */
-	public get(fullRoute: string, options: RequestData = {}) {
+	public get(fullRoute: `/${string}`, options: RequestData = {}) {
 		return this.request({ ...options, fullRoute, method: RequestMethod.Get });
 	}
 
@@ -80,7 +80,7 @@ export class REST extends EventEmitter {
 	 * @param fullRoute The full route to query
 	 * @param options Optional request options
 	 */
-	public delete(fullRoute: string, options: RequestData = {}) {
+	public delete(fullRoute: `/${string}`, options: RequestData = {}) {
 		return this.request({ ...options, fullRoute, method: RequestMethod.Delete });
 	}
 
@@ -89,7 +89,7 @@ export class REST extends EventEmitter {
 	 * @param fullRoute The full route to query
 	 * @param options Optional request options
 	 */
-	public post(fullRoute: string, options: RequestData = {}) {
+	public post(fullRoute: `/${string}`, options: RequestData = {}) {
 		return this.request({ ...options, fullRoute, method: RequestMethod.Post });
 	}
 
@@ -98,7 +98,7 @@ export class REST extends EventEmitter {
 	 * @param fullRoute The full route to query
 	 * @param options Optional request options
 	 */
-	public put(fullRoute: string, options: RequestData = {}) {
+	public put(fullRoute: `/${string}`, options: RequestData = {}) {
 		return this.request({ ...options, fullRoute, method: RequestMethod.Put });
 	}
 
@@ -107,7 +107,7 @@ export class REST extends EventEmitter {
 	 * @param fullRoute The full route to query
 	 * @param options Optional request options
 	 */
-	public patch(fullRoute: string, options: RequestData = {}) {
+	public patch(fullRoute: `/${string}`, options: RequestData = {}) {
 		return this.request({ ...options, fullRoute, method: RequestMethod.Patch });
 	}
 
