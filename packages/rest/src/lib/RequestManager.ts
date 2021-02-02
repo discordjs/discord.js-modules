@@ -80,6 +80,8 @@ export const enum RequestMethod {
 	Put = 'put',
 }
 
+export type RouteLike = `/${string}`;
+
 /**
  * Internal request options
  *
@@ -87,7 +89,7 @@ export const enum RequestMethod {
  */
 export interface InternalRequest extends RequestData {
 	method: RequestMethod;
-	fullRoute: `/${string}`;
+	fullRoute: RouteLike;
 }
 
 /**
