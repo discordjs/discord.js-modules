@@ -42,10 +42,10 @@
 		"@discordjs/collection": "^13.0.0-dev",
 		"@discordjs/core": "^13.0.0-dev",
 		"@discordjs/form-data": "^3.0.1",
-		"@sapphire/async-queue": "^1.0.2",
-		"@sapphire/snowflake": "^1.2.4",
+		"@sapphire/async-queue": "^1.0.5",
+		"@sapphire/snowflake": "^1.2.6",
 		"abort-controller": "^3.0.0",
-		"discord-api-types": "^0.12.1",
+		"discord-api-types": "^0.13.3",
 		"node-fetch": "^2.6.1",
 		"tslib": "^2.1.0"
 	},
@@ -53,7 +53,6 @@
 		"node": ">=14.0.0"
 	},
 	"devDependencies": {
-		"@types/nock": "^11.1.0",
 		"@types/node-fetch": "^2.5.8"
 	}
 }
