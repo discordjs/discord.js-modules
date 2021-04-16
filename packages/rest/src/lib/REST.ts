@@ -78,6 +78,28 @@ export interface RatelimitData {
 	majorParameter: string;
 }
 
+interface RestEvents {
+	restDebug: [info: string];
+	rateLimited: [ratelimitInfo: RatelimitData];
+}
+
+export interface REST {
+	on<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	on<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	once<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	once<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	emit<K extends keyof RestEvents>(event: K, ...args: RestEvents[K]): boolean;
+	emit<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, ...args: any[]): boolean;
+
+	off<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	off<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	removeAllListeners<K extends keyof RestEvents>(event?: K): this;
+	removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof RestEvents>): this;
+}
+
 export class REST extends EventEmitter {
 	public readonly cdn: CDN;
 	public readonly requestManager: RequestManager;
@@ -150,17 +172,5 @@ export class REST extends EventEmitter {
 	 */
 	public request(options: InternalRequest) {
 		return this.requestManager.queueRequest(options);
-	}
-
-	public on(event: RESTEvents.Debug, listener: (info: string) => void): this;
-	public on(event: RESTEvents.RateLimited, listener: (rateLimitInfo: RatelimitData) => void): this;
-	public on(event: string, listener: (...args: any[]) => void): this {
-		return super.on(event, listener);
-	}
-
-	public once(event: RESTEvents.Debug, listener: (info: string) => void): this;
-	public once(event: RESTEvents.RateLimited, listener: (rateLimitInfo: RatelimitData) => void): this;
-	public once(event: string, listener: (...args: any[]) => void): this {
-		return super.once(event, listener);
 	}
 }
