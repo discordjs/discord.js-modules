@@ -45,6 +45,39 @@ export interface RESTOptions {
 	version: string;
 }
 
+/**
+ * Data emitted on `RESTEvents.Debug`
+ */
+export interface RatelimitData {
+	/**
+	 * The time, in milliseconds, until the request-lock is reset
+	 */
+	timeToReset: number;
+	/**
+	 * The amount of requests we can perform before locking requests
+	 */
+	limit: number;
+	/**
+	 * The HTTP method being performed
+	 */
+	method: string;
+	/**
+	 * The bucket hash for this request
+	 */
+	hash: string;
+	/**
+	 * The route being hit in this request
+	 */
+	route: string;
+	/**
+	 * The major parameter of the route
+	 *
+	 * For example, in `/channels/x`, this will be `x`.
+	 * If there is no major parameter (e.g: `/bot/gateway`) this will be `global`.
+	 */
+	majorParameter: string;
+}
+
 export class REST extends EventEmitter {
 	public readonly cdn: CDN;
 	public readonly requestManager: RequestManager;
@@ -117,5 +150,17 @@ export class REST extends EventEmitter {
 	 */
 	public request(options: InternalRequest) {
 		return this.requestManager.queueRequest(options);
+	}
+
+	public on(event: RESTEvents.Debug, listener: (info: string) => void): this;
+	public on(event: RESTEvents.RateLimited, listener: (rateLimitInfo: RatelimitData) => void): this;
+	public on(event: string, listener: (...args: any[]) => void): this {
+		return super.on(event, listener);
+	}
+
+	public once(event: RESTEvents.Debug, listener: (info: string) => void): this;
+	public once(event: RESTEvents.RateLimited, listener: (rateLimitInfo: RatelimitData) => void): this;
+	public once(event: string, listener: (...args: any[]) => void): this {
+		return super.once(event, listener);
 	}
 }
