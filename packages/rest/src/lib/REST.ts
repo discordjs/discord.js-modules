@@ -80,7 +80,7 @@ export interface RatelimitData {
 
 interface RestEvents {
 	restDebug: [info: string];
-	rateLimited: [ratelimitInfo: RatelimitData];
+	rateLimited: [rateLimitInfo: RatelimitData];
 }
 
 export interface REST {
