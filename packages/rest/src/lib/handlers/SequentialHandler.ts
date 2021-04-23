@@ -131,8 +131,10 @@ export class SequentialHandler {
 			res = await fetch(url, { ...options, signal: controller.signal });
 		} catch (error) {
 			// Retry the specified number of times for possible timed out requests
-			if (error.name === 'AbortError' && retries !== this.manager.options.retries)
+			if (error.name === 'AbortError' && retries !== this.manager.options.retries) {
 				return this.runRequest(routeID, url, options, ++retries);
+			}
+
 			throw error;
 		} finally {
 			clearTimeout(timeout);
@@ -160,13 +162,7 @@ export class SequentialHandler {
 		// Handle buckets via the hash header retroactively
 		if (hash && hash !== this.hash) {
 			// Let library users know when rate limit buckets have been updated
-			this.debug(
-				[
-					'Received bucket hash update', //
-					`  Old Hash  : ${this.hash}`,
-					`  New Hash  : ${hash}`,
-				].join('\n'),
-			);
+			this.debug(['Received bucket hash update', `  Old Hash  : ${this.hash}`, `  New Hash  : ${hash}`].join('\n'));
 			// This queue will eventually be eliminated via attrition
 			this.manager.hashes.set(`${method}:${routeID.bucketRoute}`, hash);
 		}
@@ -200,7 +196,9 @@ export class SequentialHandler {
 			return this.runRequest(routeID, url, options, retries);
 		} else if (res.status >= 500 && res.status < 600) {
 			// Retry the specified number of times for possible server side issues
-			if (retries !== this.manager.options.retries) return this.runRequest(routeID, url, options, ++retries);
+			if (retries !== this.manager.options.retries) {
+				return this.runRequest(routeID, url, options, ++retries);
+			}
 			// We are out of retries, throw an error
 			throw new HTTPError(res.statusText, res.constructor.name, res.status, method, url);
 		} else {

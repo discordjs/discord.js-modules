@@ -116,7 +116,10 @@ export class CDN {
 	 * @param options Optional options for the avatar
 	 */
 	public userAvatar(userID: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
-		if (dynamic && avatarHash.startsWith('a_')) options.extension = 'gif';
+		if (dynamic && avatarHash.startsWith('a_')) {
+			options.extension = 'gif';
+		}
+
 		return this.makeURL(`/avatars/${userID}/${avatarHash}`, options);
 	}
 
@@ -128,15 +131,21 @@ export class CDN {
 	private makeURL(base: string, { extension = 'png', size }: ImageURLOptions = {}): string {
 		extension = String(extension).toLowerCase() as ImageExtension;
 
-		if (!ALLOWED_EXTENSIONS.includes(extension))
+		if (!ALLOWED_EXTENSIONS.includes(extension)) {
 			throw new RangeError(
 				`Invalid extension provided: ${extension}\nMust be one of: ${ALLOWED_EXTENSIONS.join(', ')}`,
 			);
-		if (size && !ALLOWED_SIZES.includes(size))
+		}
+
+		if (size && !ALLOWED_SIZES.includes(size)) {
 			throw new RangeError(`Invalid size provided: ${size}\nMust be one of: ${ALLOWED_SIZES.join(', ')}`);
+		}
 
 		const url = new URL(`${this.base}${base}.${extension}`);
-		if (size) url.searchParams.set('size', String(size));
+
+		if (size) {
+			url.searchParams.set('size', String(size));
+		}
 
 		return url.toString();
 	}

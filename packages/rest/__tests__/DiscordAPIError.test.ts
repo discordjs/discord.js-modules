@@ -34,10 +34,7 @@ test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
 
 	expect(error.code).toBe(50035);
 	expect(error.message).toBe(
-		[
-			'Invalid Form Body', //
-			'username[BASE_TYPE_BAD_LENGTH]: Must be between 2 and 32 in length.',
-		].join('\n'),
+		['Invalid Form Body', 'username[BASE_TYPE_BAD_LENGTH]: Must be between 2 and 32 in length.'].join('\n'),
 	);
 	expect(error.method).toBe('PATCH');
 	expect(error.name).toBe('DiscordAPIError[50035]');
@@ -64,10 +61,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{prop
 
 	expect(error.code).toBe(50035);
 	expect(error.message).toBe(
-		[
-			'Invalid Form Body', //
-			'embed.fields[0].value[BASE_TYPE_REQUIRED]: This field is required',
-		].join('\n'),
+		['Invalid Form Body', 'embed.fields[0].value[BASE_TYPE_REQUIRED]: This field is required'].join('\n'),
 	);
 	expect(error.method).toBe('POST');
 	expect(error.name).toBe('DiscordAPIError[50035]');
@@ -94,10 +88,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{inde
 
 	expect(error.code).toBe(50035);
 	expect(error.message).toBe(
-		[
-			'Invalid Form Body', //
-			'form_fields.label[0][BASE_TYPE_REQUIRED]: This field is required',
-		].join('\n'),
+		['Invalid Form Body', 'form_fields.label[0][BASE_TYPE_REQUIRED]: This field is required'].join('\n'),
 	);
 	expect(error.method).toBe('PATCH');
 	expect(error.name).toBe('DiscordAPIError[50035]');

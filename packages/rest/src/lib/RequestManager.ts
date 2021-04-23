@@ -191,7 +191,9 @@ export class RequestManager extends EventEmitter {
 		let query = '';
 
 		// If a query option is passed, use it
-		if (request.query) query = `?${request.query.toString() as string}`;
+		if (request.query) {
+			query = `?${request.query.toString() as string}`;
+		}
 
 		// Create the required headers
 		const headers: RequestHeaders = {
@@ -201,7 +203,9 @@ export class RequestManager extends EventEmitter {
 		// If this request requires authorization (allowing non-"authorized" requests for webhooks)
 		if (request.auth !== false) {
 			// If we haven't received a token, throw an error
-			if (!this.#token) throw new Error('Expected token to be set for this request, but none was present');
+			if (!this.#token) {
+				throw new Error('Expected token to be set for this request, but none was present');
+			}
 
 			headers.Authorization = `${request.authPrefix ?? 'Bot'} ${this.#token}`;
 		}
@@ -229,7 +233,9 @@ export class RequestManager extends EventEmitter {
 
 			// If a JSON body was added as well, attach it to the form data
 			// eslint-disable-next-line no-eq-null
-			if (request.body != null) formData.append('payload_json', JSON.stringify(request.body));
+			if (request.body != null) {
+				formData.append('payload_json', JSON.stringify(request.body));
+			}
 
 			// Set the final body to the form data
 			finalBody = formData;
@@ -267,7 +273,7 @@ export class RequestManager extends EventEmitter {
 		// Get the major ID for this route - global otherwise
 		const majorID = majorIDMatch?.[1] ?? 'global';
 
-		const baseRoute = endpoint //
+		const baseRoute = endpoint
 			// Strip out all IDs
 			.replace(/\d{16,19}/g, ':id')
 			// Strip out reaction as they fall under the same bucket
@@ -280,7 +286,9 @@ export class RequestManager extends EventEmitter {
 		if (method === RequestMethod.Delete && baseRoute === '/channels/:id/messages/:id') {
 			const id = /\d{16,19}$/.exec(endpoint)![0];
 			const snowflake = DiscordSnowflake.deconstruct(id);
-			if (Date.now() - Number(snowflake.timestamp) > 1000 * 60 * 60 * 24 * 14) exceptions += '/Delete Old Message';
+			if (Date.now() - Number(snowflake.timestamp) > 1000 * 60 * 60 * 24 * 14) {
+				exceptions += '/Delete Old Message';
+			}
 		}
 
 		return {

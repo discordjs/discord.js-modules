@@ -73,7 +73,9 @@ export class DiscordAPIError extends Error {
 			if (typeof v === 'string') {
 				yield v;
 			} else if (isErrorGroupWrapper(v)) {
-				for (const error of v._errors) yield* this.flattenDiscordError(error, nextKey);
+				for (const error of v._errors) {
+					yield* this.flattenDiscordError(error, nextKey);
+				}
 			} else {
 				yield* this.flattenDiscordError(v, nextKey);
 			}
