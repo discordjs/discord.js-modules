@@ -45,6 +45,61 @@ export interface RESTOptions {
 	version: string;
 }
 
+/**
+ * Data emitted on `RESTEvents.Debug`
+ */
+export interface RatelimitData {
+	/**
+	 * The time, in milliseconds, until the request-lock is reset
+	 */
+	timeToReset: number;
+	/**
+	 * The amount of requests we can perform before locking requests
+	 */
+	limit: number;
+	/**
+	 * The HTTP method being performed
+	 */
+	method: string;
+	/**
+	 * The bucket hash for this request
+	 */
+	hash: string;
+	/**
+	 * The route being hit in this request
+	 */
+	route: string;
+	/**
+	 * The major parameter of the route
+	 *
+	 * For example, in `/channels/x`, this will be `x`.
+	 * If there is no major parameter (e.g: `/bot/gateway`) this will be `global`.
+	 */
+	majorParameter: string;
+}
+
+interface RestEvents {
+	restDebug: [info: string];
+	rateLimited: [rateLimitInfo: RatelimitData];
+}
+
+export interface REST {
+	on<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	on<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	once<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	once<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	emit<K extends keyof RestEvents>(event: K, ...args: RestEvents[K]): boolean;
+	emit<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, ...args: any[]): boolean;
+
+	off<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	off<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	removeAllListeners<K extends keyof RestEvents>(event?: K): this;
+	removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof RestEvents>): this;
+}
+
 export class REST extends EventEmitter {
 	public readonly cdn: CDN;
 	public readonly requestManager: RequestManager;
