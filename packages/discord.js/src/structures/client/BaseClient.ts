@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { ClientOptions } from '../typedefs/ClientOptions';
+import { ClientOptions } from '../../typedefs/ClientOptions';
 export class BaseClient extends EventEmitter {
 	public constructor(options: ClientOptions) {
 		super();
