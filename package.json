@@ -15,9 +15,13 @@
 		"test": "jest --collect-coverage",
 		"test:ci": "jest --verbose --ci --no-stack-trace --collect-coverage",
 		"docs": "typedoc --name discord.js --exclude **/index.ts --exclude **/*.test.ts --includeVersion --json docs/docs.json",
+		"prebuild": "npm run clean",
+		"build": "lerna run build",
+		"clean": "npx rimraf packages/*/dist",
 		"lint": "eslint packages --ext .ts",
 		"lint:fix": "eslint packages --ext .ts --fix",
-		"prettier": "prettier --write **/*.{ts,js,json,yml,yaml}"
+		"prettier": "prettier --write **/*.{ts,js,json,yml,yaml}",
+		"postinstall": "npx lerna bootstrap"
 	},
 	"repository": {
 		"type": "git",
@@ -26,7 +30,7 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-next/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next#readme",
+	"homepage": "https://github.com/discordjs/discord.js-next",
 	"keywords": [
 		"discord",
 		"api",
@@ -36,30 +40,32 @@
 		"discordapp"
 	],
 	"devDependencies": {
-		"@babel/core": "^7.11.4",
-		"@babel/plugin-proposal-decorators": "^7.10.5",
-		"@babel/preset-env": "^7.11.0",
-		"@babel/preset-typescript": "^7.10.4",
-		"@commitlint/cli": "^9.1.2",
-		"@commitlint/config-angular": "^9.1.2",
-		"@types/jest": "^26.0.10",
-		"@typescript-eslint/eslint-plugin": "^3.10.1",
-		"@typescript-eslint/parser": "^3.10.1",
-		"babel-jest": "^26.3.0",
-		"babel-plugin-transform-typescript-metadata": "^0.3.0",
-		"eslint": "^7.7.0",
-		"eslint-config-marine": "^7.2.0",
-		"eslint-config-prettier": "^6.11.0",
-		"eslint-plugin-import": "^2.22.0",
-		"eslint-plugin-prettier": "^3.1.4",
-		"husky": "^4.2.5",
-		"jest": "^26.4.2",
-		"lerna": "^3.22.1",
-		"lint-staged": "^10.2.13",
-		"prettier": "^2.1.1",
-		"typedoc": "^0.19.0",
+		"@babel/core": "^7.13.16",
+		"@babel/plugin-proposal-decorators": "^7.13.15",
+		"@babel/preset-env": "^7.13.15",
+		"@babel/preset-typescript": "^7.13.0",
+		"@commitlint/cli": "^12.1.1",
+		"@commitlint/config-angular": "^12.1.1",
+		"@types/jest": "^26.0.22",
+		"@typescript-eslint/eslint-plugin": "^4.22.0",
+		"@typescript-eslint/parser": "^4.22.0",
+		"babel-jest": "^26.6.3",
+		"babel-plugin-const-enum": "^1.0.1",
+		"babel-plugin-transform-typescript-metadata": "^0.3.2",
+		"eslint": "^7.25.0",
+		"eslint-config-marine": "^8.3.2",
+		"eslint-config-prettier": "^8.2.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-prettier": "^3.4.0",
+		"husky": "^4.3.8",
+		"jest": "^26.6.3",
+		"lerna": "^4.0.0",
+		"lint-staged": "^10.5.4",
+		"nock": "^13.0.11",
+		"prettier": "^2.2.1",
+		"typedoc": "^0.20.36",
 		"typedoc-plugin-lerna-packages": "^0.3.1",
-		"typescript": "^4.0.2"
+		"typescript": "^4.2.4"
 	},
 	"engines": {
 		"node": ">=14.0.0"
@@ -69,6 +75,9 @@
 		"parserOptions": {
 			"project": "./tsconfig.eslint.json"
 		},
+		"ignorePatterns": [
+			"**/dist/*"
+		],
 		"env": {
 			"jest": true
 		},
@@ -91,12 +100,8 @@
 		}
 	},
 	"lint-staged": {
-		"*.js": [
-			"prettier --write"
-		],
-		"*.ts": [
-			"eslint --fix",
-			"prettier --write"
+		"*.{mjs,js,ts}": [
+			"eslint --ext .ts --fix"
 		],
 		"*.{json,yml,yaml}": [
 			"prettier --write"
@@ -125,6 +130,11 @@
 					"types",
 					"wip"
 				]
+			],
+			"scope-case": [
+				1,
+				"always",
+				"pascal-case"
 			]
 		}
 	}

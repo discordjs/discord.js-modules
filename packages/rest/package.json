@@ -7,11 +7,13 @@
 		"Amish Shah <amishshah.2k@gmail.com>",
 		"Crawl <icrawltogo@gmail.com>",
 		"SpaceEEC <spaceeec@yahoo.com>",
-		"Vlad Frangu <kingdgrizzle@gmail.com>"
+		"Vlad Frangu <kingdgrizzle@gmail.com>",
+		"Antonio Roman <kyradiscord@gmail.com>"
 	],
 	"license": "Apache-2.0",
 	"scripts": {
-		"test": "echo \"Error: run tests from root\" && exit 1"
+		"test": "echo \"Error: run tests from root\" && exit 1",
+		"build": "tsc -b src"
 	},
 	"repository": {
 		"type": "git",
@@ -25,7 +27,8 @@
 		"discord",
 		"api",
 		"rest",
-		"discordapp"
+		"discordapp",
+		"discordjs"
 	],
 	"main": "dist/index.js",
 	"directories": {
@@ -36,10 +39,20 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "^2.0.1"
+		"@discordjs/collection": "^13.0.0-dev",
+		"@discordjs/core": "^13.0.0-dev",
+		"@discordjs/form-data": "^3.0.1",
+		"@sapphire/async-queue": "^1.1.0",
+		"@sapphire/snowflake": "^1.3.0",
+		"abort-controller": "^3.0.0",
+		"discord-api-types": "^0.18.0",
+		"node-fetch": "^2.6.1",
+		"tslib": "^2.2.0"
 	},
-	"devDependencies": {},
 	"engines": {
 		"node": ">=14.0.0"
+	},
+	"devDependencies": {
+		"@types/node-fetch": "^2.5.10"
 	}
 }

@@ -3,19 +3,22 @@
 		"strict": true,
 		"moduleResolution": "node",
 		"module": "commonjs",
-		"target": "es2019",
+		"target": "es2020",
 		"lib": ["esnext", "esnext.array", "esnext.asynciterable", "esnext.intl", "esnext.symbol"],
 		"declaration": true,
+		"declarationMap": true,
 		"sourceMap": true,
 		"removeComments": false,
 		"alwaysStrict": true,
 		"pretty": true,
-		"outDir": "dist",
 		"incremental": true,
 		"noEmitHelpers": true,
 		"importHelpers": true,
 		"skipLibCheck": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"preserveConstEnums": true,
+		"resolveJsonModule": true,
+		"importsNotUsedAsValues": "error"
 	},
 	"exclude": ["**/*.test.ts"]
 }

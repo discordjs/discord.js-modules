@@ -1,3 +1,3 @@
-export function sum(...a: number[]) {
-	return a.reduce((a, v) => a + v, 0);
+export function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
