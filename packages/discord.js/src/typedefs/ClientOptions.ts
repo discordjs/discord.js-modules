@@ -1,4 +1,4 @@
-import { MessageMentionOptions } from './MessageMentions';
+import { MessageMentionOptions } from './MessageMentionTypes';
 import { PartialTypes } from './Partials';
 import { PresenceData } from './Presences';
 
@@ -38,7 +38,7 @@ export interface ClientOptions {
 	restGlobalRateLimit?: number;
 	restSweepInterval?: number;
 	retryLimit?: number;
-	presence: PresenceData;
+	presence?: PresenceData;
 	// intents
 	ws?: WebSocketOptions;
 	http?: HTTPOptions;

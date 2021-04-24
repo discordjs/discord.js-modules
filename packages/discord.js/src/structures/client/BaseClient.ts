@@ -1,18 +1,17 @@
-import { EventEmitter } from 'events';
+import EventEmitter from 'events';
 import { ClientOptions } from '../../typedefs/ClientOptions';
 export class BaseClient extends EventEmitter {
-	public constructor(options: ClientOptions) {
+	public constructor(options?: ClientOptions) {
 		super();
-		this._timeouts = new Set();
-		this._intervals = new Set();
-		this._immediates = new Set();
 		this.options = options;
 	}
+	// private readonly api
+	// private rest
 
-	private readonly _timeouts: Set<NodeJS.Timeout>;
-	private readonly _intervals: Set<NodeJS.Timeout>;
-	private readonly _immediates: Set<NodeJS.Immediate>;
-	public readonly options: ClientOptions;
+	private readonly _timeouts = new Set<NodeJS.Timeout>();
+	private readonly _intervals = new Set<NodeJS.Timeout>();
+	private readonly _immediates = new Set<NodeJS.Immediate>();
+	public options: ClientOptions | undefined;
 	public destroy(): void {
 		for (const t of this._timeouts) this.clearTimeout(t);
 		for (const i of this._intervals) this.clearInterval(i);
@@ -37,7 +36,7 @@ export class BaseClient extends EventEmitter {
 		this._immediates.delete(immediate);
 	}
 
-	public setTimeout(fn: any, delay: number, ...args: unknown[]): NodeJS.Timeout {
+	public setTimeout(fn: (...args: unknown[]) => void, delay: number, ...args: unknown[]): NodeJS.Timeout {
 		const timeout = setTimeout(() => {
 			fn(...args);
 			this._timeouts.delete(timeout);
@@ -46,15 +45,29 @@ export class BaseClient extends EventEmitter {
 		return timeout;
 	}
 
-	public setInterval(fn: any, delay: number, ...args: unknown[]): NodeJS.Timeout {
+	public setInterval(fn: (...args: unknown[]) => void, delay: number, ...args: unknown[]): NodeJS.Timeout {
 		const interval = this.setInterval(fn, delay, ...args);
 		this._intervals.add(interval);
 		return interval;
 	}
 
-	public setImmediate(fn: () => any, ...args: unknown[]): NodeJS.Immediate {
+	public setImmediate(fn: (...args: unknown[]) => void, ...args: unknown[]): NodeJS.Immediate {
 		const immediate = this.setImmediate(fn, ...args);
 		this._immediates.add(immediate);
 		return immediate;
+	}
+
+	private incrementMaxListeners(): void {
+		const maxListeners = this.getMaxListeners();
+		if (maxListeners !== 0) {
+			this.setMaxListeners(maxListeners + 1);
+		}
+	}
+
+	private decrementMaxListener(): void {
+		const maxListeners = this.getMaxListeners();
+		if (maxListeners !== 0) {
+			this.setMaxListeners(maxListeners - 1);
+		}
 	}
 }
