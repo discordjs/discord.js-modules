@@ -11,10 +11,10 @@ interface CloseEvent {
 interface ClientEvents {
 	ready: () => void;
 	shardDisconnect: (event: CloseEvent, shardID: number) => void;
-	shardError: [error: Error, shardID: number];
-	shardReady: [shardID: number, unavailableGuilds: Set<string> | undefined];
-	shardReconnecting: [shardID: number];
-	shardResume: [shardID: number, replayedEvents: number];
+	shardError: (error: Error, shardID: number) => void;
+	shardReady: (shardID: number, unavailableGuilds: Set<string> | undefined) => void;
+	shardReconnecting: (shardID: number) => void;
+	shardResume: (shardID: number, replayedEvents: number) => void;
 }
 
 export declare interface Client {
