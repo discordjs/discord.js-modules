@@ -120,11 +120,11 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 test('Handle standard rate limits', async () => {
 	const [a, b, c] = [api.get('/standard'), api.get('/standard'), api.get('/standard')];
 
-	expect(await a).toEqual(Buffer.alloc(0));
+	expect(await a).toStrictEqual(Buffer.alloc(0));
 	const previous1 = Date.now();
-	expect(await b).toEqual(Buffer.alloc(0));
+	expect(await b).toStrictEqual(Buffer.alloc(0));
 	const previous2 = Date.now();
-	expect(await c).toEqual(Buffer.alloc(0));
+	expect(await c).toStrictEqual(Buffer.alloc(0));
 	const now = Date.now();
 	expect(previous2).toBeGreaterThanOrEqual(previous1 + 250);
 	expect(now).toBeGreaterThanOrEqual(previous2 + 250);
@@ -132,25 +132,25 @@ test('Handle standard rate limits', async () => {
 
 test('Handle global rate limits', async () => {
 	const earlier = Date.now();
-	expect(await api.get('/triggerGlobal')).toEqual({ global: true });
-	expect(await api.get('/regularRequest')).toEqual({ test: true });
+	expect(await api.get('/triggerGlobal')).toStrictEqual({ global: true });
+	expect(await api.get('/regularRequest')).toStrictEqual({ test: true });
 	expect(Date.now()).toBeGreaterThanOrEqual(earlier + 100);
 });
 
 test('Handle unexpected 429', async () => {
 	const previous = Date.now();
-	expect(await api.get('/unexpected')).toEqual({ test: true });
+	expect(await api.get('/unexpected')).toStrictEqual({ test: true });
 	expect(Date.now()).toBeGreaterThanOrEqual(previous + 1000);
 });
 
 test('Handle unexpected 429 cloudflare', async () => {
 	const previous = Date.now();
-	expect(await api.get('/unexpected-cf')).toEqual({ test: true });
+	expect(await api.get('/unexpected-cf')).toStrictEqual({ test: true });
 	expect(Date.now()).toBeGreaterThanOrEqual(previous + 1000);
 });
 
 test('Handle temp server outage', async () => {
-	expect(await api.get('/temp')).toEqual({ test: true });
+	expect(await api.get('/temp')).toStrictEqual({ test: true });
 });
 
 test('perm server outage', async () => {
