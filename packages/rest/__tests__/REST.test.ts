@@ -49,23 +49,23 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.reply(200, { test: true });
 
 test('simple GET', async () => {
-	expect(await api.get('/simpleGet')).toEqual({ test: true });
+	expect(await api.get('/simpleGet')).toStrictEqual({ test: true });
 });
 
 test('simple DELETE', async () => {
-	expect(await api.delete('/simpleDelete')).toEqual({ test: true });
+	expect(await api.delete('/simpleDelete')).toStrictEqual({ test: true });
 });
 
 test('simple PATCH', async () => {
-	expect(await api.patch('/simplePatch')).toEqual({ test: true });
+	expect(await api.patch('/simplePatch')).toStrictEqual({ test: true });
 });
 
 test('simple PUT', async () => {
-	expect(await api.put('/simplePut')).toEqual({ test: true });
+	expect(await api.put('/simplePut')).toStrictEqual({ test: true });
 });
 
 test('simple POST', async () => {
-	expect(await api.post('/simplePost')).toEqual({ test: true });
+	expect(await api.post('/simplePost')).toStrictEqual({ test: true });
 });
 
 test('getQuery', async () => {
@@ -76,35 +76,35 @@ test('getQuery', async () => {
 				['hello', 'world'],
 			]),
 		}),
-	).toEqual({ test: true });
+	).toStrictEqual({ test: true });
 });
 
 test('getAuth default', async () => {
-	expect(await api.get('/getAuth')).toEqual({ auth: 'Bot A-Very-Fake-Token' });
+	expect(await api.get('/getAuth')).toStrictEqual({ auth: 'Bot A-Very-Fake-Token' });
 });
 
 test('getAuth unauthorized', async () => {
-	expect(await api.get('/getAuth', { auth: false })).toEqual({ auth: null });
+	expect(await api.get('/getAuth', { auth: false })).toStrictEqual({ auth: null });
 });
 
 test('getAuth authorized', async () => {
-	expect(await api.get('/getAuth', { auth: true })).toEqual({ auth: 'Bot A-Very-Fake-Token' });
+	expect(await api.get('/getAuth', { auth: true })).toStrictEqual({ auth: 'Bot A-Very-Fake-Token' });
 });
 
 test('getReason default', async () => {
-	expect(await api.get('/getReason')).toEqual({ reason: null });
+	expect(await api.get('/getReason')).toStrictEqual({ reason: null });
 });
 
 test('getReason plain text', async () => {
-	expect(await api.get('/getReason', { reason: 'Hello' })).toEqual({ reason: 'Hello' });
+	expect(await api.get('/getReason', { reason: 'Hello' })).toStrictEqual({ reason: 'Hello' });
 });
 
 test('getReason encoded', async () => {
-	expect(await api.get('/getReason', { reason: '😄' })).toEqual({ reason: '%F0%9F%98%84' });
+	expect(await api.get('/getReason', { reason: '😄' })).toStrictEqual({ reason: '%F0%9F%98%84' });
 });
 
 test('postAttachment empty', async () => {
-	expect(await api.post('/postAttachment', { attachments: [] })).toEqual({
+	expect(await api.post('/postAttachment', { attachments: [] })).toStrictEqual({
 		body: '',
 	});
 });
@@ -114,7 +114,7 @@ test('postAttachment attachment', async () => {
 		await api.post('/postAttachment', {
 			attachments: [{ fileName: 'out.txt', rawBuffer: Buffer.from('Hello') }],
 		}),
-	).toEqual({
+	).toStrictEqual({
 		body: [
 			'Content-Disposition: form-data; name="out.txt"; filename="out.txt"',
 			'Content-Type: text/plain',
@@ -130,7 +130,7 @@ test('postAttachment attachment and JSON', async () => {
 			attachments: [{ fileName: 'out.txt', rawBuffer: Buffer.from('Hello') }],
 			body: { foo: 'bar' },
 		}),
-	).toEqual({
+	).toStrictEqual({
 		body: [
 			'Content-Disposition: form-data; name="out.txt"; filename="out.txt"',
 			'Content-Type: text/plain',
@@ -144,13 +144,15 @@ test('postAttachment attachment and JSON', async () => {
 });
 
 test('postEcho', async () => {
-	expect(await api.post('/postEcho', { body: { foo: 'bar' } })).toEqual({ foo: 'bar' });
+	expect(await api.post('/postEcho', { body: { foo: 'bar' } })).toStrictEqual({ foo: 'bar' });
 });
 
 test('Old Message Delete Edge-Case: Old message', async () => {
-	expect(await api.delete(Routes.channelMessage('339942739275677727', '392063687801700356'))).toEqual({ test: true });
+	expect(await api.delete(Routes.channelMessage('339942739275677727', '392063687801700356'))).toStrictEqual({
+		test: true,
+	});
 });
 
 test('Old Message Delete Edge-Case: New message', async () => {
-	expect(await api.delete(Routes.channelMessage('339942739275677727', newSnowflake))).toEqual({ test: true });
+	expect(await api.delete(Routes.channelMessage('339942739275677727', newSnowflake))).toStrictEqual({ test: true });
 });
