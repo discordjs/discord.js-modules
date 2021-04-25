@@ -1,3 +1,5 @@
+import { IntentsString } from '../structures/client/Intents';
+import { BitFieldResolvable } from './BitFieldResolvable';
 import { MessageMentionOptions } from './MessageMentionTypes';
 import { PartialTypes } from './Partials';
 import { PresenceData } from './Presences';
@@ -39,7 +41,7 @@ export interface ClientOptions {
 	restSweepInterval?: number;
 	retryLimit?: number;
 	presence?: PresenceData;
-	// intents
+	intents: BitFieldResolvable<IntentsString, number>;
 	ws?: WebSocketOptions;
 	http?: HTTPOptions;
 }

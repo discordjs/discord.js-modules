@@ -1,3 +1,5 @@
+/* eslint no-eval: 0 */
+
 import { ClientOptions } from '../../typedefs/ClientOptions';
 import { BaseClient } from './BaseClient';
 
@@ -30,5 +32,16 @@ export class Client extends BaseClient {
 	public constructor(options?: ClientOptions) {
 		super();
 		this.options = options;
+	}
+	private _eval(script: any): any {
+		/* eslint-disable no-alert, no-console */
+		return eval(script);
+	}
+	public readyAt: Date | null = null;
+	public get readyTimestamp(): number | null {
+		return this.readyAt ? this.readyAt.getTime() : null;
+	}
+	public get uptime(): number | null {
+		return this.readyAt ? Date.now() - this.readyAt.getTime() : null;
 	}
 }
