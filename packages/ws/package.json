@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json.schemastore.org/package",
 	"name": "@discordjs/ws",
-	"version": "13.0.0-dev",
+	"version": "0.1.0",
 	"description": "The WebSocket for Discord.js",
 	"contributors": [
 		"Amish Shah <amishshah.2k@gmail.com>",
@@ -10,6 +10,7 @@
 		"Vlad Frangu <kingdgrizzle@gmail.com>"
 	],
 	"license": "Apache-2.0",
+	"private": true,
 	"scripts": {
 		"test": "echo \"Error: run tests from root\" && exit 1",
 		"build": "tsc"
@@ -38,9 +39,12 @@
 		"dist"
 	],
 	"dependencies": {
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
 	},
 	"engines": {
-		"node": ">=14.0.0"
+		"node": ">=16.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

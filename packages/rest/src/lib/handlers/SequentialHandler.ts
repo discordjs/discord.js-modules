@@ -130,12 +130,13 @@ export class SequentialHandler {
 		try {
 			res = await fetch(url, { ...options, signal: controller.signal });
 		} catch (error) {
+			const err = error as Error;
 			// Retry the specified number of times for possible timed out requests
-			if (error.name === 'AbortError' && retries !== this.manager.options.retries) {
+			if (err.name === 'AbortError' && retries !== this.manager.options.retries) {
 				return this.runRequest(routeID, url, options, ++retries);
 			}
 
-			throw error;
+			throw err;
 		} finally {
 			clearTimeout(timeout);
 		}

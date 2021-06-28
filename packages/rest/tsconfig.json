@@ -1,8 +1,11 @@
 {
-	"extends": "../../tsconfig.base.json",
+	"extends": "../tsconfig.base.json",
 	"compilerOptions": {
+		"sourceRoot": "./",
+		"rootDir": "./src",
 		"outDir": "dist",
 		"lib": ["ESNext", "DOM"]
 	},
-	"include": ["src"]
+	"include": ["src"],
+	"references": [{ "path": "../core" }]
 }

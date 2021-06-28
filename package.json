@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json.schemastore.org/package",
 	"name": "discord.js",
-	"version": "13.0.0-dev",
+	"version": "0.1.0-dev",
 	"description": "A powerful library for interacting with the Discord API",
 	"contributors": [
 		"Amish Shah <amishshah.2k@gmail.com>",
@@ -12,16 +12,17 @@
 	"license": "Apache-2.0",
 	"private": true,
 	"scripts": {
+		"pretest": "yarn build",
 		"test": "jest --collect-coverage",
-		"test:ci": "jest --verbose --ci --no-stack-trace --collect-coverage",
-		"docs": "typedoc --name discord.js --exclude **/index.ts --exclude **/*.test.ts --includeVersion --json docs/docs.json",
-		"prebuild": "npm run clean",
-		"build": "lerna run build",
-		"clean": "npx rimraf packages/*/dist",
-		"lint": "eslint packages --ext .ts",
-		"lint:fix": "eslint packages --ext .ts --fix",
-		"prettier": "prettier --write **/*.{ts,js,json,yml,yaml}",
-		"postinstall": "npx lerna bootstrap"
+		"test:ci": "yarn test --verbose --noStackTrace",
+		"prebuild": "yarn clean",
+		"build": "tsc --build packages/core packages/rest packages/ws --force",
+		"clean": "rimraf packages/**/dist",
+		"lint": "eslint packages --ext mjs,js,ts",
+		"lint:fix": "eslint packages --ext mjs,js,ts --fix",
+		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",
+		"update": "yarn upgrade-interactive --latest",
+		"prepare": "husky install"
 	},
 	"repository": {
 		"type": "git",
@@ -40,102 +41,37 @@
 		"discordapp"
 	],
 	"devDependencies": {
-		"@babel/core": "^7.13.16",
-		"@babel/plugin-proposal-decorators": "^7.13.15",
-		"@babel/preset-env": "^7.13.15",
-		"@babel/preset-typescript": "^7.13.0",
-		"@commitlint/cli": "^12.1.1",
-		"@commitlint/config-angular": "^12.1.1",
-		"@types/jest": "^26.0.22",
-		"@typescript-eslint/eslint-plugin": "^4.22.0",
-		"@typescript-eslint/parser": "^4.22.0",
-		"babel-jest": "^26.6.3",
+		"@babel/core": "^7.14.6",
+		"@babel/plugin-proposal-decorators": "^7.14.5",
+		"@babel/preset-env": "^7.14.7",
+		"@babel/preset-typescript": "^7.14.5",
+		"@commitlint/cli": "^12.1.4",
+		"@commitlint/config-angular": "^12.1.4",
+		"@types/jest": "^26.0.23",
+		"@typescript-eslint/eslint-plugin": "^4.28.0",
+		"@typescript-eslint/parser": "^4.28.0",
+		"babel-jest": "^27.0.5",
 		"babel-plugin-const-enum": "^1.0.1",
 		"babel-plugin-transform-typescript-metadata": "^0.3.2",
-		"eslint": "^7.25.0",
-		"eslint-config-marine": "^8.3.2",
-		"eslint-config-prettier": "^8.2.0",
-		"eslint-plugin-import": "^2.22.1",
+		"conventional-changelog-cli": "^2.1.1",
+		"eslint": "^7.29.0",
+		"eslint-config-marine": "^9.0.6",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-import": "^2.23.4",
 		"eslint-plugin-prettier": "^3.4.0",
-		"husky": "^4.3.8",
-		"jest": "^26.6.3",
+		"husky": "^6.0.0",
+		"jest": "^27.0.5",
 		"lerna": "^4.0.0",
-		"lint-staged": "^10.5.4",
-		"nock": "^13.0.11",
-		"prettier": "^2.2.1",
-		"typedoc": "^0.20.36",
-		"typedoc-plugin-lerna-packages": "^0.3.1",
-		"typescript": "^4.2.4"
+		"lint-staged": "^11.0.0",
+		"nock": "^13.1.0",
+		"prettier": "^2.3.2",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.3.4"
 	},
 	"engines": {
-		"node": ">=14.0.0"
+		"node": ">=16.0.0"
 	},
-	"eslintConfig": {
-		"extends": "marine/prettier/node",
-		"parserOptions": {
-			"project": "./tsconfig.eslint.json"
-		},
-		"ignorePatterns": [
-			"**/dist/*"
-		],
-		"env": {
-			"jest": true
-		},
-		"rules": {
-			"@typescript-eslint/naming-convention": 0
-		}
-	},
-	"prettier": {
-		"printWidth": 120,
-		"useTabs": true,
-		"singleQuote": true,
-		"quoteProps": "as-needed",
-		"trailingComma": "all",
-		"endOfLine": "lf"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged && npm test",
-			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-		}
-	},
-	"lint-staged": {
-		"*.{mjs,js,ts}": [
-			"eslint --ext .ts --fix"
-		],
-		"*.{json,yml,yaml}": [
-			"prettier --write"
-		]
-	},
-	"commitlint": {
-		"extends": [
-			"@commitlint/config-angular"
-		],
-		"rules": {
-			"type-enum": [
-				2,
-				"always",
-				[
-					"chore",
-					"build",
-					"ci",
-					"docs",
-					"feat",
-					"fix",
-					"perf",
-					"refactor",
-					"revert",
-					"style",
-					"test",
-					"types",
-					"wip"
-				]
-			],
-			"scope-case": [
-				1,
-				"always",
-				"pascal-case"
-			]
-		}
-	}
+	"workspaces": [
+		"packages/*"
+	]
 }
