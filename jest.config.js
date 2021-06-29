@@ -16,9 +16,5 @@ module.exports = {
 		},
 	},
 	roots: ['<rootDir>packages/'],
-	coveragePathIgnorePatterns: [
-		'/node_modules/',
-		'<rootDir>/packages/collection/src/index.ts',
-		'<rootDir>/packages/rest/src/index.ts',
-	],
+	coveragePathIgnorePatterns: ['/node_modules/', '<rootDir>/packages/rest/src/index.ts'],
 };

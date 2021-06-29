@@ -1,3 +1,3 @@
 # `@discordjs/core`
 
-> The core for Discord.js
+> The core module for Discord.js

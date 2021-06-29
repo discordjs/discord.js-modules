@@ -3,9 +3,19 @@
 	"version": "independent",
 	"command": {
 		"publish": {
-			"ignoreChanges": ["*.md"],
-			"message": "chore(release): publish"
+			"ignoreChanges": ["**/*.md", "**/__tests__/**"],
+			"message": "chore(release): publish",
+			"conventionalCommits": true,
+			"push": false
+		},
+		"version": {
+			"allowBranch": ["main"],
+			"conventionalCommits": true,
+			"push": false,
+			"createRelease": "github"
 		}
 	},
-	"packages": ["packages/*"]
+	"packages": ["packages/*"],
+	"npmClient": "yarn",
+	"useWorkspaces": true
 }

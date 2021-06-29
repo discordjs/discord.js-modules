@@ -1,3 +1,3 @@
 # `@discordjs/rest`
 
-> The REST API for Discord.js
+> The REST API module for Discord.js

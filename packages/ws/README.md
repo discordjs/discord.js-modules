@@ -1,3 +1,3 @@
 # `@discordjs/ws`
 
-> The WebSocket for Discord.js
+> The WebSocket module for Discord.js

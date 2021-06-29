@@ -1,5 +1,5 @@
-import { Collection } from '@discordjs/collection';
-import FormData from '@discordjs/form-data';
+import Collection from '@discordjs/collection';
+import FormData from 'form-data';
 import { DiscordSnowflake } from '@sapphire/snowflake';
 import { EventEmitter } from 'events';
 import { Agent } from 'https';

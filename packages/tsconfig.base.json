@@ -1,0 +1,12 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"module": "CommonJS",
+		"composite": true,
+		"declaration": true,
+		"declarationMap": true,
+		"preserveConstEnums": true,
+		"resolveJsonModule": true,
+		"importsNotUsedAsValues": "error"
+	}
+}
