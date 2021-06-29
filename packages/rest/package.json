@@ -40,7 +40,6 @@
 	],
 	"dependencies": {
 		"@discordjs/collection": "^0.1.6",
-		"@discordjs/core": "^0.0.0",
 		"@sapphire/async-queue": "^1.1.4",
 		"@sapphire/snowflake": "^1.3.5",
 		"abort-controller": "^3.0.0",
