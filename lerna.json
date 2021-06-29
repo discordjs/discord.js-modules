@@ -6,12 +6,12 @@
 			"ignoreChanges": ["**/*.md", "**/__tests__/**"],
 			"message": "chore(release): publish",
 			"conventionalCommits": true,
-			"push": false
+			"push": true
 		},
 		"version": {
 			"allowBranch": ["main"],
 			"conventionalCommits": true,
-			"push": false,
+			"push": true,
 			"createRelease": "github"
 		}
 	},
