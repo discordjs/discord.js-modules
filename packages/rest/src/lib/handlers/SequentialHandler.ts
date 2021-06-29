@@ -1,4 +1,4 @@
-import { sleep } from '@discordjs/core';
+import { setTimeout as sleep } from 'timers/promises';
 import { AsyncQueue } from '@sapphire/async-queue';
 import AbortController from 'abort-controller';
 import fetch, { RequestInit, Response } from 'node-fetch';
