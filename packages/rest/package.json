@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json.schemastore.org/package",
 	"name": "@discordjs/rest",
-	"version": "0.1.0",
+	"version": "0.0.0",
 	"description": "The REST API for Discord.js",
 	"contributors": [
 		"Amish Shah <amishshah.2k@gmail.com>",
@@ -13,7 +13,7 @@
 	"license": "Apache-2.0",
 	"scripts": {
 		"test": "echo \"Error: run tests from root\" && exit 1",
-		"build": "tsc -b src"
+		"build": "tsc --build --force"
 	},
 	"repository": {
 		"type": "git",
@@ -22,7 +22,7 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-next/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/rest#readme",
+	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/rest",
 	"keywords": [
 		"discord",
 		"api",
