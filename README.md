@@ -13,6 +13,10 @@
 </div>
 
 ## Status: pre-alpha
+The idea behind -next is to rewrite the entire library in typescript to make use of type safety and other TS features during development. We will still release it as a javascript library via the NPM registry.
+
+Being a full rewrite this will be a bit of a larger undergoing, so we encapsulate it in its own repository. Discord.js version 13 is in its finishing strides over at https://github.com/discordjs/discord.js . We do currently not have a roadmap or estimate on a release date for the rewrite under -next.
+
 
 ## Contribution
 
