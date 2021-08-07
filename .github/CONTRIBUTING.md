@@ -2,7 +2,7 @@
 
 **The issue tracker is only for bug reports and enhancement suggestions. If you have a question, please ask it in the [Discord server](https://discord.gg/bRCvFy9) instead of opening an issue – you will get redirected there anyway.**
 
-- [Code of Conduct](https://github.com/discordjs/discord.js-next/blob/master/.github/CODE_OF_CONDUCT.md)
+- [Code of Conduct](https://github.com/discordjs/discord.js-modules/blob/main/.github/CODE_OF_CONDUCT.md)
 - [Pull Request Guidelines](#pull-request-guidelines)
 - [Development Setup](#development-setup)
 - [Project Structure](#project-structure)
@@ -10,7 +10,7 @@
 
 ## Pull Request Guidelines
 
-- Checkout a topic branch from a base branch, e.g. `master`, and merge back against that branch.
+- Checkout a topic branch from a base branch, e.g. `main`, and merge back against that branch.
 
 - If adding a new feature:
 

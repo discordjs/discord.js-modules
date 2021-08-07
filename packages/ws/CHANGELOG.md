@@ -8,4 +8,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **rest:** Implement rest module ([#34](https://github.com/discordjs/discord.js-next/issues/34)) ([6990f0f](https://github.com/discordjs/discord.js-next/commit/6990f0f7f3ca958a95f9b1b19681b42669743427))
+* **rest:** Implement rest module ([#34](https://github.com/discordjs/discord.js-modules/issues/34)) ([6990f0f](https://github.com/discordjs/discord.js-modules/commit/6990f0f7f3ca958a95f9b1b19681b42669743427))
