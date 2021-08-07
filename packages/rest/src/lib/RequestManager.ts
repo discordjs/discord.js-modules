@@ -150,20 +150,20 @@ export class RequestManager extends EventEmitter {
 	 */
 	public async queueRequest(request: InternalRequest): Promise<unknown> {
 		// Generalize the endpoint to its route data
-		const routeID = RequestManager.generateRouteData(request.fullRoute, request.method);
+		const routeId = RequestManager.generateRouteData(request.fullRoute, request.method);
 		// Get the bucket hash for the generic route, or point to a global route otherwise
 		const hash =
-			this.hashes.get(`${request.method}:${routeID.bucketRoute}`) ?? `Global(${request.method}:${routeID.bucketRoute})`;
+			this.hashes.get(`${request.method}:${routeId.bucketRoute}`) ?? `Global(${request.method}:${routeId.bucketRoute})`;
 
 		// Get the request handler for the obtained hash, with its major parameter
 		const handler =
-			this.handlers.get(`${hash}:${routeID.majorParameter}`) ?? this.createHandler(hash, routeID.majorParameter);
+			this.handlers.get(`${hash}:${routeId.majorParameter}`) ?? this.createHandler(hash, routeId.majorParameter);
 
 		// Resolve the request into usable fetch/node-fetch options
 		const { url, fetchOptions } = this.resolveRequest(request);
 
 		// Queue the request
-		return handler.queueRequest(routeID, url, fetchOptions);
+		return handler.queueRequest(routeId, url, fetchOptions);
 	}
 
 	/**
@@ -175,7 +175,7 @@ export class RequestManager extends EventEmitter {
 	private createHandler(hash: string, majorParameter: string) {
 		// Create the async request queue to handle requests
 		const queue = new SequentialHandler(this, hash, majorParameter);
-		// Save the queue based on its ID
+		// Save the queue based on its id
 		this.handlers.set(queue.id, queue);
 
 		return queue;
@@ -268,13 +268,13 @@ export class RequestManager extends EventEmitter {
 	 * @private
 	 */
 	private static generateRouteData(endpoint: string, method: RequestMethod): RouteData {
-		const majorIDMatch = /^\/(?:channels|guilds|webhooks)\/(\d{16,19})/.exec(endpoint);
+		const majorIdMatch = /^\/(?:channels|guilds|webhooks)\/(\d{16,19})/.exec(endpoint);
 
-		// Get the major ID for this route - global otherwise
-		const majorID = majorIDMatch?.[1] ?? 'global';
+		// Get the major id for this route - global otherwise
+		const majorId = majorIdMatch?.[1] ?? 'global';
 
 		const baseRoute = endpoint
-			// Strip out all IDs
+			// Strip out all ids
 			.replace(/\d{16,19}/g, ':id')
 			// Strip out reaction as they fall under the same bucket
 			.replace(/\/reactions\/(.*)/, '/reactions/:reaction');
@@ -292,7 +292,7 @@ export class RequestManager extends EventEmitter {
 		}
 
 		return {
-			majorParameter: majorID,
+			majorParameter: majorId,
 			bucketRoute: baseRoute + exceptions,
 			original: endpoint,
 		};
