@@ -14,22 +14,22 @@ export class CDN {
 
 	/**
 	 * Generates an app asset URL for a client's asset.
-	 * @param clientID The client ID that has the asset
+	 * @param clientId The client id that has the asset
 	 * @param assetHash The hash provided by Discord for this asset
 	 * @param options Optional options for the asset
 	 */
-	public appAsset(clientID: string, assetHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/app-assets/${clientID}/${assetHash}`, options);
+	public appAsset(clientId: string, assetHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/app-assets/${clientId}/${assetHash}`, options);
 	}
 
 	/**
 	 * Generates an app icon URL for a client's icon.
-	 * @param clientID The client ID that has the icon
+	 * @param clientId The client id that has the icon
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public appIcon(clientID: string, iconHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/app-icons/${clientID}/${iconHash}`, options);
+	public appIcon(clientId: string, iconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/app-icons/${clientId}/${iconHash}`, options);
 	}
 
 	/**
@@ -42,85 +42,85 @@ export class CDN {
 
 	/**
 	 * Generates a discovery splash URL for a guild's discovery splash.
-	 * @param guildID The guild ID that has the discovery splash
+	 * @param guildId The guild id that has the discovery splash
 	 * @param splashHash The hash provided by Discord for this splash
 	 * @param options Optional options for the splash
 	 */
-	public discoverySplash(guildID: string, splashHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/discovery-splashes/${guildID}/${splashHash}`, options);
+	public discoverySplash(guildId: string, splashHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/discovery-splashes/${guildId}/${splashHash}`, options);
 	}
 
 	/**
 	 * Generates an emoji's URL for an emoji.
-	 * @param emojiID The emoji ID
+	 * @param emojiId The emoji id
 	 * @param extension The extension of the emoji
 	 */
-	public emoji(emojiID: string, extension?: ImageExtension): string {
-		return this.makeURL(`/emojis/${emojiID}`, { extension });
+	public emoji(emojiId: string, extension?: ImageExtension): string {
+		return this.makeURL(`/emojis/${emojiId}`, { extension });
 	}
 
 	/**
 	 * Generates a group DM icon URL for a group DM.
-	 * @param channelID The group channel ID that has the icon
+	 * @param channelId The group channel id that has the icon
 	 * @param iconHash The hash provided by Discord for this group DM channel
 	 * @param options Optional options for the icon
 	 */
-	public groupDMIcon(channelID: string, iconHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/channel-icons/${channelID}/${iconHash}`, options);
+	public groupDMIcon(channelId: string, iconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/channel-icons/${channelId}/${iconHash}`, options);
 	}
 
 	/**
 	 * Generates a banner URL for a guild's banner.
-	 * @param guildID The guild ID that has the banner splash
+	 * @param guildId The guild id that has the banner splash
 	 * @param bannerHash The hash provided by Discord for this banner
 	 * @param options Optional options for the banner
 	 */
-	public guildBanner(guildID: string, bannerHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/banners/${guildID}/${bannerHash}`, options);
+	public guildBanner(guildId: string, bannerHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/banners/${guildId}/${bannerHash}`, options);
 	}
 
 	/**
 	 * Generates an icon URL for a guild's icon.
-	 * @param guildID The guild ID that has the icon splash
+	 * @param guildId The guild id that has the icon splash
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public guildIcon(guildID: string, iconHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/icons/${guildID}/${iconHash}`, options);
+	public guildIcon(guildId: string, iconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/icons/${guildId}/${iconHash}`, options);
 	}
 
 	/**
 	 * Generates a guild invite splash URL for a guild's invite splash.
-	 * @param guildID The guild ID that has the invite splash
+	 * @param guildId The guild id that has the invite splash
 	 * @param splashHash The hash provided by Discord for this splash
 	 * @param options Optional options for the splash
 	 */
-	public splash(guildID: string, splashHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/splashes/${guildID}/${splashHash}`, options);
+	public splash(guildId: string, splashHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/splashes/${guildId}/${splashHash}`, options);
 	}
 
 	/**
 	 * Generates a team icon URL for a team's icon.
-	 * @param teamID The team ID that has the icon
+	 * @param teamId The team id that has the icon
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public teamIcon(teamID: string, iconHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/team-icons/${teamID}/${iconHash}`, options);
+	public teamIcon(teamId: string, iconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/team-icons/${teamId}/${iconHash}`, options);
 	}
 
 	/**
 	 * Generates a user avatar URL for a user's avatar.
-	 * @param userID The user ID that has the icon
+	 * @param userId The user id that has the icon
 	 * @param avatarHash The hash provided by Discord for this avatar
 	 * @param options Optional options for the avatar
 	 */
-	public userAvatar(userID: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
+	public userAvatar(userId: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
 		if (dynamic && avatarHash.startsWith('a_')) {
 			options.extension = 'gif';
 		}
 
-		return this.makeURL(`/avatars/${userID}/${avatarHash}`, options);
+		return this.makeURL(`/avatars/${userId}/${avatarHash}`, options);
 	}
 
 	/**

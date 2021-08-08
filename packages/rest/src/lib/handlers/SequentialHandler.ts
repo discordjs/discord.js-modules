@@ -13,7 +13,7 @@ import { parseResponse } from '../utils/utils';
  */
 export class SequentialHandler {
 	/**
-	 * The unique ID of the handler
+	 * The unique id of the handler
 	 */
 	public readonly id: string;
 
@@ -82,11 +82,11 @@ export class SequentialHandler {
 
 	/**
 	 * Queues a request to be sent
-	 * @param routeID The generalized api route with literal ids for major parameters
+	 * @param routeId The generalized api route with literal ids for major parameters
 	 * @param url The url to do the request on
 	 * @param options All the information needed to make a request
 	 */
-	public async queueRequest(routeID: RouteData, url: string, options: RequestInit): Promise<unknown> {
+	public async queueRequest(routeId: RouteData, url: string, options: RequestInit): Promise<unknown> {
 		// Wait for any previous requests to be completed before this one is run
 		await this.#asyncQueue.wait();
 		try {
@@ -100,7 +100,7 @@ export class SequentialHandler {
 					limit: this.limit,
 					method: options.method,
 					hash: this.hash,
-					route: routeID.bucketRoute,
+					route: routeId.bucketRoute,
 					majorParameter: this.majorParameter,
 				});
 				this.debug(`Waiting ${this.timeToReset}ms for rate limit to pass`);
@@ -108,7 +108,7 @@ export class SequentialHandler {
 				await sleep(this.timeToReset);
 			}
 			// Make the request, and return the results
-			return await this.runRequest(routeID, url, options);
+			return await this.runRequest(routeId, url, options);
 		} finally {
 			// Allow the next request to fire
 			this.#asyncQueue.shift();
@@ -117,12 +117,12 @@ export class SequentialHandler {
 
 	/**
 	 * The method that actually makes the request to the api, and updates info about the bucket accordingly
-	 * @param routeID The generalized api route with literal ids for major parameters
+	 * @param routeId The generalized api route with literal ids for major parameters
 	 * @param url The fully resolved url to make the request to
 	 * @param options The node-fetch options needed to make the request
 	 * @param retries The number of retries this request has already attempted (recursion)
 	 */
-	private async runRequest(routeID: RouteData, url: string, options: RequestInit, retries = 0): Promise<unknown> {
+	private async runRequest(routeId: RouteData, url: string, options: RequestInit, retries = 0): Promise<unknown> {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), this.manager.options.timeout);
 		let res: Response;
@@ -132,7 +132,7 @@ export class SequentialHandler {
 		} catch (error: unknown) {
 			// Retry the specified number of times for possible timed out requests
 			if (error instanceof Error && error.name === 'AbortError' && retries !== this.manager.options.retries) {
-				return this.runRequest(routeID, url, options, ++retries);
+				return this.runRequest(routeId, url, options, ++retries);
 			}
 
 			throw error;
@@ -164,7 +164,7 @@ export class SequentialHandler {
 			// Let library users know when rate limit buckets have been updated
 			this.debug(['Received bucket hash update', `  Old Hash  : ${this.hash}`, `  New Hash  : ${hash}`].join('\n'));
 			// This queue will eventually be eliminated via attrition
-			this.manager.hashes.set(`${method}:${routeID.bucketRoute}`, hash);
+			this.manager.hashes.set(`${method}:${routeId.bucketRoute}`, hash);
 		}
 
 		// Handle global rate limit
@@ -184,8 +184,8 @@ export class SequentialHandler {
 			this.debug(
 				[
 					'Encountered unexpected 429 rate limit',
-					`  Bucket         : ${routeID.bucketRoute}`,
-					`  Major parameter: ${routeID.majorParameter}`,
+					`  Bucket         : ${routeId.bucketRoute}`,
+					`  Major parameter: ${routeId.majorParameter}`,
 					`  Hash           : ${this.hash}`,
 					`  Retry After    : ${retryAfter}ms`,
 				].join('\n'),
@@ -193,11 +193,11 @@ export class SequentialHandler {
 			// Wait the retryAfter amount of time before retrying the request
 			await sleep(retryAfter);
 			// Since this is not a server side issue, the next request should pass, so we don't bump the retries counter
-			return this.runRequest(routeID, url, options, retries);
+			return this.runRequest(routeId, url, options, retries);
 		} else if (res.status >= 500 && res.status < 600) {
 			// Retry the specified number of times for possible server side issues
 			if (retries !== this.manager.options.retries) {
-				return this.runRequest(routeID, url, options, ++retries);
+				return this.runRequest(routeId, url, options, ++retries);
 			}
 			// We are out of retries, throw an error
 			throw new HTTPError(res.statusText, res.constructor.name, res.status, method, url);
