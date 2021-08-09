@@ -17,12 +17,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/discordjs/discord.js-next.git"
+		"url": "git+https://github.com/discordjs/discord.js-modules.git"
 	},
 	"bugs": {
-		"url": "https://github.com/discordjs/discord.js-next/issues"
+		"url": "https://github.com/discordjs/discord.js-modules/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-next/tree/master/packages/ws",
+	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/ws",
 	"keywords": [
 		"discord",
 		"api",

@@ -6,9 +6,9 @@
 	<br />
 		<p>
 		<a href="https://discord.gg/djs"><img src="https://img.shields.io/discord/222078108977594368?color=5865F2&logo=discord&logoColor=white" alt="Discord server" /></a>
-		<a href="https://github.com/discordjs/discord.js/actions"><img src="https://github.com/discordjs/discord.js-next/workflows/Tests/badge.svg" alt="Test status" /></a>
-		<a href="https://github.com/discordjs/discord.js/actions"><img src="https://github.com/discordjs/discord.js-next/workflows/Lint/badge.svg" alt="Lint status" /></a>
-		<a href="https://codecov.io/gh/discordjs/discord.js-next"><img src="https://codecov.io/gh/discordjs/discord.js-next/branch/master/graph/badge.svg" alt="Code coverage" /></a>
+		<a href="https://github.com/discordjs/discord.js/actions"><img src="https://github.com/discordjs/discord.js-modules/workflows/Tests/badge.svg" alt="Test status" /></a>
+		<a href="https://github.com/discordjs/discord.js/actions"><img src="https://github.com/discordjs/discord.js-modules/workflows/Lint/badge.svg" alt="Lint status" /></a>
+		<a href="https://codecov.io/gh/discordjs/discord.js-modules"><img src="https://codecov.io/gh/discordjs/discord.js-modules/branch/main/graph/badge.svg" alt="Code coverage" /></a>
 	</p>
 </div>
 
@@ -16,4 +16,4 @@
 
 ## Contribution
 
-See [Contributing Guide](https://github.com/discordjs/discord.js-next/blob/master/.github/CONTRIBUTING.md).
+See [Contributing Guide](https://github.com/discordjs/discord.js-modules/blob/main/.github/CONTRIBUTING.md).
