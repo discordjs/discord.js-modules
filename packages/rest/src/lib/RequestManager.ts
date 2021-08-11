@@ -108,10 +108,19 @@ export interface RouteData {
  */
 export class RequestManager extends EventEmitter {
 	/**
-	 * A timeout promise that is set when we hit the global rate limit
-	 * @default null
+	 * The number of requests remaining in the global bucket
 	 */
-	public globalTimeout: Promise<void> | null = null;
+	public globalRemaining: number;
+
+	/**
+	 * The promise used to wait out the global rate limit
+	 */
+	public globalDelay: Promise<void> | null = null;
+
+	/**
+	 * The timestamp at which the global bucket resets
+	 */
+	public globalReset = -1;
 
 	/**
 	 * API bucket hashes that are cached from provided routes
@@ -132,6 +141,7 @@ export class RequestManager extends EventEmitter {
 		super();
 		this.options = { ...DefaultRestOptions, ...options };
 		this.options.offset = Math.max(0, this.options.offset);
+		this.globalRemaining = this.options.globalRequestsPerSecond;
 	}
 
 	/**

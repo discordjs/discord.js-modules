@@ -10,6 +10,8 @@ export const DefaultRestOptions: Required<RESTOptions> = {
 	api: 'https://discord.com/api',
 	cdn: 'https://cdn.discordapp.com',
 	headers: {},
+	invalidRequestWarningInterval: 0,
+	globalRequestsPerSecond: 50,
 	offset: 50,
 	retries: 3,
 	timeout: 15_000,
@@ -22,6 +24,7 @@ export const DefaultRestOptions: Required<RESTOptions> = {
  */
 export const enum RESTEvents {
 	Debug = 'restDebug',
+	InvalidRequestWarning = 'invalidRequestWarning',
 	RateLimited = 'rateLimited',
 }
 

@@ -23,6 +23,17 @@ export interface RESTOptions {
 	 */
 	headers: Record<string, string>;
 	/**
+	 * The number of invalid REST requests (those that return 401, 403, or 429) in a 10 minute window between emitted warnings (0 for no warnings).
+	 * That is, if set to 500, warnings will be emitted at invalid request number 500, 1000, 1500, and so on.
+	 * @default 0
+	 */
+	invalidRequestWarningInterval: number;
+	/**
+	 * How many requests to allow sending per second (Infinity for unlimited, 50 for the standard global limit used by Discord)
+	 * @default 50
+	 */
+	globalRequestsPerSecond: number;
+	/**
 	 * The extra offset to add to rate limits in milliseconds
 	 * @default 50
 	 */
@@ -81,9 +92,25 @@ export interface RateLimitData {
 	 * If there is no major parameter (e.g: `/bot/gateway`) this will be `global`.
 	 */
 	majorParameter: string;
+	/**
+	 * Whether the rate limit that was reached was the global limit
+	 */
+	global: boolean;
+}
+
+export interface InvalidRequestWarningData {
+	/**
+	 * Number of invalid requests that have been made in the window
+	 */
+	count: number;
+	/**
+	 * Time in ms remaining before the count resets
+	 */
+	remainingTime: number;
 }
 
 interface RestEvents {
+	invalidRequestWarning: [invalidRequestInfo: InvalidRequestWarningData];
 	restDebug: [info: string];
 	rateLimited: [rateLimitInfo: RateLimitData];
 }
@@ -114,7 +141,8 @@ export class REST extends EventEmitter {
 		this.cdn = new CDN(options.cdn ?? DefaultRestOptions.cdn);
 		this.requestManager = new RequestManager(options)
 			.on(RESTEvents.Debug, this.emit.bind(this, RESTEvents.Debug))
-			.on(RESTEvents.RateLimited, this.emit.bind(this, RESTEvents.RateLimited));
+			.on(RESTEvents.RateLimited, this.emit.bind(this, RESTEvents.RateLimited))
+			.on(RESTEvents.InvalidRequestWarning, this.emit.bind(this, RESTEvents.InvalidRequestWarning));
 	}
 
 	/**
