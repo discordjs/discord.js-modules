@@ -39,12 +39,13 @@
 
 ## Development Setup
 
-You will need [Node.js](http://nodejs.org) **version 12+**, and [npm](https://www.npmjs.com/).
+You will need [Node.js](http://nodejs.org) **version 16+**, and [yarn](https://yarnpkg.com/).
 
 After cloning the repo, run:
 
 ```bash
-$ npm i # install the dependencies of the project
+$ yarn # install the dependencies of the project
+$ touch .env # required to run tests, add any env vars in the future
 ```
 
 A high level overview of tools used:
