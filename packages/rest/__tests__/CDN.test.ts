@@ -56,6 +56,14 @@ test('icon default', () => {
 	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
+test('guildIcon dynamic-animated', () => {
+	expect(cdn.icon(id, animatedHash, { dynamic: true })).toBe(`${base}/icons/${id}/${animatedHash}.gif`);
+});
+
+test('guildIcon dynamic-not-animated', () => {
+	expect(cdn.icon(id, hash, { dynamic: true })).toBe(`${base}/icons/${id}/${hash}.png`);
+});
+
 test('splash default', () => {
 	expect(cdn.splash(id, hash)).toBe(`${base}/splashes/${id}/${hash}.png`);
 });
