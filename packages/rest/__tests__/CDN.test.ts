@@ -66,12 +66,12 @@ test('teamIcon default', () => {
 
 test('makeURL throws on invalid size', () => {
 	// @ts-expect-error: Invalid size
-	expect(() => cdn.userAvatar(id, animatedHash, { size: 5 })).toThrow(RangeError);
+	expect(() => cdn.avatar(id, animatedHash, { size: 5 })).toThrow(RangeError);
 });
 
 test('makeURL throws on invalid extension', () => {
 	// @ts-expect-error: Invalid extension
-	expect(() => cdn.userAvatar(id, animatedHash, { extension: 'tif' })).toThrow(RangeError);
+	expect(() => cdn.avatar(id, animatedHash, { extension: 'tif' })).toThrow(RangeError);
 });
 
 test('makeURL valid size', () => {
