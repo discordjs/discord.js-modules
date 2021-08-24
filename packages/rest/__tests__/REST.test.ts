@@ -3,7 +3,7 @@ import { DiscordSnowflake } from '@sapphire/snowflake';
 import { REST, DefaultRestOptions } from '../src';
 import { Routes, Snowflake } from 'discord-api-types/v8';
 
-const newSnowflake = DiscordSnowflake.generate().toString() as Snowflake;
+const newSnowflake: Snowflake = DiscordSnowflake.generate().toString();
 
 const api = new REST().setToken('A-Very-Fake-Token');
 
