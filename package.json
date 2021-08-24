@@ -16,7 +16,7 @@
 		"test:ci": "yarn test --verbose --noStackTrace",
 		"prebuild": "yarn clean",
 		"build": "tsc --build packages/core packages/rest packages/ws --force",
-		"clean": "rimraf packages/**/dist",
+		"clean": "rimraf packages/**/dist packages/**/*.tsbuildinfo",
 		"lint": "eslint packages --ext mjs,js,ts",
 		"lint:fix": "eslint packages --ext mjs,js,ts --fix",
 		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",

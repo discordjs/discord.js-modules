@@ -4,7 +4,7 @@
 		"sourceRoot": "./",
 		"rootDir": "./src",
 		"outDir": "dist",
-		"lib": ["ESNext", "DOM"]
+		"lib": ["ESNext"]
 	},
 	"include": ["src"],
 	"references": [{ "path": "../core" }]
