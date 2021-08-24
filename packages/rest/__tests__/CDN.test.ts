@@ -16,6 +16,26 @@ test('appIcon default', () => {
 	expect(cdn.appIcon(id, hash)).toBe(`${base}/app-icons/${id}/${hash}.png`);
 });
 
+test('avatar default', () => {
+	expect(cdn.avatar(id, animatedHash)).toBe(`${base}/avatars/${id}/${animatedHash}.png`);
+});
+
+test('avatar dynamic-animated', () => {
+	expect(cdn.avatar(id, animatedHash, { dynamic: true })).toBe(`${base}/avatars/${id}/${animatedHash}.gif`);
+});
+
+test('avatar dynamic-not-animated', () => {
+	expect(cdn.avatar(id, hash, { dynamic: true })).toBe(`${base}/avatars/${id}/${hash}.png`);
+});
+
+test('banner default', () => {
+	expect(cdn.banner(id, hash)).toBe(`${base}/banners/${id}/${hash}.png`);
+});
+
+test('channelIcon default', () => {
+	expect(cdn.channelIcon(id, hash)).toBe(`${base}/channel-icons/${id}/${hash}.png`);
+});
+
 test('defaultAvatar default', () => {
 	expect(cdn.defaultAvatar(defaultAvatar)).toBe(`${base}/embed/avatars/${defaultAvatar}.png`);
 });
@@ -32,16 +52,8 @@ test('emoji gif', () => {
 	expect(cdn.emoji(id, 'gif')).toBe(`${base}/emojis/${id}.gif`);
 });
 
-test('groupDMIcon default', () => {
-	expect(cdn.groupDMIcon(id, hash)).toBe(`${base}/channel-icons/${id}/${hash}.png`);
-});
-
-test('guildBanner default', () => {
-	expect(cdn.guildBanner(id, hash)).toBe(`${base}/banners/${id}/${hash}.png`);
-});
-
-test('guildIcon default', () => {
-	expect(cdn.guildIcon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
+test('icon default', () => {
+	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
 test('splash default', () => {
@@ -52,28 +64,16 @@ test('teamIcon default', () => {
 	expect(cdn.teamIcon(id, hash)).toBe(`${base}/team-icons/${id}/${hash}.png`);
 });
 
-test('userAvatar default', () => {
-	expect(cdn.userAvatar(id, animatedHash)).toBe(`${base}/avatars/${id}/${animatedHash}.png`);
-});
-
-test('userAvatar dynamic-animated', () => {
-	expect(cdn.userAvatar(id, animatedHash, { dynamic: true })).toBe(`${base}/avatars/${id}/${animatedHash}.gif`);
-});
-
-test('userAvatar dynamic-not-animated', () => {
-	expect(cdn.userAvatar(id, hash, { dynamic: true })).toBe(`${base}/avatars/${id}/${hash}.png`);
-});
-
 test('makeURL throws on invalid size', () => {
 	// @ts-expect-error: Invalid size
-	expect(() => cdn.userAvatar(id, animatedHash, { size: 5 })).toThrow(RangeError);
+	expect(() => cdn.avatar(id, animatedHash, { size: 5 })).toThrow(RangeError);
 });
 
 test('makeURL throws on invalid extension', () => {
 	// @ts-expect-error: Invalid extension
-	expect(() => cdn.userAvatar(id, animatedHash, { extension: 'tif' })).toThrow(RangeError);
+	expect(() => cdn.avatar(id, animatedHash, { extension: 'tif' })).toThrow(RangeError);
 });
 
 test('makeURL valid size', () => {
-	expect(cdn.userAvatar(id, animatedHash, { size: 512 })).toBe(`${base}/avatars/${id}/${animatedHash}.png?size=512`);
+	expect(cdn.avatar(id, animatedHash, { size: 512 })).toBe(`${base}/avatars/${id}/${animatedHash}.png?size=512`);
 });
