@@ -1,6 +1,6 @@
 # discord.js Contributing Guide
 
-**The issue tracker is only for bug reports and enhancement suggestions. If you have a question, please ask it in the [Discord server](https://discord.gg/bRCvFy9) instead of opening an issue – you will get redirected there anyway.**
+**The issue tracker is only for bug reports and enhancement suggestions. If you have a question, please ask it in the [Discord server](https://discord.gg/djs) instead of opening an issue – you will get redirected there anyway.**
 
 - [Code of Conduct](https://github.com/discordjs/discord.js-modules/blob/main/.github/CODE_OF_CONDUCT.md)
 - [Pull Request Guidelines](#pull-request-guidelines)
@@ -39,12 +39,13 @@
 
 ## Development Setup
 
-You will need [Node.js](http://nodejs.org) **version 12+**, and [npm](https://www.npmjs.com/).
+You will need [Node.js](http://nodejs.org) **version 16+**, and [yarn](https://yarnpkg.com/).
 
 After cloning the repo, run:
 
 ```bash
-$ npm i # install the dependencies of the project
+$ yarn # install the dependencies of the project
+$ touch .env # required to run tests, add any env vars in the future
 ```
 
 A high level overview of tools used:

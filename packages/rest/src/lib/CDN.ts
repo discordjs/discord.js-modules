@@ -33,6 +33,40 @@ export class CDN {
 	}
 
 	/**
+	 * Generates an avatar URL, e.g. for a user or a webhook.
+	 * @param id The id that has the icon
+	 * @param avatarHash The hash provided by Discord for this avatar
+	 * @param options Optional options for the avatar
+	 */
+	public avatar(id: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
+		if (dynamic && avatarHash.startsWith('a_')) {
+			options.extension = 'gif';
+		}
+
+		return this.makeURL(`/avatars/${id}/${avatarHash}`, options);
+	}
+
+	/**
+	 * Generates a banner URL, e.g. for a user or a guild.
+	 * @param id The id that has the banner splash
+	 * @param bannerHash The hash provided by Discord for this banner
+	 * @param options Optional options for the banner
+	 */
+	public banner(id: string, bannerHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/banners/${id}/${bannerHash}`, options);
+	}
+
+	/**
+	 * Generates an icon URL for a channel, e.g. a group DM.
+	 * @param channelId The channel id that has the icon
+	 * @param iconHash The hash provided by Discord for this channel
+	 * @param options Optional options for the icon
+	 */
+	public channelIcon(channelId: string, iconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/channel-icons/${channelId}/${iconHash}`, options);
+	}
+
+	/**
 	 * Generates the default avatar URL for a discriminator.
 	 * @param discriminator The discriminator modulo 5
 	 */
@@ -60,28 +94,8 @@ export class CDN {
 	}
 
 	/**
-	 * Generates a group DM icon URL for a group DM.
-	 * @param channelId The group channel id that has the icon
-	 * @param iconHash The hash provided by Discord for this group DM channel
-	 * @param options Optional options for the icon
-	 */
-	public groupDMIcon(channelId: string, iconHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/channel-icons/${channelId}/${iconHash}`, options);
-	}
-
-	/**
-	 * Generates a banner URL for a guild's banner.
-	 * @param guildId The guild id that has the banner splash
-	 * @param bannerHash The hash provided by Discord for this banner
-	 * @param options Optional options for the banner
-	 */
-	public guildBanner(guildId: string, bannerHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/banners/${guildId}/${bannerHash}`, options);
-	}
-
-	/**
-	 * Generates an icon URL for a guild's icon.
-	 * @param guildId The guild id that has the icon splash
+	 * Generates an icon URL, e.g. for a guild.
+	 * @param id The id that has the icon splash
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
@@ -111,20 +125,6 @@ export class CDN {
 	 */
 	public teamIcon(teamId: string, iconHash: string, options?: ImageURLOptions): string {
 		return this.makeURL(`/team-icons/${teamId}/${iconHash}`, options);
-	}
-
-	/**
-	 * Generates a user avatar URL for a user's avatar.
-	 * @param userId The user id that has the icon
-	 * @param avatarHash The hash provided by Discord for this avatar
-	 * @param options Optional options for the avatar
-	 */
-	public userAvatar(userId: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
-		if (dynamic && avatarHash.startsWith('a_')) {
-			options.extension = 'gif';
-		}
-
-		return this.makeURL(`/avatars/${userId}/${avatarHash}`, options);
 	}
 
 	/**
