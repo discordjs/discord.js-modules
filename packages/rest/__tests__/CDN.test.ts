@@ -52,7 +52,7 @@ test('emoji gif', () => {
 	expect(cdn.emoji(id, 'gif')).toBe(`${base}/emojis/${id}.gif`);
 });
 
-test('guildIcon default', () => {
+test('icon default', () => {
 	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
