@@ -52,8 +52,8 @@ test('emoji gif', () => {
 	expect(cdn.emoji(id, 'gif')).toBe(`${base}/emojis/${id}.gif`);
 });
 
-test('icon default', () => {
-	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
+test('guildIcon default', () => {
+	expect(cdn.guildIcon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
 test('guildIcon dynamic-animated', () => {
