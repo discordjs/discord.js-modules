@@ -53,7 +53,7 @@ test('emoji gif', () => {
 });
 
 test('guildIcon default', () => {
-	expect(cdn.guildIcon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
+	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
 test('guildIcon dynamic-animated', () => {
