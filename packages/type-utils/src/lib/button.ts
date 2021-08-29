@@ -4,9 +4,9 @@ import { isPartOfEnum } from './util/enum';
 const { MessageButtonStyles } = Constants;
 
 /**
- * Verifies if the given message button options support URL's or not.
+ * Verifies if the given message button options support URLs or not.
  * @param messageButtonOptions The message button options to check.
- * @returns True if the option supports URL's, false otherwise.
+ * @returns True if the option supports URLs, false otherwise.
  */
 export function isLinkButtonOptions(buttonData: MessageButtonOptions): buttonData is LinkButtonOptions {
 	if (!('style' in buttonData)) {
