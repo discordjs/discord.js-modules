@@ -1,3 +1,3 @@
-# `@discordjs/typeguards`
+# `@discordjs/type-utils`
 
-> The Type Guards module for Discord.js
+> The type utilities module for Discord.js
