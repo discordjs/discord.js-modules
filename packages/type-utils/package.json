@@ -1,8 +1,8 @@
 {
 	"$schema": "http://json.schemastore.org/package",
-	"name": "@discordjs/typeguards",
+	"name": "@discordjs/type-utils",
 	"version": "0.1.0-canary.0",
-	"description": "Typeguard helpers for Discord.js types.",
+	"description": "Type utilities for Discord.js and discord api types.",
 	"contributors": [
 		"Suneet Tipirneni <suneettipirneni@icloud.com>",
 		"NotSugden <email>"
@@ -19,7 +19,7 @@
 	"bugs": {
 		"url": "https://github.com/discordjs/discord.js-modules/issues"
 	},
-	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/typeguards",
+	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/type-utils",
 	"keywords": [
 		"discord",
 		"typeguards",
