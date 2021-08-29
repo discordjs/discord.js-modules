@@ -35,11 +35,9 @@
 	"files": [
 		"dist"
 	],
-	"dependencies": {
-		"discord.js": "^13.1.0"
-	},
 	"devDependencies": {
-		"@types/node-fetch": "^2.5.10"
+		"@types/node-fetch": "^2.5.10",
+		"discord.js": "^13.1.0"
 	},
 	"engines": {
 		"node": ">=16.0.0"
