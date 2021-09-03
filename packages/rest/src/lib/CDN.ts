@@ -118,6 +118,24 @@ export class CDN {
 	}
 
 	/**
+	 * Generates a sticker URL.
+	 * @param stickerId The sticker id
+	 * @param extension The extension of the sticker
+	 */
+	public sticker(stickerId: string, extension?: ImageExtension): string {
+		return this.makeURL(`/stickers/${stickerId}`, { extension });
+	}
+
+	/**
+	 * Generates a sticker pack banner URL.
+	 * @param bannerId The banner id
+	 * @param options Optional options for the banner
+	 */
+	public stickerPackBanner(bannerId: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/app-assets/710982414301790216/store/${bannerId}`, options);
+	}
+
+	/**
 	 * Generates a team icon URL for a team's icon.
 	 * @param teamId The team id that has the icon
 	 * @param iconHash The hash provided by Discord for this icon

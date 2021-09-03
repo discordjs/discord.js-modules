@@ -68,6 +68,14 @@ test('splash default', () => {
 	expect(cdn.splash(id, hash)).toBe(`${base}/splashes/${id}/${hash}.png`);
 });
 
+test('sticker default', () => {
+	expect(cdn.sticker(id)).toBe(`${base}/stickers/${id}.png`);
+});
+
+test('stickerPackBanner default', () => {
+	expect(cdn.stickerPackBanner(id)).toBe(`${base}/app-assets/710982414301790216/store/${id}.png`);
+});
+
 test('teamIcon default', () => {
 	expect(cdn.teamIcon(id, hash)).toBe(`${base}/team-icons/${id}/${hash}.png`);
 });
