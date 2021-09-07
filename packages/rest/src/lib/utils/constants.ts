@@ -24,8 +24,10 @@ export const enum RESTEvents {
 	RateLimited = 'rateLimited',
 }
 
-export const ALLOWED_EXTENSIONS = ['webp', 'png', 'jpg', 'jpeg', 'gif', 'json'] as const;
+export const ALLOWED_EXTENSIONS = ['webp', 'png', 'jpg', 'jpeg', 'gif'] as const;
+export const ALLOWED_STICKER_EXTENSIONS = ['png', 'json'] as const;
 export const ALLOWED_SIZES = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096] as const;
 
 export type ImageExtension = typeof ALLOWED_EXTENSIONS[number];
+export type StickerExtension = typeof ALLOWED_STICKER_EXTENSIONS[number];
 export type ImageSize = typeof ALLOWED_SIZES[number];

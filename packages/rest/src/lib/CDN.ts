@@ -1,9 +1,23 @@
-import { ALLOWED_EXTENSIONS, ALLOWED_SIZES, DefaultRestOptions, ImageExtension, ImageSize } from './utils/constants';
+import {
+	ALLOWED_EXTENSIONS,
+	ALLOWED_SIZES,
+	ALLOWED_STICKER_EXTENSIONS,
+	DefaultRestOptions,
+	ImageExtension,
+	ImageSize,
+	StickerExtension,
+} from './utils/constants';
 
 export interface ImageURLOptions {
 	extension?: ImageExtension;
 	size?: ImageSize;
 	dynamic?: boolean;
+}
+
+export interface MakeURLOptions {
+	extension?: string;
+	size?: ImageSize;
+	allowedExtensions?: readonly string[];
 }
 
 /**
@@ -122,8 +136,8 @@ export class CDN {
 	 * @param stickerId The sticker id
 	 * @param extension The extension of the sticker
 	 */
-	public sticker(stickerId: string, extension?: ImageExtension): string {
-		return this.makeURL(`/stickers/${stickerId}`, { extension });
+	public sticker(stickerId: string, extension?: StickerExtension): string {
+		return this.makeURL(`/stickers/${stickerId}`, { allowedExtensions: ALLOWED_STICKER_EXTENSIONS, extension });
 	}
 
 	/**
@@ -150,13 +164,14 @@ export class CDN {
 	 * @param base The base cdn route
 	 * @param options The extension/size options for the link
 	 */
-	private makeURL(base: string, { extension = 'png', size }: ImageURLOptions = {}): string {
-		extension = String(extension).toLowerCase() as ImageExtension;
+	private makeURL(
+		base: string,
+		{ allowedExtensions = ALLOWED_EXTENSIONS, extension = 'png', size }: MakeURLOptions = {},
+	): string {
+		extension = String(extension).toLowerCase();
 
-		if (!ALLOWED_EXTENSIONS.includes(extension)) {
-			throw new RangeError(
-				`Invalid extension provided: ${extension}\nMust be one of: ${ALLOWED_EXTENSIONS.join(', ')}`,
-			);
+		if (!allowedExtensions.includes(extension)) {
+			throw new RangeError(`Invalid extension provided: ${extension}\nMust be one of: ${allowedExtensions.join(', ')}`);
 		}
 
 		if (size && !ALLOWED_SIZES.includes(size)) {
