@@ -64,6 +64,10 @@ test('guildIcon dynamic-not-animated', () => {
 	expect(cdn.icon(id, hash, { dynamic: true })).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
+test('role icon default', () => {
+	expect(cdn.roleIcon(id, hash)).toBe(`${base}/role-icons/${id}/${hash}.png`);
+});
+
 test('splash default', () => {
 	expect(cdn.splash(id, hash)).toBe(`${base}/splashes/${id}/${hash}.png`);
 });

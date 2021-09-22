@@ -108,6 +108,16 @@ export class CDN {
 	}
 
 	/**
+	 * Generates a URL for the icon of a role
+	 * @param roleId The id of the role whose icon's URL is to be generated
+	 * @param roleIconHash The hash provided by Discord for this role icon
+	 * @param options Optional data for the role icon
+	 */
+	public roleIcon(roleId: string, roleIconHash: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/role-icons/${roleId}/${roleIconHash}`, options);
+	}
+
+	/**
 	 * Generates a guild invite splash URL for a guild's invite splash.
 	 * @param guildId The guild id that has the invite splash
 	 * @param splashHash The hash provided by Discord for this splash
