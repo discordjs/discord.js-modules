@@ -109,9 +109,9 @@ export class CDN {
 
 	/**
 	 * Generates a URL for the icon of a role
-	 * @param roleId The id of the role whose icon's URL is to be generated
+	 * @param roleId The id of the role that has the icon
 	 * @param roleIconHash The hash provided by Discord for this role icon
-	 * @param options Optional data for the role icon
+	 * @param options Optional options for the role icon
 	 */
 	public roleIcon(roleId: string, roleIconHash: string, options?: ImageURLOptions): string {
 		return this.makeURL(`/role-icons/${roleId}/${roleIconHash}`, options);
