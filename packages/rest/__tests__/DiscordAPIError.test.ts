@@ -6,7 +6,7 @@ test('Unauthorized', () => {
 		0,
 		401,
 		'PATCH',
-		'https://discord.com/api/v8/guilds/:id',
+		'https://discord.com/api/v9/guilds/:id',
 	);
 
 	expect(error.code).toBe(0);
@@ -14,7 +14,7 @@ test('Unauthorized', () => {
 	expect(error.method).toBe('PATCH');
 	expect(error.name).toBe('DiscordAPIError[0]');
 	expect(error.status).toBe(401);
-	expect(error.url).toBe('https://discord.com/api/v8/guilds/:id');
+	expect(error.url).toBe('https://discord.com/api/v9/guilds/:id');
 });
 
 test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
@@ -29,7 +29,7 @@ test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
 		50035,
 		400,
 		'PATCH',
-		'https://discord.com/api/v8/users/@me',
+		'https://discord.com/api/v9/users/@me',
 	);
 
 	expect(error.code).toBe(50035);
@@ -39,7 +39,7 @@ test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
 	expect(error.method).toBe('PATCH');
 	expect(error.name).toBe('DiscordAPIError[50035]');
 	expect(error.status).toBe(400);
-	expect(error.url).toBe('https://discord.com/api/v8/users/@me');
+	expect(error.url).toBe('https://discord.com/api/v9/users/@me');
 });
 
 test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{property}._errors.{index})', () => {
@@ -56,7 +56,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{prop
 		50035,
 		400,
 		'POST',
-		'https://discord.com/api/v8/channels/:id',
+		'https://discord.com/api/v9/channels/:id',
 	);
 
 	expect(error.code).toBe(50035);
@@ -66,7 +66,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{prop
 	expect(error.method).toBe('POST');
 	expect(error.name).toBe('DiscordAPIError[50035]');
 	expect(error.status).toBe(400);
-	expect(error.url).toBe('https://discord.com/api/v8/channels/:id');
+	expect(error.url).toBe('https://discord.com/api/v9/channels/:id');
 });
 
 test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{index}._errors)', () => {
@@ -83,7 +83,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{inde
 		50035,
 		400,
 		'PATCH',
-		'https://discord.com/api/v8/guilds/:id',
+		'https://discord.com/api/v9/guilds/:id',
 	);
 
 	expect(error.code).toBe(50035);
@@ -93,5 +93,5 @@ test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{inde
 	expect(error.method).toBe('PATCH');
 	expect(error.name).toBe('DiscordAPIError[50035]');
 	expect(error.status).toBe(400);
-	expect(error.url).toBe('https://discord.com/api/v8/guilds/:id');
+	expect(error.url).toBe('https://discord.com/api/v9/guilds/:id');
 });

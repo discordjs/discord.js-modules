@@ -40,7 +40,7 @@ export interface RESTOptions {
 	userAgentAppendix: string;
 	/**
 	 * The version of the API to use
-	 * @default '8'
+	 * @default '9'
 	 */
 	version: string;
 }
