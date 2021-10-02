@@ -46,9 +46,9 @@ export interface RESTOptions {
 }
 
 /**
- * Data emitted on `RESTEvents.Debug`
+ * Data emitted on `RESTEvents.RateLimited`
  */
-export interface RatelimitData {
+export interface RateLimitData {
 	/**
 	 * The time, in milliseconds, until the request-lock is reset
 	 */
@@ -80,7 +80,7 @@ export interface RatelimitData {
 
 interface RestEvents {
 	restDebug: [info: string];
-	rateLimited: [rateLimitInfo: RatelimitData];
+	rateLimited: [rateLimitInfo: RateLimitData];
 }
 
 export interface REST {
