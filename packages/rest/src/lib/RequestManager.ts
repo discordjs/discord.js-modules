@@ -1,8 +1,8 @@
 import Collection from '@discordjs/collection';
 import FormData from 'form-data';
 import { DiscordSnowflake } from '@sapphire/snowflake';
-import { EventEmitter } from 'events';
-import { Agent } from 'https';
+import { EventEmitter } from 'node:events';
+import { Agent } from 'node:https';
 import type { RequestInit } from 'node-fetch';
 import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';

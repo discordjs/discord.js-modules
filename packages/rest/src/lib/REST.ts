@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'node:events';
 import { CDN } from './CDN';
 import { InternalRequest, RequestData, RequestManager, RequestMethod, RouteLike } from './RequestManager';
 import { DefaultRestOptions, RESTEvents } from './utils/constants';
