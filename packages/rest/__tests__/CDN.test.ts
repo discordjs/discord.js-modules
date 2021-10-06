@@ -52,6 +52,22 @@ test('emoji gif', () => {
 	expect(cdn.emoji(id, 'gif')).toBe(`${base}/emojis/${id}.gif`);
 });
 
+test('guildMemberAvatar default', () => {
+	expect(cdn.guildMemberAvatar(id, id, hash)).toBe(`${base}/guilds/${id}/users/${id}/avatars/${hash}.png`);
+});
+
+test('guildMemberAvatar dynamic-animated', () => {
+	expect(cdn.guildMemberAvatar(id, id, animatedHash, { dynamic: true })).toBe(
+		`${base}/guilds/${id}/users/${id}/avatars/${animatedHash}.gif`,
+	);
+});
+
+test('guildMemberAvatar dynamic-not-animated', () => {
+	expect(cdn.guildMemberAvatar(id, id, hash, { dynamic: true })).toBe(
+		`${base}/guilds/${id}/users/${id}/avatars/${hash}.png`,
+	);
+});
+
 test('icon default', () => {
 	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });

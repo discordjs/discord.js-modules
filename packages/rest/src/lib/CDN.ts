@@ -94,6 +94,26 @@ export class CDN {
 	}
 
 	/**
+	 * Generates a guild member avatar URL.
+	 * @param guildId The id of the guild
+	 * @param userId The id of the user
+	 * @param iconHash The hash provided by Discord for this avatar
+	 * @param options Optional options for the avatar
+	 */
+	public guildMemberAvatar(
+		guildId: string,
+		userId: string,
+		avatarHash: string,
+		{ dynamic = false, ...options }: ImageURLOptions = {},
+	): string {
+		if (dynamic && avatarHash.startsWith('a_')) {
+			options.extension = 'gif';
+		}
+
+		return this.makeURL(`/guilds/${guildId}/users/${userId}/avatars/${avatarHash}`, options);
+	}
+
+	/**
 	 * Generates an icon URL, e.g. for a guild.
 	 * @param id The id that has the icon splash
 	 * @param iconHash The hash provided by Discord for this icon
