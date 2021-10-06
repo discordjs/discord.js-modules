@@ -56,11 +56,11 @@ test('icon default', () => {
 	expect(cdn.icon(id, hash)).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
-test('guildIcon dynamic-animated', () => {
+test('icon dynamic-animated', () => {
 	expect(cdn.icon(id, animatedHash, { dynamic: true })).toBe(`${base}/icons/${id}/${animatedHash}.gif`);
 });
 
-test('guildIcon dynamic-not-animated', () => {
+test('icon dynamic-not-animated', () => {
 	expect(cdn.icon(id, hash, { dynamic: true })).toBe(`${base}/icons/${id}/${hash}.png`);
 });
 
