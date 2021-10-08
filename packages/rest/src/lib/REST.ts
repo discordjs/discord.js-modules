@@ -18,6 +18,11 @@ export interface RESTOptions {
 	 */
 	cdn: string;
 	/**
+	 * Additional headers to send for all API requests
+	 * @default {}
+	 */
+	headers: Record<string, string>;
+	/**
 	 * The extra offset to add to rate limits in milliseconds
 	 * @default 50
 	 */

@@ -9,6 +9,7 @@ export const DefaultUserAgent = `DiscordBot (${Package.homepage}, ${Package.vers
 export const DefaultRestOptions: Required<RESTOptions> = {
 	api: 'https://discord.com/api',
 	cdn: 'https://cdn.discordapp.com',
+	headers: {},
 	offset: 50,
 	retries: 3,
 	timeout: 15_000,
