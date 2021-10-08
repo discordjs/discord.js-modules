@@ -18,7 +18,7 @@ export interface RESTOptions {
 	 */
 	cdn: string;
 	/**
-	 * Additional headesr to send for all API requests
+	 * Additional headers to send for all API requests
 	 * @default {}
 	 */
 	headers: Record<string, string>;
