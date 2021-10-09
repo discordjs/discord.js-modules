@@ -1,0 +1,48 @@
+{
+	"$schema": "http://json.schemastore.org/package",
+	"name": "@discordjs/type-utils",
+	"version": "0.1.0-canary.0",
+	"description": "Type utilities for Discord.js and discord api types.",
+	"contributors": [
+		"Suneet Tipirneni <suneettipirneni@icloud.com>",
+		"NotSugden <email>"
+	],
+	"license": "Apache-2.0",
+	"scripts": {
+		"test": "echo \"Error: run tests from root\" && exit 1",
+		"build": "tsc --build --force"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/discordjs/discord.js-modules.git"
+	},
+	"bugs": {
+		"url": "https://github.com/discordjs/discord.js-modules/issues"
+	},
+	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/type-utils",
+	"keywords": [
+		"discord",
+		"typeguards",
+		"typescript",
+		"discordapp",
+		"discordjs"
+	],
+	"main": "dist/index.js",
+	"directories": {
+		"lib": "src",
+		"test": "__tests__"
+	},
+	"files": [
+		"dist"
+	],
+	"devDependencies": {
+		"@types/node-fetch": "^2.5.10",
+		"discord.js": "^13.1.0"
+	},
+	"engines": {
+		"node": ">=16.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
