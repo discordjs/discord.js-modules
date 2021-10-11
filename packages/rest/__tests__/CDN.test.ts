@@ -17,7 +17,7 @@ test('appIcon default', () => {
 });
 
 test('avatar default', () => {
-	expect(cdn.avatar(id, animatedHash)).toBe(`${base}/avatars/${id}/${animatedHash}.png`);
+	expect(cdn.avatar(id, hash)).toBe(`${base}/avatars/${id}/${hash}.png`);
 });
 
 test('avatar dynamic-animated', () => {
