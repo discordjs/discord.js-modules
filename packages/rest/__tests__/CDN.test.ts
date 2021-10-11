@@ -32,6 +32,14 @@ test('banner default', () => {
 	expect(cdn.banner(id, hash)).toBe(`${base}/banners/${id}/${hash}.png`);
 });
 
+test('banner dynamic-animated', () => {
+	expect(cdn.banner(id, animatedHash, { dynamic: true })).toBe(`${base}/banners/${id}/${animatedHash}.gif`);
+});
+
+test('banner dynamic-not-animated', () => {
+	expect(cdn.banner(id, hash, { dynamic: true })).toBe(`${base}/banners/${id}/${hash}.png`);
+});
+
 test('channelIcon default', () => {
 	expect(cdn.channelIcon(id, hash)).toBe(`${base}/channel-icons/${id}/${hash}.png`);
 });
