@@ -1,3 +1,5 @@
+import type { InternalRequest, RawAttachment } from '../RequestManager';
+
 interface DiscordErrorFieldInformation {
 	code: string;
 	message: string;
@@ -15,6 +17,11 @@ export interface DiscordErrorData {
 	errors?: DiscordError;
 }
 
+export interface RequestBody {
+	attachments: RawAttachment[] | undefined;
+	json: unknown | undefined;
+}
+
 function isErrorGroupWrapper(error: any): error is DiscordErrorGroupWrapper {
 	return Reflect.has(error, '_errors');
 }
@@ -28,12 +35,15 @@ function isErrorResponse(error: any): error is DiscordErrorFieldInformation {
  * @extends Error
  */
 export class DiscordAPIError extends Error {
+	public requestBody: RequestBody;
+
 	/**
 	 * @param rawError The error reported by Discord
 	 * @param code The error code reported by Discord
 	 * @param status The status code of the response
 	 * @param method The method of the request that erred
 	 * @param url The url of the request that erred
+	 * @param bodyData The unparsed data for the request that errored
 	 */
 	public constructor(
 		public rawError: DiscordErrorData,
@@ -41,8 +51,11 @@ export class DiscordAPIError extends Error {
 		public status: number,
 		public method: string,
 		public url: string,
+		bodyData: Pick<InternalRequest, 'attachments' | 'body'>,
 	) {
 		super(DiscordAPIError.getMessage(rawError));
+
+		this.requestBody = { attachments: bodyData.attachments, json: bodyData.body };
 	}
 
 	/**

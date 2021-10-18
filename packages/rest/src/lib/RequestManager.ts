@@ -163,7 +163,7 @@ export class RequestManager extends EventEmitter {
 		const { url, fetchOptions } = this.resolveRequest(request);
 
 		// Queue the request
-		return handler.queueRequest(routeId, url, fetchOptions);
+		return handler.queueRequest(routeId, url, fetchOptions, { body: request.body, attachments: request.attachments });
 	}
 
 	/**

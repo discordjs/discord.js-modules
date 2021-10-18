@@ -3,7 +3,7 @@ import { AsyncQueue } from '@sapphire/async-queue';
 import fetch, { RequestInit, Response } from 'node-fetch';
 import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
-import type { RequestManager, RouteData } from '../RequestManager';
+import type { InternalRequest, RequestManager, RouteData } from '../RequestManager';
 import { RESTEvents } from '../utils/constants';
 import { parseResponse } from '../utils/utils';
 
@@ -84,8 +84,14 @@ export class SequentialHandler {
 	 * @param routeId The generalized api route with literal ids for major parameters
 	 * @param url The url to do the request on
 	 * @param options All the information needed to make a request
+	 * @param bodyData The data taht was used to form the body, passed to any errors generated
 	 */
-	public async queueRequest(routeId: RouteData, url: string, options: RequestInit): Promise<unknown> {
+	public async queueRequest(
+		routeId: RouteData,
+		url: string,
+		options: RequestInit,
+		bodyData: Pick<InternalRequest, 'attachments' | 'body'>,
+	): Promise<unknown> {
 		// Wait for any previous requests to be completed before this one is run
 		await this.#asyncQueue.wait();
 		try {
@@ -107,7 +113,7 @@ export class SequentialHandler {
 				await sleep(this.timeToReset);
 			}
 			// Make the request, and return the results
-			return await this.runRequest(routeId, url, options);
+			return await this.runRequest(routeId, url, options, bodyData);
 		} finally {
 			// Allow the next request to fire
 			this.#asyncQueue.shift();
@@ -119,9 +125,16 @@ export class SequentialHandler {
 	 * @param routeId The generalized api route with literal ids for major parameters
 	 * @param url The fully resolved url to make the request to
 	 * @param options The node-fetch options needed to make the request
+	 * @param bodyData The data that was used to form the body, passed to any errors generated
 	 * @param retries The number of retries this request has already attempted (recursion)
 	 */
-	private async runRequest(routeId: RouteData, url: string, options: RequestInit, retries = 0): Promise<unknown> {
+	private async runRequest(
+		routeId: RouteData,
+		url: string,
+		options: RequestInit,
+		bodyData: Pick<InternalRequest, 'attachments' | 'body'>,
+		retries = 0,
+	): Promise<unknown> {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), this.manager.options.timeout);
 		let res: Response;
@@ -131,7 +144,7 @@ export class SequentialHandler {
 		} catch (error: unknown) {
 			// Retry the specified number of times for possible timed out requests
 			if (error instanceof Error && error.name === 'AbortError' && retries !== this.manager.options.retries) {
-				return this.runRequest(routeId, url, options, ++retries);
+				return this.runRequest(routeId, url, options, bodyData, ++retries);
 			}
 
 			throw error;
@@ -192,14 +205,14 @@ export class SequentialHandler {
 			// Wait the retryAfter amount of time before retrying the request
 			await sleep(retryAfter);
 			// Since this is not a server side issue, the next request should pass, so we don't bump the retries counter
-			return this.runRequest(routeId, url, options, retries);
+			return this.runRequest(routeId, url, options, bodyData, retries);
 		} else if (res.status >= 500 && res.status < 600) {
 			// Retry the specified number of times for possible server side issues
 			if (retries !== this.manager.options.retries) {
-				return this.runRequest(routeId, url, options, ++retries);
+				return this.runRequest(routeId, url, options, bodyData, ++retries);
 			}
 			// We are out of retries, throw an error
-			throw new HTTPError(res.statusText, res.constructor.name, res.status, method, url);
+			throw new HTTPError(res.statusText, res.constructor.name, res.status, method, url, bodyData);
 		} else {
 			// Handle possible malformed requests
 			if (res.status >= 400 && res.status < 500) {
@@ -210,7 +223,7 @@ export class SequentialHandler {
 				// The request will not succeed for some reason, parse the error returned from the api
 				const data = (await parseResponse(res)) as DiscordErrorData;
 				// throw the API error
-				throw new DiscordAPIError(data, data.code, res.status, method, url);
+				throw new DiscordAPIError(data, data.code, res.status, method, url, bodyData);
 			}
 			return null;
 		}

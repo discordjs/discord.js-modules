@@ -7,6 +7,10 @@ test('Unauthorized', () => {
 		401,
 		'PATCH',
 		'https://discord.com/api/v9/guilds/:id',
+		{
+			attachments: undefined,
+			body: undefined,
+		},
 	);
 
 	expect(error.code).toBe(0);
@@ -15,6 +19,8 @@ test('Unauthorized', () => {
 	expect(error.name).toBe('DiscordAPIError[0]');
 	expect(error.status).toBe(401);
 	expect(error.url).toBe('https://discord.com/api/v9/guilds/:id');
+	expect(error.requestBody.attachments).toBe(undefined);
+	expect(error.requestBody.json).toBe(undefined);
 });
 
 test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
@@ -30,6 +36,12 @@ test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
 		400,
 		'PATCH',
 		'https://discord.com/api/v9/users/@me',
+		{
+			attachments: undefined,
+			body: {
+				username: 'a',
+			},
+		},
 	);
 
 	expect(error.code).toBe(50035);
@@ -40,6 +52,8 @@ test('Invalid Form Body Error (error.{property}._errors.{index})', () => {
 	expect(error.name).toBe('DiscordAPIError[50035]');
 	expect(error.status).toBe(400);
 	expect(error.url).toBe('https://discord.com/api/v9/users/@me');
+	expect(error.requestBody.attachments).toBe(undefined);
+	expect(error.requestBody.json).toStrictEqual({ username: 'a' });
 });
 
 test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{property}._errors.{index})', () => {
@@ -57,6 +71,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}.{index}.{prop
 		400,
 		'POST',
 		'https://discord.com/api/v9/channels/:id',
+		{},
 	);
 
 	expect(error.code).toBe(50035);
@@ -84,6 +99,7 @@ test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{inde
 		400,
 		'PATCH',
 		'https://discord.com/api/v9/guilds/:id',
+		{},
 	);
 
 	expect(error.code).toBe(50035);
