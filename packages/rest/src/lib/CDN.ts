@@ -119,12 +119,12 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public icon(guildId: string, iconHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
+	public icon(id: string, iconHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
 		if (dynamic && iconHash.startsWith('a_')) {
 			options.extension = 'gif';
 		}
 
-		return this.makeURL(`/icons/${guildId}/${iconHash}`, options);
+		return this.makeURL(`/icons/${id}/${iconHash}`, options);
 	}
 
 	/**
