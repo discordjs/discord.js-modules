@@ -97,7 +97,7 @@ export class CDN {
 	 * Generates a guild member avatar URL.
 	 * @param guildId The id of the guild
 	 * @param userId The id of the user
-	 * @param iconHash The hash provided by Discord for this avatar
+	 * @param avatarHash The hash provided by Discord for this avatar
 	 * @param options Optional options for the avatar
 	 */
 	public guildMemberAvatar(
