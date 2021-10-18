@@ -1,6 +1,5 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { AsyncQueue } from '@sapphire/async-queue';
-import AbortController from 'abort-controller';
 import fetch, { RequestInit, Response } from 'node-fetch';
 import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
