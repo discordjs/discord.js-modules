@@ -1,9 +1,23 @@
-import { ALLOWED_EXTENSIONS, ALLOWED_SIZES, DefaultRestOptions, ImageExtension, ImageSize } from './utils/constants';
+import {
+	ALLOWED_EXTENSIONS,
+	ALLOWED_SIZES,
+	ALLOWED_STICKER_EXTENSIONS,
+	DefaultRestOptions,
+	ImageExtension,
+	ImageSize,
+	StickerExtension,
+} from './utils/constants';
 
 export interface ImageURLOptions {
 	extension?: ImageExtension;
 	size?: ImageSize;
 	dynamic?: boolean;
+}
+
+export interface MakeURLOptions {
+	extension?: string;
+	size?: ImageSize;
+	allowedExtensions?: readonly string[];
 }
 
 /**
@@ -148,6 +162,24 @@ export class CDN {
 	}
 
 	/**
+	 * Generates a sticker URL.
+	 * @param stickerId The sticker id
+	 * @param extension The extension of the sticker
+	 */
+	public sticker(stickerId: string, extension?: StickerExtension): string {
+		return this.makeURL(`/stickers/${stickerId}`, { allowedExtensions: ALLOWED_STICKER_EXTENSIONS, extension });
+	}
+
+	/**
+	 * Generates a sticker pack banner URL.
+	 * @param bannerId The banner id
+	 * @param options Optional options for the banner
+	 */
+	public stickerPackBanner(bannerId: string, options?: ImageURLOptions): string {
+		return this.makeURL(`/app-assets/710982414301790216/store/${bannerId}`, options);
+	}
+
+	/**
 	 * Generates a team icon URL for a team's icon.
 	 * @param teamId The team id that has the icon
 	 * @param iconHash The hash provided by Discord for this icon
@@ -162,13 +194,14 @@ export class CDN {
 	 * @param base The base cdn route
 	 * @param options The extension/size options for the link
 	 */
-	private makeURL(base: string, { extension = 'png', size }: ImageURLOptions = {}): string {
-		extension = String(extension).toLowerCase() as ImageExtension;
+	private makeURL(
+		base: string,
+		{ allowedExtensions = ALLOWED_EXTENSIONS, extension = 'png', size }: MakeURLOptions = {},
+	): string {
+		extension = String(extension).toLowerCase();
 
-		if (!ALLOWED_EXTENSIONS.includes(extension)) {
-			throw new RangeError(
-				`Invalid extension provided: ${extension}\nMust be one of: ${ALLOWED_EXTENSIONS.join(', ')}`,
-			);
+		if (!allowedExtensions.includes(extension)) {
+			throw new RangeError(`Invalid extension provided: ${extension}\nMust be one of: ${allowedExtensions.join(', ')}`);
 		}
 
 		if (size && !ALLOWED_SIZES.includes(size)) {
