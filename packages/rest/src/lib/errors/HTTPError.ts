@@ -6,13 +6,14 @@ import type { RequestBody } from './DiscordAPIError';
  */
 export class HTTPError extends Error {
 	public requestBody: RequestBody;
+
 	/**
 	 * @param message The error message
 	 * @param name The name of the error
 	 * @param status The status code of the response
 	 * @param method The method of the request that erred
 	 * @param url The url of the request that erred
-	 * @param bodyData The unparsed data for the request that erred
+	 * @param bodyData The unparsed data for the request that errored
 	 */
 	public constructor(
 		message: string,
