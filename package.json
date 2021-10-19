@@ -11,14 +11,16 @@
 	"license": "Apache-2.0",
 	"private": true,
 	"scripts": {
-		"test": "yarn build && jest --collect-coverage",
+		"pretest": "yarn build",
+		"test": "jest --collect-coverage",
 		"test:ci": "yarn test --verbose --noStackTrace",
-		"build": "yarn clean && tsc --build packages/core packages/rest packages/ws --force",
-		"clean": "rimraf \"packages/**/dist\" \"packages/**/*.tsbuildinfo\"",
+		"prebuild": "yarn clean",
+		"build": "tsc --build packages/core packages/rest packages/ws --force",
+		"clean": "rimraf packages/**/dist packages/**/*.tsbuildinfo",
 		"lint": "eslint packages --ext mjs,js,ts",
 		"lint:fix": "eslint packages --ext mjs,js,ts --fix",
-		"format": "prettier --write \"**/*.{ts,js,json,yml,yaml}\"",
-		"update": "yarn upgrade-interactive",
+		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",
+		"update": "yarn upgrade-interactive --latest",
 		"prepare": "husky install",
 		"lerna": "env-cmd lerna"
 	},
@@ -72,6 +74,5 @@
 	},
 	"workspaces": [
 		"packages/*"
-	],
-	"packageManager": "yarn@3.0.2"
+	]
 }

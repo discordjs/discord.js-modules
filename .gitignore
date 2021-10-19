@@ -23,7 +23,3 @@ docs/
 .tmp/
 coverage/
 tsconfig.tsbuildinfo
-
-# Yarn files
-.yarn/install-state.gz
-.yarn/build-state.yml
