@@ -40,12 +40,12 @@
 	],
 	"dependencies": {
 		"@discordjs/collection": "^0.2.1",
-		"@sapphire/async-queue": "^1.1.4",
-		"@sapphire/snowflake": "^2.0.0",
-		"discord-api-types": "^0.22.0",
+		"@sapphire/async-queue": "^1.1.7",
+		"@sapphire/snowflake": "^2.1.2",
+		"discord-api-types": "^0.23.1",
 		"form-data": "^4.0.0",
-		"node-fetch": "^2.6.1",
-		"tslib": "^2.3.0"
+		"node-fetch": "^2.6.5",
+		"tslib": "^2.3.1"
 	},
 	"devDependencies": {
 		"@types/node-fetch": "^2.5.10"
