@@ -6,6 +6,8 @@ import { HTTPError } from '../errors/HTTPError';
 import type { InternalRequest, RequestManager, RouteData } from '../RequestManager';
 import { RESTEvents } from '../utils/constants';
 import { hasSublimit, parseResponse } from '../utils/utils';
+import type { RateLimitData } from '../REST';
+import { RateLimitError } from '../..';
 
 /* Invalid request limiting is done on a per-IP basis, not a per-token basis.
  * The best we can do is track invalid counts process-wide (on the theory that
@@ -139,6 +141,22 @@ export class SequentialHandler {
 		this.manager.globalDelay = null;
 	}
 
+	/*
+	 * Determines whether the request should be queued or whether a RateLimitError should be thrown
+	 */
+	private async onRateLimit(rateLimitData: RateLimitData) {
+		const { options } = this.manager;
+		if (!options.rejectOnRateLimit) return;
+
+		const shouldThrow =
+			typeof options.rejectOnRateLimit === 'function'
+				? await options.rejectOnRateLimit(rateLimitData)
+				: options.rejectOnRateLimit.some((route) => rateLimitData.route.startsWith(route.toLowerCase()));
+		if (shouldThrow) {
+			throw new RateLimitError(rateLimitData);
+		}
+	}
+
 	/**
 	 * Queues a request to be sent
 	 * @param routeId The generalized api route with literal ids for major parameters
@@ -236,16 +254,21 @@ export class SequentialHandler {
 				timeout = this.timeToReset;
 				delay = sleep(timeout, undefined, { ref: false });
 			}
-			// Let library users know they have hit a rate limit
-			this.manager.emit(RESTEvents.RateLimited, {
+			const rateLimitData: RateLimitData = {
 				timeToReset: timeout,
 				limit,
-				method: options.method,
+				method: options.method ?? 'get',
 				hash: this.hash,
+				url,
 				route: routeId.bucketRoute,
 				majorParameter: this.majorParameter,
 				global: isGlobal,
-			});
+			};
+			// Let library users know they have hit a rate limit
+			this.manager.emit(RESTEvents.RateLimited, rateLimitData);
+			// Determine whether a RateLimitError should be thrown
+			await this.onRateLimit(rateLimitData);
+			// When not erroring, emit debug for what is happening
 			if (isGlobal) {
 				this.debug(`Global rate limit hit, blocking all requests for ${timeout}ms`);
 			} else {
@@ -356,6 +379,29 @@ export class SequentialHandler {
 					`  Retry After    : ${retryAfter}ms`,
 				].join('\n'),
 			);
+			const isGlobal = this.globalLimited;
+			let limit: number;
+			let timeout: number;
+
+			if (isGlobal) {
+				// Set RateLimitData based on the globl limit
+				limit = this.manager.options.globalRequestsPerSecond;
+				timeout = this.manager.globalReset + this.manager.options.offset - Date.now();
+			} else {
+				// Set RateLimitData based on the route-specific limit
+				limit = this.limit;
+				timeout = this.timeToReset;
+			}
+			await this.onRateLimit({
+				timeToReset: timeout,
+				limit,
+				method,
+				hash: this.hash,
+				url,
+				route: routeId.bucketRoute,
+				majorParameter: this.majorParameter,
+				global: isGlobal,
+			});
 			// If caused by a sublimit, wait it out here so other requests on the route can be handled
 			if (sublimitTimeout) {
 				// Normally the sublimit queue will not exist, however, if a sublimit is hit while in the sublimit queue, it will

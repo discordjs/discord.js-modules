@@ -8,6 +8,7 @@ import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RESTOptions } from './REST';
 import { DefaultRestOptions, DefaultUserAgent } from './utils/constants';
+import type { RestEvents } from '..';
 
 const agent = new Agent({ keepAlive: true });
 
@@ -101,6 +102,23 @@ export interface RouteData {
 	majorParameter: string;
 	bucketRoute: string;
 	original: string;
+}
+
+export interface RequestManager {
+	on<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	on<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	once<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	once<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	emit<K extends keyof RestEvents>(event: K, ...args: RestEvents[K]): boolean;
+	emit<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, ...args: any[]): boolean;
+
+	off<K extends keyof RestEvents>(event: K, listener: (...args: RestEvents[K]) => void): this;
+	off<S extends string | symbol>(event: Exclude<S, keyof RestEvents>, listener: (...args: any[]) => void): this;
+
+	removeAllListeners<K extends keyof RestEvents>(event?: K): this;
+	removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof RestEvents>): this;
 }
 
 /**

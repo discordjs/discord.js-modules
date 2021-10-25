@@ -1,8 +1,9 @@
 import nock from 'nock';
-import { DefaultRestOptions, DiscordAPIError, HTTPError, REST, RESTEvents } from '../src';
+import { DefaultRestOptions, DiscordAPIError, HTTPError, RateLimitError, REST, RESTEvents } from '../src';
 
 const api = new REST({ timeout: 2000, offset: 5 }).setToken('A-Very-Fake-Token');
 const invalidAuthApi = new REST({ timeout: 2000 }).setToken('Definitely-Not-A-Fake-Token');
+const rateLimitErrorApi = new REST({ rejectOnRateLimit: ['/channels'] }).setToken('Obviouslly-Not-A-Fake-Token');
 
 let resetAfter = 0;
 let sublimitResetAfter = 0;
@@ -16,6 +17,9 @@ const sublimitIntervals = {
 	reset: null,
 	retry: null,
 };
+
+const sublimit = { body: { name: 'newname' } };
+const noSublimit = { body: { bitrate: 40000 } };
 
 nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.persist()
@@ -253,8 +257,6 @@ test('Handle global rate limits', async () => {
 });
 
 test('Handle sublimits', async () => {
-	const sublimit = { body: { name: 'newname' } };
-	const noSublimit = { body: { bitrate: 40000 } };
 	// Return the current time on these results as their response does not indicate anything
 	// Queue all requests, don't wait, to allow retroactive check
 	const [aP, bP, cP, dP, eP] = [
@@ -323,6 +325,19 @@ test('Unauthorized', async () => {
 	const promise = invalidAuthApi.get('/unauthorized');
 	await expect(promise).rejects.toThrowError('401: Unauthorized');
 	await expect(promise).rejects.toBeInstanceOf(DiscordAPIError);
+});
+
+test('Reject on RateLimit', async () => {
+	const [aP, bP, cP] = [
+		rateLimitErrorApi.patch('/channels/:id', sublimit),
+		rateLimitErrorApi.patch('/channels/:id', sublimit),
+		rateLimitErrorApi.patch('/channels/:id', sublimit),
+	];
+	await expect(aP).resolves;
+	await expect(bP).rejects.toThrowError();
+	await expect(bP).rejects.toBeInstanceOf(RateLimitError);
+	await expect(cP).rejects.toThrowError();
+	await expect(cP).rejects.toBeInstanceOf(RateLimitError);
 });
 
 test('malformedRequest', async () => {
