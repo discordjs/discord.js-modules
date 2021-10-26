@@ -1,20 +1,40 @@
 {
-	"$schema": "http://json.schemastore.org/package",
 	"name": "@discordjs/ws",
 	"version": "0.1.1-canary.0",
-	"description": "The WebSocket for Discord.js",
+	"description": "The WebSocket for discord.js",
+	"private": true,
+	"scripts": {
+		"test": "echo \"Error: run tests from root\" && exit 1",
+		"build": "tsup && tsc --emitDeclarationOnly"
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"typings": "./dist/index.d.ts",
+	"exports": {
+		"import": "./dist/index.mjs",
+		"require": "./dist/index.js"
+	},
+	"directories": {
+		"lib": "src",
+		"test": "__tests__"
+	},
+	"files": [
+		"dist"
+	],
 	"contributors": [
-		"Amish Shah <amishshah.2k@gmail.com>",
 		"Crawl <icrawltogo@gmail.com>",
+		"Amish Shah <amishshah.2k@gmail.com>",
 		"SpaceEEC <spaceeec@yahoo.com>",
 		"Vlad Frangu <kingdgrizzle@gmail.com>"
 	],
 	"license": "Apache-2.0",
-	"private": true,
-	"scripts": {
-		"test": "echo \"Error: run tests from root\" && exit 1",
-		"build": "tsc --build --force"
-	},
+	"keywords": [
+		"discord",
+		"api",
+		"websocket",
+		"ws",
+		"discordapp"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/discordjs/discord.js-modules.git"
@@ -23,21 +43,6 @@
 		"url": "https://github.com/discordjs/discord.js-modules/issues"
 	},
 	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/ws",
-	"keywords": [
-		"discord",
-		"api",
-		"websocket",
-		"ws",
-		"discordapp"
-	],
-	"main": "dist/index.js",
-	"directories": {
-		"lib": "src",
-		"test": "__tests__"
-	},
-	"files": [
-		"dist"
-	],
 	"dependencies": {
 		"tslib": "^2.3.1"
 	},

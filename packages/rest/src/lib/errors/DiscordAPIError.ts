@@ -61,7 +61,7 @@ export class DiscordAPIError extends Error {
 	/**
 	 * The name of the error
 	 */
-	public get name(): string {
+	public override get name(): string {
 		return `${DiscordAPIError.name}[${this.code}]`;
 	}
 

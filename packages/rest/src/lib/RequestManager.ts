@@ -26,7 +26,7 @@ export interface RequestData {
 	/**
 	 * Files to be attached to this request
 	 */
-	attachments?: RawAttachment[];
+	attachments?: RawAttachment[] | undefined;
 	/**
 	 * If this request needs the `Authorization` header
 	 * @default true

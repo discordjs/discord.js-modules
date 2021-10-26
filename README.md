@@ -12,7 +12,7 @@
 	</p>
 </div>
 
-## Status: pre-alpha
+## Status: alpha
 
 ## Contribution
 

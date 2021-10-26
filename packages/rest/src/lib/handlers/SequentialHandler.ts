@@ -140,7 +140,9 @@ export class SequentialHandler {
 		let res: Response;
 
 		try {
-			res = await fetch(url, { ...options, signal: controller.signal });
+			// node-fetch typings are a bit weird, so we have to cast to any to get the correct signature
+			// Type 'AbortSignal' is not assignable to type 'import("discord.js-modules/node_modules/@types/node-fetch/externals").AbortSignal'
+			res = await fetch(url, { ...options, signal: controller.signal as any });
 		} catch (error: unknown) {
 			// Retry the specified number of times for possible timed out requests
 			if (error instanceof Error && error.name === 'AbortError' && retries !== this.manager.options.retries) {

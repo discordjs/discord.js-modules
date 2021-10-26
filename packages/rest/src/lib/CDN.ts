@@ -15,7 +15,7 @@ export interface ImageURLOptions {
 }
 
 export interface MakeURLOptions {
-	extension?: string;
+	extension?: string | undefined;
 	size?: ImageSize;
 	allowedExtensions?: readonly string[];
 }

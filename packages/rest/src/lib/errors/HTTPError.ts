@@ -17,7 +17,7 @@ export class HTTPError extends Error {
 	 */
 	public constructor(
 		message: string,
-		public name: string,
+		public override name: string,
 		public status: number,
 		public method: string,
 		public url: string,
