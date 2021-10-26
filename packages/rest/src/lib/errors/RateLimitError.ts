@@ -24,7 +24,7 @@ export class RateLimitError extends Error implements RateLimitData {
 	/**
 	 * The name of the error
 	 */
-	public get name(): string {
+	public override get name(): string {
 		return `${RateLimitError.name}[${this.route}]`;
 	}
 }
