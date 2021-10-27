@@ -1,8 +1,8 @@
 name: Tests
 on: [push, pull_request]
 jobs:
-  test:
-    name: Test
+  lint:
+    name: ESLint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -12,12 +12,51 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
+          cache: npm
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build TypeScript
+      - name: Run ESLint
+        run: yarn lint
+
+  typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Node v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Register Problem Matcher
+        run: echo "##[add-matcher].github/tsc.json"
+
+      - name: Run TypeScript compiler
         run: yarn build
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Node v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Run Tests
         run: yarn test:ci

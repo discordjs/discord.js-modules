@@ -8,5 +8,5 @@ export const tsup: Options = {
 	minify: true,
 	skipNodeModulesBundle: true,
 	sourcemap: true,
-	target: 'es2020',
+	target: 'es2021',
 };
