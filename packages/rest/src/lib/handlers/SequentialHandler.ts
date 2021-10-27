@@ -3,11 +3,11 @@ import { AsyncQueue } from '@sapphire/async-queue';
 import fetch, { RequestInit, Response } from 'node-fetch';
 import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
+import { RateLimitError } from '../errors/RateLimitError';
 import type { InternalRequest, RequestManager, RouteData } from '../RequestManager';
 import { RESTEvents } from '../utils/constants';
 import { hasSublimit, parseResponse } from '../utils/utils';
 import type { RateLimitData } from '../REST';
-import { RateLimitError } from '../..';
 
 /* Invalid request limiting is done on a per-IP basis, not a per-token basis.
  * The best we can do is track invalid counts process-wide (on the theory that

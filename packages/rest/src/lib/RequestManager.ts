@@ -6,9 +6,8 @@ import { Agent } from 'node:https';
 import type { RequestInit } from 'node-fetch';
 import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
-import type { RESTOptions } from './REST';
+import type { RESTOptions, RestEvents } from './REST';
 import { DefaultRestOptions, DefaultUserAgent } from './utils/constants';
-import type { RestEvents } from '..';
 
 const agent = new Agent({ keepAlive: true });
 
