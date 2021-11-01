@@ -39,10 +39,10 @@ export interface RESTOptions {
 	 */
 	offset: number;
 	/**
-	 * Determines how how rate limiting and pre-emptive throttling should be handled.
+	 * Determines how rate limiting and pre-emptive throttling should be handled.
 	 * When an array of strings, each element is treated as a prefix for the request route
 	 * (e.g. `/channels/` to match any route starting with `/channels` such as `/channels/:id/messages`)
-	 * for which to throw {@link RateLimitError}s. All other requests routes will be queued normally
+	 * for which to throw {@link RateLimitError}s. All other request routes will be queued normally
 	 * @default null
 	 */
 	rejectOnRateLimit: string[] | RateLimitQueueFilter | null;
@@ -90,7 +90,7 @@ export interface RateLimitData {
 	 */
 	hash: string;
 	/**
-	 * The full url for this request
+	 * The full URL for this request
 	 */
 	url: string;
 	/**
