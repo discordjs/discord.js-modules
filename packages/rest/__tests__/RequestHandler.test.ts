@@ -3,7 +3,7 @@ import { DefaultRestOptions, DiscordAPIError, HTTPError, RateLimitError, REST, R
 
 const api = new REST({ timeout: 2000, offset: 5 }).setToken('A-Very-Fake-Token');
 const invalidAuthApi = new REST({ timeout: 2000 }).setToken('Definitely-Not-A-Fake-Token');
-const rateLimitErrorApi = new REST({ rejectOnRateLimit: ['/channels'] }).setToken('Obviouslly-Not-A-Fake-Token');
+const rateLimitErrorApi = new REST({ rejectOnRateLimit: ['/channels'] }).setToken('Obviously-Not-A-Fake-Token');
 
 let resetAfter = 0;
 let sublimitResetAfter = 0;
