@@ -12,7 +12,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -31,7 +32,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -53,7 +55,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-          cache: npm
+          cache: yarn
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
