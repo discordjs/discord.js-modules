@@ -15,8 +15,17 @@ const agent = new Agent({ keepAlive: true });
  * Represents an attachment to be added to the request
  */
 export interface RawAttachment {
+	/**
+	 * The name of the file
+	 */
 	fileName: string;
+	/**
+	 * A key to use for the name of the formdata field for this attachment, otherwise the name is used.
+	 */
 	key?: string;
+	/**
+	 * The actual data for the attachment
+	 */
 	rawBuffer: Buffer;
 }
 
@@ -25,7 +34,7 @@ export interface RawAttachment {
  */
 export interface RequestData {
 	/**
-	 * Whether to append JSON data to form data isntead of `payload_json` when sending attachments
+	 * Whether to append JSON data to form data instead of `payload_json` when sending attachments
 	 */
 	appendToFormData?: boolean;
 	/**
