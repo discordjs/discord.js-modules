@@ -384,7 +384,7 @@ export class SequentialHandler {
 			let timeout: number;
 
 			if (isGlobal) {
-				// Set RateLimitData based on the globl limit
+				// Set RateLimitData based on the global limit
 				limit = this.manager.options.globalRequestsPerSecond;
 				timeout = this.manager.globalReset + this.manager.options.offset - Date.now();
 			} else {

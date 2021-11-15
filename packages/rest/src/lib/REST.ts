@@ -41,7 +41,7 @@ export interface RESTOptions {
 	/**
 	 * Determines how rate limiting and pre-emptive throttling should be handled.
 	 * When an array of strings, each element is treated as a prefix for the request route
-	 * (e.g. `/channels/` to match any route starting with `/channels` such as `/channels/:id/messages`)
+	 * (e.g. `/channels` to match any route starting with `/channels` such as `/channels/:id/messages`)
 	 * for which to throw {@link RateLimitError}s. All other request routes will be queued normally
 	 * @default null
 	 */
