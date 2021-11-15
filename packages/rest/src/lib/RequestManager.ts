@@ -25,6 +25,10 @@ export interface RawAttachment {
  */
 export interface RequestData {
 	/**
+	 * Whether to append JSON data to form data isntead of `payload_json` when sending attachments
+	 */
+	appendToFormData?: boolean;
+	/**
 	 * Files to be attached to this request
 	 */
 	attachments?: RawAttachment[] | undefined;
@@ -42,10 +46,6 @@ export interface RequestData {
 	 * The body to send to this request
 	 */
 	body?: unknown;
-	/**
-	 * Whether to append JSON data to form data isntead of `payload_json` when sending attachments
-	 */
-	dontUsePayloadJSON?: boolean;
 	/**
 	 * Additional headers to add to this request
 	 */
@@ -250,7 +250,7 @@ export class RequestManager extends EventEmitter {
 			// If a JSON body was added as well, attach it to the form data, using payload_json unless otherwise specified
 			// eslint-disable-next-line no-eq-null
 			if (request.body != null) {
-				if (request.dontUsePayloadJSON) {
+				if (request.appendToFormData) {
 					for (const [key, value] of Object.entries(request.body as any)) formData.append(key, value);
 				} else {
 					formData.append('payload_json', JSON.stringify(request.body));

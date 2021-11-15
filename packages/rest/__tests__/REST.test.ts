@@ -148,7 +148,7 @@ test('postAttachment sticker and JSON', async () => {
 		await api.post('/postAttachment', {
 			attachments: [{ key: 'file', fileName: 'sticker.png', rawBuffer: Buffer.from('Sticker') }],
 			body: { foo: 'bar' },
-			dontUsePayloadJSON: true,
+			appendToFormData: true,
 		}),
 	).toStrictEqual({
 		body: [
