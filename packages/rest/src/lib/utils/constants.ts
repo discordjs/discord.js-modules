@@ -7,6 +7,7 @@ const Package = require('../../../package.json');
 export const DefaultUserAgent = `DiscordBot (${Package.homepage}, ${Package.version})`;
 
 export const DefaultRestOptions: Required<RESTOptions> = {
+	agent: {},
 	api: 'https://discord.com/api',
 	cdn: 'https://cdn.discordapp.com',
 	headers: {},

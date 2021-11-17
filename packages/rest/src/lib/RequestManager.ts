@@ -9,7 +9,7 @@ import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RESTOptions } from './REST';
 import { DefaultRestOptions, DefaultUserAgent } from './utils/constants';
 
-const agent = new Agent({ keepAlive: true });
+let agent: Agent | null = null;
 
 /**
  * Represents an attachment to be added to the request
@@ -197,6 +197,8 @@ export class RequestManager extends EventEmitter {
 	 */
 	private resolveRequest(request: InternalRequest): { url: string; fetchOptions: RequestInit } {
 		const { options } = this;
+
+		agent ??= new Agent({ ...options.agent, keepAlive: true });
 
 		let query = '';
 

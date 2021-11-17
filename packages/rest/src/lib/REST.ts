@@ -2,11 +2,17 @@ import { EventEmitter } from 'node:events';
 import { CDN } from './CDN';
 import { InternalRequest, RequestData, RequestManager, RequestMethod, RouteLike } from './RequestManager';
 import { DefaultRestOptions, RESTEvents } from './utils/constants';
+import type { AgentOptions } from 'node:https';
 
 /**
  * Options to be passed when creating the REST instance
  */
 export interface RESTOptions {
+	/**
+	 * HTTPS Agent options
+	 * @default {}
+	 */
+	agent: Omit<AgentOptions, 'keepAlive'>;
 	/**
 	 * The base api path, without version
 	 * @default 'https://discord.com/api'
