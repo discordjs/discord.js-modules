@@ -36,7 +36,7 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.post('/postEcho')
 	.reply(200, (_, body) => body)
 	.post('/postAttachment')
-	.times(3)
+	.times(4)
 	.reply(200, (_, body) => ({
 		body: body
 			.replace(/\r\n/g, '\n')
@@ -139,6 +139,26 @@ test('postAttachment attachment and JSON', async () => {
 			'Content-Disposition: form-data; name="payload_json"',
 			'',
 			'{"foo":"bar"}',
+		].join('\n'),
+	});
+});
+
+test('postAttachment sticker and JSON', async () => {
+	expect(
+		await api.post('/postAttachment', {
+			attachments: [{ key: 'file', fileName: 'sticker.png', rawBuffer: Buffer.from('Sticker') }],
+			body: { foo: 'bar' },
+			appendToFormData: true,
+		}),
+	).toStrictEqual({
+		body: [
+			'Content-Disposition: form-data; name="file"; filename="sticker.png"',
+			'Content-Type: image/png',
+			'',
+			'Sticker',
+			'Content-Disposition: form-data; name="foo"',
+			'',
+			'bar',
 		].join('\n'),
 	});
 });

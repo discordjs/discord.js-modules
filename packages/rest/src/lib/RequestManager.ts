@@ -15,7 +15,17 @@ let agent: Agent | null = null;
  * Represents an attachment to be added to the request
  */
 export interface RawAttachment {
+	/**
+	 * The name of the file
+	 */
 	fileName: string;
+	/**
+	 * A key to use for the name of the formdata field for this attachment, otherwise the name is used.
+	 */
+	key?: string;
+	/**
+	 * The actual data for the attachment
+	 */
 	rawBuffer: Buffer;
 }
 
@@ -23,6 +33,10 @@ export interface RawAttachment {
  * Represents possible data to be given to an endpoint
  */
 export interface RequestData {
+	/**
+	 * Whether to append JSON data to form data instead of `payload_json` when sending attachments
+	 */
+	appendToFormData?: boolean;
 	/**
 	 * Files to be attached to this request
 	 */
@@ -241,13 +255,17 @@ export class RequestManager extends EventEmitter {
 
 			// Attach all files to the request
 			for (const attachment of request.attachments) {
-				formData.append(attachment.fileName, attachment.rawBuffer, attachment.fileName);
+				formData.append(attachment.key ?? attachment.fileName, attachment.rawBuffer, attachment.fileName);
 			}
 
-			// If a JSON body was added as well, attach it to the form data
+			// If a JSON body was added as well, attach it to the form data, using payload_json unless otherwise specified
 			// eslint-disable-next-line no-eq-null
 			if (request.body != null) {
-				formData.append('payload_json', JSON.stringify(request.body));
+				if (request.appendToFormData) {
+					for (const [key, value] of Object.entries(request.body as any)) formData.append(key, value);
+				} else {
+					formData.append('payload_json', JSON.stringify(request.body));
+				}
 			}
 
 			// Set the final body to the form data
