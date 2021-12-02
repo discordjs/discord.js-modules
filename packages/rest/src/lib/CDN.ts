@@ -75,7 +75,7 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this channel
 	 * @param options Optional options for the icon
 	 */
-	public channelIcon(channelId: string, iconHash: string, options?: Readonly<ImageURLOptions>): string {
+	public channelIcon(channelId: string, iconHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/channel-icons/${channelId}/${iconHash}`, options);
 	}
 
@@ -157,7 +157,7 @@ export class CDN {
 	 * @param stickerId The sticker id
 	 * @param extension The extension of the sticker
 	 */
-	public sticker(stickerId: string, extension?: Readonly<StickerExtension>): string {
+	public sticker(stickerId: string, extension?: StickerExtension): string {
 		return this.makeURL(`/stickers/${stickerId}`, { allowedExtensions: ALLOWED_STICKER_EXTENSIONS, extension });
 	}
 
