@@ -14,6 +14,7 @@ export const DefaultRestOptions: Required<RESTOptions> = {
 	invalidRequestWarningInterval: 0,
 	globalRequestsPerSecond: 50,
 	offset: 50,
+	rejectOnRateLimit: null,
 	retries: 3,
 	timeout: 15_000,
 	userAgentAppendix: `Node.js ${process.version}`,

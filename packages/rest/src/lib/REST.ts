@@ -45,6 +45,14 @@ export interface RESTOptions {
 	 */
 	offset: number;
 	/**
+	 * Determines how rate limiting and pre-emptive throttling should be handled.
+	 * When an array of strings, each element is treated as a prefix for the request route
+	 * (e.g. `/channels` to match any route starting with `/channels` such as `/channels/:id/messages`)
+	 * for which to throw {@link RateLimitError}s. All other request routes will be queued normally
+	 * @default null
+	 */
+	rejectOnRateLimit: string[] | RateLimitQueueFilter | null;
+	/**
 	 * The number of retries for errors with the 500 code, or errors
 	 * that timeout
 	 * @default 3
@@ -88,6 +96,10 @@ export interface RateLimitData {
 	 */
 	hash: string;
 	/**
+	 * The full URL for this request
+	 */
+	url: string;
+	/**
 	 * The route being hit in this request
 	 */
 	route: string;
@@ -104,6 +116,11 @@ export interface RateLimitData {
 	global: boolean;
 }
 
+/**
+ * A function that determines whether the rate limit hit should throw an Error
+ */
+export type RateLimitQueueFilter = (rateLimitData: RateLimitData) => boolean | Promise<boolean>;
+
 export interface InvalidRequestWarningData {
 	/**
 	 * Number of invalid requests that have been made in the window
@@ -115,7 +132,7 @@ export interface InvalidRequestWarningData {
 	remainingTime: number;
 }
 
-interface RestEvents {
+export interface RestEvents {
 	invalidRequestWarning: [invalidRequestInfo: InvalidRequestWarningData];
 	restDebug: [info: string];
 	rateLimited: [rateLimitInfo: RateLimitData];
