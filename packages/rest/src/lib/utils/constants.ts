@@ -28,6 +28,8 @@ export const enum RESTEvents {
 	Debug = 'restDebug',
 	InvalidRequestWarning = 'invalidRequestWarning',
 	RateLimited = 'rateLimited',
+	Request = 'request',
+	Response = 'response',
 }
 
 export const ALLOWED_EXTENSIONS = ['webp', 'png', 'jpg', 'jpeg', 'gif'] as const;

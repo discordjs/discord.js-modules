@@ -1,7 +1,8 @@
 import nock from 'nock';
 import { DiscordSnowflake } from '@sapphire/snowflake';
-import { REST, DefaultRestOptions } from '../src';
+import { REST, DefaultRestOptions, APIRequest } from '../src';
 import { Routes, Snowflake } from 'discord-api-types/v9';
+import { Response } from 'node-fetch';
 
 const newSnowflake: Snowflake = DiscordSnowflake.generate().toString();
 
@@ -46,6 +47,9 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.delete('/channels/339942739275677727/messages/392063687801700356')
 	.reply(200, { test: true })
 	.delete(`/channels/339942739275677727/messages/${newSnowflake}`)
+	.reply(200, { test: true })
+	.get('/request')
+	.times(2)
 	.reply(200, { test: true });
 
 test('simple GET', async () => {
@@ -175,4 +179,44 @@ test('Old Message Delete Edge-Case: Old message', async () => {
 
 test('Old Message Delete Edge-Case: New message', async () => {
 	expect(await api.delete(Routes.channelMessage('339942739275677727', newSnowflake))).toStrictEqual({ test: true });
+});
+
+test('Request and Response Events', async () => {
+	const requestListener = jest.fn();
+	const responseListener = jest.fn();
+
+	api.on('request', requestListener);
+	api.on('response', responseListener);
+
+	await api.get('/request');
+
+	expect(requestListener).toHaveBeenCalledTimes(1);
+	expect(responseListener).toHaveBeenCalledTimes(1);
+	expect(requestListener).toHaveBeenLastCalledWith<[APIRequest]>(
+		expect.objectContaining({
+			method: 'get',
+			path: '/request',
+			route: '/request',
+			data: { attachments: undefined, body: undefined },
+			retries: 0,
+		}),
+	);
+	expect(responseListener).toHaveBeenLastCalledWith<[APIRequest, Response]>(
+		expect.objectContaining({
+			method: 'get',
+			path: '/request',
+			route: '/request',
+			data: { attachments: undefined, body: undefined },
+			retries: 0,
+		}),
+		expect.objectContaining({ status: 200, statusText: 'OK' }),
+	);
+
+	api.off('request', requestListener);
+	api.off('response', responseListener);
+
+	await api.get('/request');
+
+	expect(requestListener).toHaveBeenCalledTimes(1);
+	expect(responseListener).toHaveBeenCalledTimes(1);
 });

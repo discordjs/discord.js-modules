@@ -114,7 +114,7 @@ export interface InternalRequest extends RequestData {
 export interface RouteData {
 	majorParameter: string;
 	bucketRoute: string;
-	original: string;
+	original: RouteLike;
 }
 
 export interface RequestManager {
@@ -315,7 +315,7 @@ export class RequestManager extends EventEmitter {
 	 * @param method The HTTP method this endpoint is called without
 	 * @private
 	 */
-	private static generateRouteData(endpoint: string, method: RequestMethod): RouteData {
+	private static generateRouteData(endpoint: RouteLike, method: RequestMethod): RouteData {
 		const majorIdMatch = /^\/(?:channels|guilds|webhooks)\/(\d{16,19})/.exec(endpoint);
 
 		// Get the major id for this route - global otherwise

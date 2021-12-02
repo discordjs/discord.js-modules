@@ -284,6 +284,19 @@ export class SequentialHandler {
 		}
 		this.manager.globalRemaining--;
 
+		const method = options.method ?? 'get';
+
+		if (this.manager.listenerCount(RESTEvents.Request)) {
+			this.manager.emit(RESTEvents.Request, {
+				method,
+				path: routeId.original,
+				route: routeId.bucketRoute,
+				options,
+				data: bodyData,
+				retries,
+			});
+		}
+
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), this.manager.options.timeout).unref();
 		let res: Response;
@@ -303,9 +316,23 @@ export class SequentialHandler {
 			clearTimeout(timeout);
 		}
 
+		if (this.manager.listenerCount(RESTEvents.Response)) {
+			this.manager.emit(
+				RESTEvents.Response,
+				{
+					method,
+					path: routeId.original,
+					route: routeId.bucketRoute,
+					options,
+					data: bodyData,
+					retries,
+				},
+				res.clone(),
+			);
+		}
+
 		let retryAfter = 0;
 
-		const method = options.method ?? 'get';
 		const limit = res.headers.get('X-RateLimit-Limit');
 		const remaining = res.headers.get('X-RateLimit-Remaining');
 		const reset = res.headers.get('X-RateLimit-Reset-After');
