@@ -8,9 +8,12 @@ import {
 	StickerExtension,
 } from './utils/constants';
 
-export interface ImageURLOptions {
+export interface BaseImageURLOptions {
 	extension?: ImageExtension;
 	size?: ImageSize;
+}
+
+export interface ImageURLOptions extends BaseImageURLOptions {
 	dynamic?: boolean;
 }
 
@@ -32,7 +35,7 @@ export class CDN {
 	 * @param assetHash The hash provided by Discord for this asset
 	 * @param options Optional options for the asset
 	 */
-	public appAsset(clientId: string, assetHash: string, options?: ImageURLOptions): string {
+	public appAsset(clientId: string, assetHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/app-assets/${clientId}/${assetHash}`, options);
 	}
 
@@ -42,7 +45,7 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public appIcon(clientId: string, iconHash: string, options?: ImageURLOptions): string {
+	public appIcon(clientId: string, iconHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/app-icons/${clientId}/${iconHash}`, options);
 	}
 
@@ -52,12 +55,8 @@ export class CDN {
 	 * @param avatarHash The hash provided by Discord for this avatar
 	 * @param options Optional options for the avatar
 	 */
-	public avatar(id: string, avatarHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
-		if (dynamic && avatarHash.startsWith('a_')) {
-			options.extension = 'gif';
-		}
-
-		return this.makeURL(`/avatars/${id}/${avatarHash}`, options);
+	public avatar(id: string, avatarHash: string, options?: Readonly<ImageURLOptions>): string {
+		return this.dynamicMakeURL(`/avatars/${id}/${avatarHash}`, avatarHash, options);
 	}
 
 	/**
@@ -66,8 +65,8 @@ export class CDN {
 	 * @param bannerHash The hash provided by Discord for this banner
 	 * @param options Optional options for the banner
 	 */
-	public banner(id: string, bannerHash: string, options?: ImageURLOptions): string {
-		return this.makeURL(`/banners/${id}/${bannerHash}`, options);
+	public banner(id: string, bannerHash: string, options?: Readonly<ImageURLOptions>): string {
+		return this.dynamicMakeURL(`/banners/${id}/${bannerHash}`, bannerHash, options);
 	}
 
 	/**
@@ -76,7 +75,7 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this channel
 	 * @param options Optional options for the icon
 	 */
-	public channelIcon(channelId: string, iconHash: string, options?: ImageURLOptions): string {
+	public channelIcon(channelId: string, iconHash: string, options?: Readonly<ImageURLOptions>): string {
 		return this.makeURL(`/channel-icons/${channelId}/${iconHash}`, options);
 	}
 
@@ -94,7 +93,7 @@ export class CDN {
 	 * @param splashHash The hash provided by Discord for this splash
 	 * @param options Optional options for the splash
 	 */
-	public discoverySplash(guildId: string, splashHash: string, options?: ImageURLOptions): string {
+	public discoverySplash(guildId: string, splashHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/discovery-splashes/${guildId}/${splashHash}`, options);
 	}
 
@@ -118,13 +117,9 @@ export class CDN {
 		guildId: string,
 		userId: string,
 		avatarHash: string,
-		{ dynamic = false, ...options }: ImageURLOptions = {},
+		options?: Readonly<ImageURLOptions>,
 	): string {
-		if (dynamic && avatarHash.startsWith('a_')) {
-			options.extension = 'gif';
-		}
-
-		return this.makeURL(`/guilds/${guildId}/users/${userId}/avatars/${avatarHash}`, options);
+		return this.dynamicMakeURL(`/guilds/${guildId}/users/${userId}/avatars/${avatarHash}`, avatarHash, options);
 	}
 
 	/**
@@ -133,12 +128,8 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public icon(id: string, iconHash: string, { dynamic = false, ...options }: ImageURLOptions = {}): string {
-		if (dynamic && iconHash.startsWith('a_')) {
-			options.extension = 'gif';
-		}
-
-		return this.makeURL(`/icons/${id}/${iconHash}`, options);
+	public icon(id: string, iconHash: string, options?: Readonly<ImageURLOptions>): string {
+		return this.dynamicMakeURL(`/icons/${id}/${iconHash}`, iconHash, options);
 	}
 
 	/**
@@ -147,7 +138,7 @@ export class CDN {
 	 * @param roleIconHash The hash provided by Discord for this role icon
 	 * @param options Optional options for the role icon
 	 */
-	public roleIcon(roleId: string, roleIconHash: string, options?: ImageURLOptions): string {
+	public roleIcon(roleId: string, roleIconHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/role-icons/${roleId}/${roleIconHash}`, options);
 	}
 
@@ -157,7 +148,7 @@ export class CDN {
 	 * @param splashHash The hash provided by Discord for this splash
 	 * @param options Optional options for the splash
 	 */
-	public splash(guildId: string, splashHash: string, options?: ImageURLOptions): string {
+	public splash(guildId: string, splashHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/splashes/${guildId}/${splashHash}`, options);
 	}
 
@@ -166,7 +157,7 @@ export class CDN {
 	 * @param stickerId The sticker id
 	 * @param extension The extension of the sticker
 	 */
-	public sticker(stickerId: string, extension?: StickerExtension): string {
+	public sticker(stickerId: string, extension?: Readonly<StickerExtension>): string {
 		return this.makeURL(`/stickers/${stickerId}`, { allowedExtensions: ALLOWED_STICKER_EXTENSIONS, extension });
 	}
 
@@ -175,7 +166,7 @@ export class CDN {
 	 * @param bannerId The banner id
 	 * @param options Optional options for the banner
 	 */
-	public stickerPackBanner(bannerId: string, options?: ImageURLOptions): string {
+	public stickerPackBanner(bannerId: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/app-assets/710982414301790216/store/${bannerId}`, options);
 	}
 
@@ -185,18 +176,32 @@ export class CDN {
 	 * @param iconHash The hash provided by Discord for this icon
 	 * @param options Optional options for the icon
 	 */
-	public teamIcon(teamId: string, iconHash: string, options?: ImageURLOptions): string {
+	public teamIcon(teamId: string, iconHash: string, options?: Readonly<BaseImageURLOptions>): string {
 		return this.makeURL(`/team-icons/${teamId}/${iconHash}`, options);
 	}
 
 	/**
+	 * Constructs the URL for the resource, checking whether or not `hash` starts with `a_` if `dynamic` is set to `true`.
+	 * @param route The base cdn route
+	 * @param hash The hash provided by Discord for this icon
+	 * @param options Optional options for the link
+	 */
+	private dynamicMakeURL(
+		route: string,
+		hash: string,
+		{ dynamic = false, ...options }: Readonly<ImageURLOptions> = {},
+	): string {
+		return this.makeURL(route, dynamic && hash.startsWith('a_') ? { ...options, extension: 'gif' } : options);
+	}
+
+	/**
 	 * Constructs the URL for the resource
-	 * @param base The base cdn route
+	 * @param route The base cdn route
 	 * @param options The extension/size options for the link
 	 */
 	private makeURL(
-		base: string,
-		{ allowedExtensions = ALLOWED_EXTENSIONS, extension = 'png', size }: MakeURLOptions = {},
+		route: string,
+		{ allowedExtensions = ALLOWED_EXTENSIONS, extension = 'png', size }: Readonly<MakeURLOptions> = {},
 	): string {
 		extension = String(extension).toLowerCase();
 
@@ -208,7 +213,7 @@ export class CDN {
 			throw new RangeError(`Invalid size provided: ${size}\nMust be one of: ${ALLOWED_SIZES.join(', ')}`);
 		}
 
-		const url = new URL(`${this.base}${base}.${extension}`);
+		const url = new URL(`${this.base}${route}.${extension}`);
 
 		if (size) {
 			url.searchParams.set('size', String(size));
