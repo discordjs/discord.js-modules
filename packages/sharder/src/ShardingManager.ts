@@ -38,7 +38,17 @@ const shardingManagerRespawnAllOptions = z.strictObject({
 	timeout: z.number().int().positive().or(z.literal(-1)).or(z.literal(Infinity)).default(30000),
 });
 
-export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject> extends EventEmitter {
+/**
+ * The ShardingManager is an utility class that makes multi-thread sharding of a bot a much simpler experience.
+ *
+ * It works by spawning shards that will create a channel to a different thread, process, or server, defined by the
+ * implementation of the defined {@link IShardHandler}, and sends messages between the primary process (the one that
+ * spawns the shards) with the shards using a message queue and message format as defined by {@link IMessageHandler}.
+ *
+ * Furthermore, this utility has several useful methods that allow managing the lifetimes of the shards as well as
+ * sending messages to one or all of them.
+ */
+export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter {
 	/**
 	 * Number of total shards of all shard managers or "auto".
 	 */
@@ -54,11 +64,24 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 	 */
 	public readonly respawns: number;
 
+	/**
+	 * The REST handler.
+	 */
 	public readonly rest: REST;
 
+	/**
+	 * The shard options validated by {@link IShardHandlerConstructor.validate}.
+	 */
 	public readonly options: ShardOptions;
+
+	/**
+	 * The {@link IShardHandler} constructor.
+	 */
 	public readonly ShardHandler: IShardHandlerConstructor<ShardOptions>;
 
+	/**
+	 * The {@link IMessageHandler} constructor.
+	 */
 	public readonly MessageHandler: IMessageHandlerConstructor;
 
 	/**
@@ -66,7 +89,7 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 	 */
 	public readonly token: string | null;
 
-	public readonly shards = new Map<number, IShardHandler>();
+	public readonly shards = new Map<number, IShardHandler<ShardOptions>>();
 
 	public constructor(options: ShardingManagerOptions<ShardOptions> = {}) {
 		super();
@@ -86,12 +109,19 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 	}
 
 	/**
+	 * Whether or not the process is a primary one.
+	 */
+	public get isPrimary() {
+		return this.ShardHandler.isPrimary;
+	}
+
+	/**
 	 * Spawns all shards given the options and that the process is not primary.
 	 * @param options The spawn options.
 	 * @returns Whether or not the spawn has happened. Will always be the opposite of {@link IShardHandlerConstructor.isPrimary}.
 	 */
 	public async spawn(options: ShardingManagerSpawnOptions): Promise<boolean> {
-		if (this.ShardHandler.isPrimary) return false;
+		if (this.isPrimary) return false;
 
 		const resolved = shardingManagerSpawnOptions.parse(options);
 		let amount = resolved.amount ?? this.totalShards;
@@ -142,7 +172,7 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 		let s = 0;
 		for (const shard of this.shards.values()) {
 			await Promise.all([
-				shard.respawn({ delay: resolved.respawnDelay, timeout: resolved.timeout }),
+				shard.restart({ delay: resolved.respawnDelay, timeout: resolved.timeout }),
 				++s < this.shards.size && resolved.shardDelay > 0 ? sleep(resolved.shardDelay) : Promise.resolve(),
 			]);
 		}
@@ -182,7 +212,7 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 
 	/**
 	 * The {@link IShardHandler} builder.
-	 * @default ProcessShardHandler
+	 * @default ForkProcessShardHandler
 	 */
 	ShardHandler?: IShardHandlerConstructor<ShardOptions>;
 

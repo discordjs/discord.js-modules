@@ -5,7 +5,7 @@ import type { ShardingManager, ShardingManagerRespawnAllOptions } from '../Shard
 import type { NonNullObject } from '../utils/types';
 import type {
 	IShardHandler,
-	ShardHandlerRespawnOptions,
+	ShardHandlerRestartOptions,
 	ShardHandlerSendOptions,
 	ShardHandlerStartOptions,
 } from './IShardHandler';
@@ -55,7 +55,7 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 	 * Closes and restarts the shard.
 	 * @param options The options for respawning the shard.
 	 */
-	public async respawn(options: ShardHandlerRespawnOptions): Promise<void> {
+	public async restart(options: ShardHandlerRestartOptions): Promise<void> {
 		await this.close();
 		if (options.delay > 0) await sleep(options.delay);
 		await this.start(options);
