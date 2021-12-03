@@ -31,6 +31,8 @@ export interface DeserializedData {
 	data: unknown;
 }
 
-export interface IMessageHandlerConstructor<SerializedType = string | Buffer> {
-	build(): IMessageHandler<SerializedType>;
-}
+export type IMessageHandlerConstructor<SerializedType = string | Buffer> = new () => IMessageHandler<SerializedType>;
+
+// export interface IMessageHandlerConstructor<SerializedType = string | Buffer> {
+// 	build(): IMessageHandler<SerializedType>;
+// }

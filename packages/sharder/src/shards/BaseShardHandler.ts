@@ -1,7 +1,7 @@
 import { EventEmitter } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { IMessageHandler, IMessageHandlerConstructor, MessageOp } from '../messages/IMessageHandler';
-import type { ShardingManager } from '../ShardingManager';
+import type { ShardingManager, ShardingManagerRespawnAllOptions } from '../ShardingManager';
 import type { NonNullObject } from '../utils/types';
 import type {
 	IShardHandler,
@@ -10,16 +10,29 @@ import type {
 	ShardHandlerStartOptions,
 } from './IShardHandler';
 
-export abstract class BaseShardHandler<ShardOptions = NonNullObject> extends EventEmitter implements IShardHandler {
+export abstract class BaseShardHandler<ShardOptions = NonNullObject>
+	extends EventEmitter
+	implements IShardHandler<ShardOptions>
+{
 	public readonly id: number;
+
 	public readonly manager: ShardingManager<ShardOptions>;
+
+	/**
+	 * Whether or not the shard's client is ready.
+	 */
+	public ready = false;
+
+	protected respawnsLeft: number;
+
 	protected readonly messages: IMessageHandler;
 
-	public constructor(id: number, manager: ShardingManager<ShardOptions>, messageBuilder: IMessageHandlerConstructor) {
+	public constructor(id: number, manager: ShardingManager<ShardOptions>, MessageHandler: IMessageHandlerConstructor) {
 		super();
 		this.id = id;
 		this.manager = manager;
-		this.messages = messageBuilder.build();
+		this.respawnsLeft = this.manager.respawns;
+		this.messages = new MessageHandler();
 	}
 
 	public async send(data: unknown, options: ShardHandlerSendOptions = {}): Promise<unknown> {
@@ -57,13 +70,62 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject> extends Eve
 
 	protected abstract sendMessage(data: unknown): Promise<void>;
 
-	public static async spawn(
-		id: number,
-		manager: ShardingManager,
-		messageBuilder: IMessageHandlerConstructor,
-	): Promise<IShardHandler> {
-		const instance = Reflect.construct(this, [id, manager, messageBuilder]) as IShardHandler;
-		await instance.start({ timeout: 0 });
-		return instance;
+	protected _consumeRespawn() {
+		if (this.respawnsLeft === 0) return false;
+
+		if (this.respawnsLeft !== -1 && this.respawnsLeft !== Infinity) --this.respawnsLeft;
+		return true;
+	}
+
+	protected _handleMessage(message: string) {
+		const deserialized = this.messages.deserialize(message);
+
+		switch (deserialized.op) {
+			case MessageOp.Ready: {
+				this.ready = true;
+				this.respawnsLeft = this.manager.respawns;
+				this.manager.emit('shardReady', this);
+				this.emit('ready');
+				break;
+			}
+			case MessageOp.Disconnected: {
+				this.ready = false;
+				this.manager.emit('shardDisconnected', this);
+				this.emit('disconnected');
+				break;
+			}
+			case MessageOp.Reconnecting: {
+				this.ready = false;
+				this.manager.emit('shardReconnecting', this);
+				this.emit('reconnecting');
+				break;
+			}
+			case MessageOp.RespawnAll: {
+				this.manager
+					.respawnAll(deserialized.data as ShardingManagerRespawnAllOptions)
+					.catch((error) => this.send({ success: false, error }, { id: deserialized.id, reply: false }))
+					.catch(() => void 0);
+				break;
+			}
+			case MessageOp.Message: {
+				this.messages.handle(deserialized.id, deserialized.data);
+				this.manager.emit('shardMessage', this);
+				this.emit('message');
+				break;
+			}
+		}
+	}
+
+	public static setup(options: NonNullObject): void;
+	public static setup() {
+		// NOP
+	}
+
+	public static validate(value: unknown): NonNullObject {
+		return value as NonNullObject;
+	}
+
+	public static get isPrimary() {
+		return false;
 	}
 }

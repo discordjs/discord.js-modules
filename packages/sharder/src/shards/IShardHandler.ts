@@ -2,9 +2,9 @@ import type { IMessageHandlerConstructor } from '../messages/IMessageHandler';
 import type { ShardingManager } from '../ShardingManager';
 import type { NonNullObject } from '../utils/types';
 
-export interface IShardHandler {
+export interface IShardHandler<ShardOptions = NonNullObject> {
 	readonly id: number;
-	readonly manager: ShardingManager;
+	readonly manager: ShardingManager<ShardOptions>;
 
 	send(data: unknown, options?: ShardHandlerSendOptions): Promise<unknown>;
 
@@ -29,10 +29,13 @@ export interface ShardHandlerRespawnOptions {
 }
 
 export interface IShardHandlerConstructor<ResolvedOptions extends NonNullObject = NonNullObject> {
-	spawn(
+	new (
 		id: number,
 		manager: ShardingManager<ResolvedOptions>,
 		messageBuilder: IMessageHandlerConstructor,
-	): Promise<IShardHandler>;
+	): IShardHandler;
+	setup(manager: ResolvedOptions): void;
 	validate(value: unknown): ResolvedOptions;
+
+	readonly isPrimary: boolean;
 }

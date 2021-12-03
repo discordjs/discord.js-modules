@@ -1,22 +1,20 @@
 import { EventEmitter } from 'node:events';
-import { statSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { z } from 'zod';
 import type { IMessageHandlerConstructor } from './messages/IMessageHandler';
 import { JsonMessageHandler } from './messages/JsonMessageHandler';
+import { ForkProcessShardHandler } from './shards/ForkProcessShardHandler';
 import type { IShardHandler, IShardHandlerConstructor, ShardHandlerSendOptions } from './shards/IShardHandler';
-import { ProcessShardHandler } from './shards/ProcessShardHandler';
 import type { NonNullObject } from './utils/types';
 
 const shardingManagerOptionsPredicate = z.strictObject({
 	shardList: z.literal('auto').or(z.array(z.number().positive().int()).nonempty()).default('auto'),
 	totalShards: z.literal('auto').or(z.number().int().gte(1)).default('auto'),
 	token: z.string().nonempty().nullish().default(null),
-	respawn: z.boolean().default(true),
-	shardHandlerBuilder: z.object({ spawn: z.function(), validate: z.function() }).optional(),
-	messageHandlerBuilder: z.object({ build: z.function() }).optional(),
+	respawns: z.number().int().positive().or(z.literal(-1)).or(z.literal(Infinity)).default(-1),
 	shardOptions: z.object({}).default({}),
+	ShardHandler: z.object({ spawn: z.function(), validate: z.function(), isPrimary: z.boolean() }).optional(),
+	MessageHandler: z.object({ build: z.function() }).optional(),
 });
 
 const shardingManagerSpawnOptions = z.strictObject({
@@ -32,8 +30,6 @@ const shardingManagerRespawnAllOptions = z.strictObject({
 });
 
 export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject> extends EventEmitter {
-	public readonly path: string;
-
 	/**
 	 * Number of total shards of all shard managers or "auto".
 	 */
@@ -44,12 +40,15 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 	 */
 	public totalShards: number | 'auto';
 
-	public readonly respawn: boolean;
+	/**
+	 * Whether or not the shards should respawn.
+	 */
+	public readonly respawns: number;
 
-	public readonly shardHandlerBuilder: IShardHandlerConstructor<ShardOptions>;
-	public readonly shardOptions: ShardOptions;
+	public readonly options: ShardOptions;
+	public readonly ShardHandler: IShardHandlerConstructor<ShardOptions>;
 
-	public readonly messageHandlerBuilder: IMessageHandlerConstructor;
+	public readonly MessageHandler: IMessageHandlerConstructor;
 
 	/**
 	 * Token to use for automatic shard count and passing to shards.
@@ -58,28 +57,25 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 
 	public readonly shards = new Map<number, IShardHandler>();
 
-	public constructor(path: string, options: ShardingManagerOptions<ShardOptions> = {}) {
+	public constructor(options: ShardingManagerOptions<ShardOptions> = {}) {
 		super();
-
-		this.path = resolve(path);
-		if (!statSync(this.path).isFile()) {
-			throw new Error(`Path '${this.path}' did not resolve to a file`);
-		}
 
 		const resolved = shardingManagerOptionsPredicate.parse(options);
 		this.shardList = resolved.shardList;
 		this.totalShards = resolved.totalShards;
-		this.respawn = resolved.respawn;
+		this.respawns = resolved.respawns;
 		this.token = resolved.token?.replace(/^Bot\s*/i, '') ?? null;
 
-		this.shardHandlerBuilder =
-			options.shardHandlerBuilder ?? (ProcessShardHandler as unknown as IShardHandlerConstructor<ShardOptions>);
-		this.shardOptions = this.shardHandlerBuilder.validate(options.shardOptions);
+		this.ShardHandler = options.ShardHandler ?? (ForkProcessShardHandler as any);
+		this.options = this.ShardHandler.validate(options.shardOptions);
+		this.ShardHandler.setup(this.options);
 
-		this.messageHandlerBuilder = options.messageHandlerBuilder ?? JsonMessageHandler;
+		this.MessageHandler = options.MessageHandler ?? JsonMessageHandler;
 	}
 
-	public async spawn(options: ShardingManagerSpawnOptions) {
+	public async spawn(options: ShardingManagerSpawnOptions): Promise<boolean> {
+		if (this.ShardHandler.isPrimary) return false;
+
 		const resolved = shardingManagerSpawnOptions.parse(options);
 		let amount = resolved.amount ?? this.totalShards;
 
@@ -106,10 +102,14 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 				resolved.delay > 0 && this.shards.size !== shardIds.length ? sleep(resolved.delay) : Promise.resolve(),
 			]);
 		}
+
+		return true;
 	}
 
 	public async spawnShard(shardId: number) {
-		const shard = await this.shardHandlerBuilder.spawn(shardId, this, this.messageHandlerBuilder);
+		const shard = new this.ShardHandler(shardId, this, this.MessageHandler);
+		await shard.start({ timeout: 0 });
+
 		this.shards.set(shard.id, shard);
 
 		this.emit('shardCreate', shard);
@@ -159,16 +159,16 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 	shardList?: [number, ...number[]] | 'auto';
 
 	/**
-	 * Whether or not shards should automatically respawn upon exiting.
-	 * @default true
+	 * The amount of times to respawn shards (`-1` or `Infinity` for no limitless)
+	 * @default -1
 	 */
-	respawn?: boolean;
+	respawns?: number;
 
 	/**
 	 * The {@link IShardHandler} builder.
 	 * @default ProcessShardHandler
 	 */
-	shardHandlerBuilder?: IShardHandlerConstructor<ShardOptions>;
+	ShardHandler?: IShardHandlerConstructor<ShardOptions>;
 
 	/**
 	 * The shard options.
@@ -180,7 +180,7 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 	 * The {@link IMessageHandler} builder.
 	 * @default JsonMessageHandler
 	 */
-	messageHandlerBuilder?: IMessageHandlerConstructor;
+	MessageHandler?: IMessageHandlerConstructor;
 
 	/**
 	 * Token to use for automatic shard count and passing to shards.
