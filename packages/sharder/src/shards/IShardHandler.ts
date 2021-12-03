@@ -34,8 +34,22 @@ export interface IShardHandlerConstructor<ResolvedOptions extends NonNullObject 
 		manager: ShardingManager<ResolvedOptions>,
 		messageBuilder: IMessageHandlerConstructor,
 	): IShardHandler;
-	setup(manager: ResolvedOptions): void;
+
+	/**
+	 * Sets up the shard handler for subsequent runs.
+	 * @param options The options passed in {@link ShardingManagerOptions.shardOptions}.
+	 */
+	setup(options: ResolvedOptions): void;
+
+	/**
+	 * Validates the shard options.
+	 * @param value The options passed in {@link ShardingManagerOptions.shardOptions}.
+	 * @returns The validated values with the defined values.
+	 */
 	validate(value: unknown): ResolvedOptions;
 
+	/**
+	 * Whether or not the process is a primary one.
+	 */
 	readonly isPrimary: boolean;
 }

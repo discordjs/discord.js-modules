@@ -1,3 +1,4 @@
+import { REST } from '@discordjs/rest';
 import { EventEmitter } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { z } from 'zod';
@@ -6,22 +7,30 @@ import { JsonMessageHandler } from './messages/JsonMessageHandler';
 import { ForkProcessShardHandler } from './shards/ForkProcessShardHandler';
 import type { IShardHandler, IShardHandlerConstructor, ShardHandlerSendOptions } from './shards/IShardHandler';
 import type { NonNullObject } from './utils/types';
+import {
+	fetchRecommendedShards,
+	FetchRecommendedShardsOptions,
+	fetchRecommendedShardsOptionsPredicate,
+} from './utils/utils';
 
 const shardingManagerOptionsPredicate = z.strictObject({
 	shardList: z.literal('auto').or(z.array(z.number().positive().int()).nonempty()).default('auto'),
 	totalShards: z.literal('auto').or(z.number().int().gte(1)).default('auto'),
 	token: z.string().nonempty().nullish().default(null),
+	rest: z.instanceof(REST).optional(),
 	respawns: z.number().int().positive().or(z.literal(-1)).or(z.literal(Infinity)).default(-1),
 	shardOptions: z.object({}).default({}),
 	ShardHandler: z.object({ spawn: z.function(), validate: z.function(), isPrimary: z.boolean() }).optional(),
 	MessageHandler: z.object({ build: z.function() }).optional(),
 });
 
-const shardingManagerSpawnOptions = z.strictObject({
-	amount: z.literal('auto').or(z.number().int().gte(1)).optional(),
-	delay: z.number().int().positive().default(5500),
-	timeout: z.number().int().positive().default(30_000),
-});
+const shardingManagerSpawnOptions = z
+	.strictObject({
+		amount: z.literal('auto').or(z.number().int().gte(1)).optional(),
+		delay: z.number().int().positive().default(5500),
+		timeout: z.number().int().positive().default(30_000),
+	})
+	.and(fetchRecommendedShardsOptionsPredicate);
 
 const shardingManagerRespawnAllOptions = z.strictObject({
 	shardDelay: z.number().int().positive().default(5000),
@@ -45,6 +54,8 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 	 */
 	public readonly respawns: number;
 
+	public readonly rest: REST;
+
 	public readonly options: ShardOptions;
 	public readonly ShardHandler: IShardHandlerConstructor<ShardOptions>;
 
@@ -65,6 +76,7 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 		this.totalShards = resolved.totalShards;
 		this.respawns = resolved.respawns;
 		this.token = resolved.token?.replace(/^Bot\s*/i, '') ?? null;
+		this.rest = resolved.rest ?? new REST().setToken(this.token!);
 
 		this.ShardHandler = options.ShardHandler ?? (ForkProcessShardHandler as any);
 		this.options = this.ShardHandler.validate(options.shardOptions);
@@ -73,6 +85,11 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 		this.MessageHandler = options.MessageHandler ?? JsonMessageHandler;
 	}
 
+	/**
+	 * Spawns all shards given the options and that the process is not primary.
+	 * @param options The spawn options.
+	 * @returns Whether or not the spawn has happened. Will always be the opposite of {@link IShardHandlerConstructor.isPrimary}.
+	 */
 	public async spawn(options: ShardingManagerSpawnOptions): Promise<boolean> {
 		if (this.ShardHandler.isPrimary) return false;
 
@@ -80,8 +97,7 @@ export class ShardingManager<ShardOptions extends NonNullObject = NonNullObject>
 		let amount = resolved.amount ?? this.totalShards;
 
 		if (amount === 'auto') {
-			// TODO: amount = await Util.fetchRecommendedShards(this.token);
-			amount = 1;
+			amount = await fetchRecommendedShards(this.rest, resolved);
 		}
 
 		if (this.shards.size >= amount) throw new Error('Shards have already spawned.');
@@ -189,7 +205,7 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 	token?: string;
 }
 
-export interface ShardingManagerSpawnOptions {
+export interface ShardingManagerSpawnOptions extends FetchRecommendedShardsOptions {
 	/**
 	 * Number of shards to spawn.
 	 * @default this.totalShards
