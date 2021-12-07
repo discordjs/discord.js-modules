@@ -20,7 +20,9 @@ export interface RawAttachment {
 	 */
 	fileName: string;
 	/**
-	 * A key to use for the name of the formdata field for this attachment, otherwise the name is used.
+	 * An explicit key to use for key of the formdata field for this attachment.
+	 * When not provided, the index of the file in the attachments array is used in the form `files[${index}]`.
+	 * If you wish to alter the placeholder snowflake, you must provide this property in the same form (`files[${placeholder}]`)
 	 */
 	key?: string;
 	/**
@@ -271,8 +273,8 @@ export class RequestManager extends EventEmitter {
 			const formData = new FormData();
 
 			// Attach all files to the request
-			for (const attachment of request.attachments) {
-				formData.append(attachment.key ?? attachment.fileName, attachment.rawBuffer, attachment.fileName);
+			for (const [index, attachment] of request.attachments.entries()) {
+				formData.append(attachment.key ?? `files[${index}]`, attachment.rawBuffer, attachment.fileName);
 			}
 
 			// If a JSON body was added as well, attach it to the form data, using payload_json unless otherwise specified

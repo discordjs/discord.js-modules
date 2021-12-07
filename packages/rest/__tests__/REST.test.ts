@@ -36,7 +36,7 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	.post('/postEcho')
 	.reply(200, (_, body) => body)
 	.post('/postAttachment')
-	.times(4)
+	.times(5)
 	.reply(200, (_, body) => ({
 		body: body
 			.replace(/\r\n/g, '\n')
@@ -116,7 +116,7 @@ test('postAttachment attachment', async () => {
 		}),
 	).toStrictEqual({
 		body: [
-			'Content-Disposition: form-data; name="out.txt"; filename="out.txt"',
+			'Content-Disposition: form-data; name="files[0]"; filename="out.txt"',
 			'Content-Type: text/plain',
 			'',
 			'Hello',
@@ -132,13 +132,39 @@ test('postAttachment attachment and JSON', async () => {
 		}),
 	).toStrictEqual({
 		body: [
-			'Content-Disposition: form-data; name="out.txt"; filename="out.txt"',
+			'Content-Disposition: form-data; name="files[0]"; filename="out.txt"',
 			'Content-Type: text/plain',
 			'',
 			'Hello',
 			'Content-Disposition: form-data; name="payload_json"',
 			'',
 			'{"foo":"bar"}',
+		].join('\n'),
+	});
+});
+
+test('postAttachment attachments and JSON', async () => {
+	expect(
+		await api.post('/postAttachment', {
+			attachments: [
+				{ fileName: 'out.txt', rawBuffer: Buffer.from('Hello') },
+				{ fileName: 'out.txt', rawBuffer: Buffer.from('Hi') },
+			],
+			body: { attachments: [{ id: 0, description: 'test' }] },
+		}),
+	).toStrictEqual({
+		body: [
+			'Content-Disposition: form-data; name="files[0]"; filename="out.txt"',
+			'Content-Type: text/plain',
+			'',
+			'Hello',
+			'Content-Disposition: form-data; name="files[1]"; filename="out.txt"',
+			'Content-Type: text/plain',
+			'',
+			'Hi',
+			'Content-Disposition: form-data; name="payload_json"',
+			'',
+			'{"attachments":[{"id":0,"description":"test"}]}',
 		].join('\n'),
 	});
 });
