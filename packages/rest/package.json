@@ -1,6 +1,6 @@
 {
 	"name": "@discordjs/rest",
-	"version": "0.1.1-canary.0",
+	"version": "0.2.0-canary.0",
 	"description": "The REST API for discord.js",
 	"scripts": {
 		"test": "echo \"Error: run tests from root\" && exit 1",

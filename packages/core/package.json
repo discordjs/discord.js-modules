@@ -1,6 +1,6 @@
 {
 	"name": "@discordjs/core",
-	"version": "0.1.1-canary.0",
+	"version": "0.1.1-canary.1",
 	"description": "The core for discord.js",
 	"private": true,
 	"scripts": {
