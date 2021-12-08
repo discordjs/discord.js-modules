@@ -397,15 +397,6 @@ export class SequentialHandler {
 			return parseResponse(res);
 		} else if (res.status === 429) {
 			// A rate limit was hit - this may happen if the route isn't associated with an official bucket hash yet, or when first globally rate limited
-			this.debug(
-				[
-					'Encountered unexpected 429 rate limit',
-					`  Bucket         : ${routeId.bucketRoute}`,
-					`  Major parameter: ${routeId.majorParameter}`,
-					`  Hash           : ${this.hash}`,
-					`  Retry After    : ${retryAfter}ms`,
-				].join('\n'),
-			);
 			const isGlobal = this.globalLimited;
 			let limit: number;
 			let timeout: number;
@@ -429,6 +420,20 @@ export class SequentialHandler {
 				majorParameter: this.majorParameter,
 				global: isGlobal,
 			});
+			this.debug(
+				[
+					'Encountered unexpected 429 rate limit',
+					`  Global         : ${isGlobal.toString()}`,
+					`  Method         : ${method}`,
+					`  URL            : ${url}`,
+					`  Bucket         : ${routeId.bucketRoute}`,
+					`  Major parameter: ${routeId.majorParameter}`,
+					`  Hash           : ${this.hash}`,
+					`  Limit          : ${limit}`,
+					`  Retry After    : ${retryAfter}ms`,
+					`  Sublimit       : ${sublimitTimeout ? `${sublimitTimeout}ms` : 'None'}`,
+				].join('\n'),
+			);
 			// If caused by a sublimit, wait it out here so other requests on the route can be handled
 			if (sublimitTimeout) {
 				// Normally the sublimit queue will not exist, however, if a sublimit is hit while in the sublimit queue, it will
