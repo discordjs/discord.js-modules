@@ -2187,10 +2187,10 @@
   resolved "https://registry.yarnpkg.com/@sapphire/async-queue/-/async-queue-1.1.7.tgz#7f23fc0fdf888d25a04876c2fbf3a207ddf4a2c8"
   integrity sha512-EBRERa9NqK/EV6DIPBVtjjdHBsu/DSdMuYAydmoIyIPONzp0UAxf2G6JGJ52WkiONtPRx6KNuqB5Q8dm14fwyw==
 
-"@sapphire/snowflake@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@sapphire/snowflake/-/snowflake-2.1.2.tgz#39c9b387ce2f5983a80400e32b9a5e193ad68490"
-  integrity sha512-BPT2FwukBDVCviNLr45ePnMCdr7ZfjHB5ysWzDzWEY6fPGEkOUN/Hl/XS9jKrJB7SN2U1JFQdZGvpRtSqHo2AQ==
+"@sapphire/snowflake@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@sapphire/snowflake/-/snowflake-3.0.0.tgz#ff64900d69e3a687fdbb9023be91b1092cc7cc1b"
+  integrity sha512-YVYXvpWe8fVs2P9mvvsMXByXCcSPcsgUhuKwA+SSlJk1VO7EW1vWjlgGozGj0tPOhsuaeAj1EjPbkCmNKiSRLA==
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
