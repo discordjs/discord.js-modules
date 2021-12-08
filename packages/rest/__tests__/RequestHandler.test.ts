@@ -75,7 +75,7 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 	})
 	.get('/regularRequest')
 	.reply(204, { test: true })
-	.patch('/channels/:id', (body) => ['name', 'topic'].some((key) => Reflect.has(body, key)))
+	.patch('/channels/:id', (body) => ['name', 'topic'].some((key) => Reflect.has(body as Record<string, unknown>, key)))
 	.reply(function handler(): nock.ReplyFnResult {
 		sublimitHits += 1;
 		sublimitRequests += 1;
@@ -110,7 +110,9 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 			},
 		];
 	})
-	.patch('/channels/:id', (body) => ['name', 'topic'].every((key) => !Reflect.has(body, key)))
+	.patch('/channels/:id', (body) =>
+		['name', 'topic'].every((key) => !Reflect.has(body as Record<string, unknown>, key)),
+	)
 	.reply(function handler(): nock.ReplyFnResult {
 		sublimitRequests += 1;
 		const response = 10 - sublimitRequests >= 0 ? 204 : 429;

@@ -281,7 +281,9 @@ export class RequestManager extends EventEmitter {
 			// eslint-disable-next-line no-eq-null
 			if (request.body != null) {
 				if (request.appendToFormData) {
-					for (const [key, value] of Object.entries(request.body as any)) formData.append(key, value);
+					for (const [key, value] of Object.entries(request.body as Record<string, unknown>)) {
+						formData.append(key, value);
+					}
 				} else {
 					formData.append('payload_json', JSON.stringify(request.body));
 				}

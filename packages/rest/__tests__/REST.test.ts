@@ -225,7 +225,7 @@ test('Request and Response Events', async () => {
 			route: '/request',
 			data: { attachments: undefined, body: undefined },
 			retries: 0,
-		}),
+		}) as APIRequest,
 	);
 	expect(responseListener).toHaveBeenLastCalledWith<[APIRequest, Response]>(
 		expect.objectContaining({
@@ -234,8 +234,8 @@ test('Request and Response Events', async () => {
 			route: '/request',
 			data: { attachments: undefined, body: undefined },
 			retries: 0,
-		}),
-		expect.objectContaining({ status: 200, statusText: 'OK' }),
+		}) as APIRequest,
+		expect.objectContaining({ status: 200, statusText: 'OK' }) as Response,
 	);
 
 	api.off('request', requestListener);

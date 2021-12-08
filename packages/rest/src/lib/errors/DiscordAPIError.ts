@@ -22,12 +22,12 @@ export interface RequestBody {
 	json: unknown | undefined;
 }
 
-function isErrorGroupWrapper(error: any): error is DiscordErrorGroupWrapper {
-	return Reflect.has(error, '_errors');
+function isErrorGroupWrapper(error: DiscordError): error is DiscordErrorGroupWrapper {
+	return Reflect.has(error as Record<string, unknown>, '_errors');
 }
 
-function isErrorResponse(error: any): error is DiscordErrorFieldInformation {
-	return typeof Reflect.get(error, 'message') === 'string';
+function isErrorResponse(error: DiscordError): error is DiscordErrorFieldInformation {
+	return typeof Reflect.get(error as Record<string, unknown>, 'message') === 'string';
 }
 
 /**
@@ -85,11 +85,13 @@ export class DiscordAPIError extends Error {
 
 			if (typeof v === 'string') {
 				yield v;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			} else if (isErrorGroupWrapper(v)) {
 				for (const error of v._errors) {
 					yield* this.flattenDiscordError(error, nextKey);
 				}
 			} else {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				yield* this.flattenDiscordError(v, nextKey);
 			}
 		}
