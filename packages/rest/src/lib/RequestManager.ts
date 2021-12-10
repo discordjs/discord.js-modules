@@ -306,7 +306,7 @@ export class RequestManager extends EventEmitter {
 			agent,
 			body: finalBody,
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-			headers: { ...(request.headers ?? {}), ...additionalHeaders, ...headers } as Record<string, string>,
+			headers: { ...additionalHeaders, ...headers, ...(request.headers ?? {}) } as Record<string, string>,
 			method: request.method,
 		};
 
