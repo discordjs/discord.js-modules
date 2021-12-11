@@ -111,3 +111,32 @@ test('Invalid FormFields Error (error.errors.{property}.{property}._errors.{inde
 	expect(error.status).toBe(400);
 	expect(error.url).toBe('https://discord.com/api/v9/guilds/:id');
 });
+
+test('Invalid Oauth Code Error (error.error)', () => {
+	const error = new DiscordAPIError(
+		{
+			error: 'invalid_request',
+			error_description: 'Invalid "code" in request.',
+		},
+		'invalid_request',
+		400,
+		'POST',
+		'https://discord.com/api/v9/oauth2/token',
+		{
+			body: new URLSearchParams([
+				['client_id', '1234567890123545678'],
+				['client_secret', 'totally-valid-secret'],
+				['redirect_uri', 'http://localhost'],
+				['grant_type', 'authorization_code'],
+				['code', 'very-invalid-code'],
+			]),
+		},
+	);
+
+	expect(error.code).toBe('invalid_request');
+	expect(error.message).toBe('Invalid "code" in request.');
+	expect(error.method).toBe('POST');
+	expect(error.name).toBe('DiscordAPIError[invalid_request]');
+	expect(error.status).toBe(400);
+	expect(error.url).toBe('https://discord.com/api/v9/oauth2/token');
+});

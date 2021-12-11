@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { AsyncQueue } from '@sapphire/async-queue';
 import fetch, { RequestInit, Response } from 'node-fetch';
-import { DiscordAPIError, DiscordErrorData } from '../errors/DiscordAPIError';
+import { DiscordAPIError, DiscordErrorData, OauthErrorData } from '../errors/DiscordAPIError';
 import { HTTPError } from '../errors/HTTPError';
 import { RateLimitError } from '../errors/RateLimitError';
 import type { InternalRequest, RequestManager, RouteData } from '../RequestManager';
@@ -472,9 +472,9 @@ export class SequentialHandler {
 					this.manager.setToken(null!);
 				}
 				// The request will not succeed for some reason, parse the error returned from the api
-				const data = (await parseResponse(res)) as DiscordErrorData;
+				const data = (await parseResponse(res)) as DiscordErrorData | OauthErrorData;
 				// throw the API error
-				throw new DiscordAPIError(data, data.code, res.status, method, url, bodyData);
+				throw new DiscordAPIError(data, 'code' in data ? data.code : data.error, res.status, method, url, bodyData);
 			}
 			return null;
 		}

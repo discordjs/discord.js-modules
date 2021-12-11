@@ -3,7 +3,7 @@ import FormData from 'form-data';
 import { DiscordSnowflake } from '@sapphire/snowflake';
 import { EventEmitter } from 'node:events';
 import { Agent } from 'node:https';
-import type { RequestInit } from 'node-fetch';
+import type { RequestInit, BodyInit } from 'node-fetch';
 import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RESTOptions, RestEvents } from './REST';
@@ -54,13 +54,19 @@ export interface RequestData {
 	 */
 	authPrefix?: 'Bot' | 'Bearer';
 	/**
-	 * The body to send to this request
+	 * The body to send to this request.
+	 * If providing as BodyInit, set `passThroughBody: true`
 	 */
-	body?: unknown;
+	body?: BodyInit | unknown;
 	/**
 	 * Additional headers to add to this request
 	 */
 	headers?: Record<string, string>;
+	/**
+	 * Whether to pass-through the body property directly to `fetch()`.
+	 * <warn>This only applies when attachments is NOT present</warn>
+	 */
+	passThroughBody?: boolean;
 	/**
 	 * Query string parameters to append to the called endpoint
 	 */
@@ -296,10 +302,14 @@ export class RequestManager extends EventEmitter {
 
 			// eslint-disable-next-line no-eq-null
 		} else if (request.body != null) {
-			// Stringify the JSON data
-			finalBody = JSON.stringify(request.body);
-			// Set the additional headers to specify the content-type
-			additionalHeaders = { 'Content-Type': 'application/json' };
+			if (request.passThroughBody) {
+				finalBody = request.body as BodyInit;
+			} else {
+				// Stringify the JSON data
+				finalBody = JSON.stringify(request.body);
+				// Set the additional headers to specify the content-type
+				additionalHeaders = { 'Content-Type': 'application/json' };
+			}
 		}
 
 		const fetchOptions = {

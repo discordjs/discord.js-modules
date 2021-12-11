@@ -34,6 +34,8 @@ nock(`${DefaultRestOptions.api}/v${DefaultRestOptions.version}`)
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		return { reason: this.req.headers['x-audit-log-reason']?.[0] ?? null };
 	})
+	.post('/urlEncoded')
+	.reply(200, (_, body) => body)
 	.post('/postEcho')
 	.reply(200, (_, body) => body)
 	.post('/postAttachment')
@@ -191,6 +193,23 @@ test('postAttachment sticker and JSON', async () => {
 			'bar',
 		].join('\n'),
 	});
+});
+
+test('urlEncoded', async () => {
+	const body = new URLSearchParams([
+		['client_id', '1234567890123545678'],
+		['client_secret', 'totally-valid-secret'],
+		['redirect_uri', 'http://localhost'],
+		['grant_type', 'authorization_code'],
+		['code', 'very-invalid-code'],
+	]);
+	expect(
+		await api.post('/urlEncoded', {
+			body,
+			passThroughBody: true,
+			auth: false,
+		}),
+	).toStrictEqual(Buffer.from(body.toString()));
 });
 
 test('postEcho', async () => {
