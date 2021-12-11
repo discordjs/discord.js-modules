@@ -58,6 +58,11 @@ export interface RequestData {
 	 */
 	body?: unknown;
 	/**
+	 * Content type for the body
+	 * @default 'json'
+	 */
+	contentType?: 'json' | 'urlencoded' | 'form-data';
+	/**
 	 * Additional headers to add to this request
 	 */
 	headers?: Record<string, string>;
@@ -225,6 +230,39 @@ export class RequestManager extends EventEmitter {
 	}
 
 	/**
+	 * Parses body in regards to the content type
+	 * @param body Body data
+	 * @param contentType Content type for body
+	 */
+	private parseBody(
+		body: unknown,
+		contentType: RequestData['contentType'] = 'json',
+	): { body: RequestInit['body']; headers: Record<string, string> } | null {
+		switch (contentType) {
+			case 'json':
+				return { body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } };
+
+			case 'urlencoded':
+				return {
+					body: body instanceof URLSearchParams ? body.toString() : (body as string),
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				};
+
+			case 'form-data':
+				if (body instanceof FormData) {
+					return {
+						body,
+						headers: body.getHeaders(),
+					};
+				}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Formats the request data to a usable format for fetch
 	 * @param request The request data
 	 */
@@ -296,10 +334,15 @@ export class RequestManager extends EventEmitter {
 
 			// eslint-disable-next-line no-eq-null
 		} else if (request.body != null) {
-			// Stringify the JSON data
-			finalBody = JSON.stringify(request.body);
-			// Set the additional headers to specify the content-type
-			additionalHeaders = { 'Content-Type': 'application/json' };
+			// Parse body
+			const parsedBody = this.parseBody(request.body, request.contentType);
+
+			if (parsedBody) {
+				finalBody = parsedBody.body;
+
+				// Set the additional headers to specify the content-type
+				additionalHeaders = parsedBody.headers;
+			}
 		}
 
 		const fetchOptions = {
