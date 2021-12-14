@@ -17,7 +17,7 @@ export interface DiscordErrorData {
 	errors?: DiscordError;
 }
 
-export interface OauthErrorData {
+export interface OAuthErrorData {
 	error: string;
 	error_description?: string;
 }
@@ -51,7 +51,7 @@ export class DiscordAPIError extends Error {
 	 * @param bodyData The unparsed data for the request that errored
 	 */
 	public constructor(
-		public rawError: DiscordErrorData | OauthErrorData,
+		public rawError: DiscordErrorData | OAuthErrorData,
 		public code: number | string,
 		public status: number,
 		public method: string,
@@ -70,7 +70,7 @@ export class DiscordAPIError extends Error {
 		return `${DiscordAPIError.name}[${this.code}]`;
 	}
 
-	private static getMessage(error: DiscordErrorData | OauthErrorData) {
+	private static getMessage(error: DiscordErrorData | OAuthErrorData) {
 		let flattened = '';
 		if ('code' in error) {
 			if (error.errors) {
