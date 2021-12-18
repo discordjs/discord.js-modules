@@ -1,25 +1,25 @@
 import { EventEmitter } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { IMessageHandler, IMessageHandlerConstructor, MessageOp } from '../messages/IMessageHandler';
-import type { ShardingManager, ShardingManagerRespawnAllOptions } from '../ShardingManager';
-import { ShardPing } from '../utils/ShardPing';
-import type { NonNullObject } from '../utils/types';
+import { IMessageHandler, IMessageHandlerConstructor, MessageOp } from '../../../messages/base/IMessageHandler';
+import type { ShardingManager, ShardingManagerRespawnAllOptions } from '../../../ShardingManager';
+import { ShardPing } from '../../ShardPing';
+import type { NonNullObject } from '../../../utils/types';
 import type {
-	IShardHandler,
-	ShardHandlerRestartOptions,
-	ShardHandlerSendOptions,
-	ShardHandlerStartOptions,
-} from './IShardHandler';
+	IClusterHandler,
+	ClusterHandlerRestartOptions,
+	ClusterHandlerSendOptions,
+	ClusterHandlerStartOptions,
+} from './IClusterHandler';
 
-export abstract class BaseShardHandler<ShardOptions = NonNullObject>
+export abstract class BaseClusterHandler<ClusterOptions = NonNullObject>
 	extends EventEmitter
-	implements IShardHandler<ShardOptions>
+	implements IClusterHandler<ClusterOptions>
 {
 	public readonly ids: readonly number[];
 
-	public readonly manager: ShardingManager<ShardOptions>;
+	public readonly manager: ShardingManager<ClusterOptions>;
 
-	public readonly ping: ShardPing<ShardOptions>;
+	public readonly ping: ShardPing<ClusterOptions>;
 
 	/**
 	 * Whether or not the shard's client is ready.
@@ -32,7 +32,7 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 
 	public constructor(
 		ids: readonly number[],
-		manager: ShardingManager<ShardOptions>,
+		manager: ShardingManager<ClusterOptions>,
 		MessageHandler: IMessageHandlerConstructor,
 	) {
 		super();
@@ -43,7 +43,7 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 		this.messages = new MessageHandler();
 	}
 
-	public async send(data: unknown, options: ShardHandlerSendOptions = {}): Promise<unknown> {
+	public async send(data: unknown, options: ClusterHandlerSendOptions = {}): Promise<unknown> {
 		const serialized = this.messages.serialize(data, options.opcode ?? MessageOp.Message);
 		const reply = options.reply ?? true;
 
@@ -63,13 +63,13 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 	 * Closes and restarts the shard.
 	 * @param options The options for respawning the shard.
 	 */
-	public async restart(options: ShardHandlerRestartOptions): Promise<void> {
+	public async restart(options: ClusterHandlerRestartOptions): Promise<void> {
 		await this.close();
 		if (options.delay > 0) await sleep(options.delay);
 		await this.start(options);
 	}
 
-	public abstract start(options: ShardHandlerStartOptions): Promise<void> | void;
+	public abstract start(options: ClusterHandlerStartOptions): Promise<void> | void;
 
 	/**
 	 * Closes the shard and does not restart it.

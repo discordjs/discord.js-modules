@@ -1,24 +1,24 @@
-import type { IMessageHandlerConstructor, MessageOp } from '../messages/IMessageHandler';
-import type { ShardingManager } from '../ShardingManager';
-import type { NonNullObject } from '../utils/types';
+import type { IMessageHandlerConstructor, MessageOp } from '../../../messages/base/IMessageHandler';
+import type { ShardingManager } from '../../../ShardingManager';
+import type { NonNullObject } from '../../../utils/types';
 
 /**
  * The shard handler is a strategy system that manages the lifetime and a channel to the client shard, this class is
  * used exclusively in the primary process alongside {@link ShardingManager}, and can be passed in
- * {@link ShardingManagerOptions.ShardHandler}.
+ * {@link ShardingManagerOptions.ClusterHandler}.
  *
  * To create your own strategy, the easiest way is to create a class extending any of the following bases:
  *
- * - {@link BaseShardHandler}: defines the bare-basic implementation.
- * - {@link BaseProcessShardHandler}: defines an almost-full implementation, works with {@link ChildProcess} and
+ * - {@link BaseClusterHandler}: defines the bare-basic implementation.
+ * - {@link BaseProcessClusterHandler}: defines an almost-full implementation, works with {@link ChildProcess} and
  * {@link Worker}.
  *
  * Furthermore, the library ships the following built-in handlers:
  *
- * - {@link ForkProcessShardHandler}: defines a process-based sharding using `child_process.fork`.
- * - {@link ClusterProcessShardHandler}: defines a process-based sharding using `cluster.fork`.
+ * - {@link ForkProcessClusterHandler}: defines a process-based sharding using `child_process.fork`.
+ * - {@link ClusterProcessClusterHandler}: defines a process-based sharding using `cluster.fork`.
  */
-export interface IShardHandler<ShardOptions = NonNullObject> {
+export interface IClusterHandler<ClusterOptions = NonNullObject> {
 	/**
 	 * The shard IDs.
 	 */
@@ -27,20 +27,20 @@ export interface IShardHandler<ShardOptions = NonNullObject> {
 	/**
 	 * The manager that instantiated the shard handler.
 	 */
-	readonly manager: ShardingManager<ShardOptions>;
+	readonly manager: ShardingManager<ClusterOptions>;
 
 	/**
 	 * Sends data to the shard.
 	 * @param data The data to be sent.
 	 * @param options The options for the message delivery.
 	 */
-	send(data: unknown, options?: ShardHandlerSendOptions): Promise<unknown>;
+	send(data: unknown, options?: ClusterHandlerSendOptions): Promise<unknown>;
 
 	/**
 	 * Starts the shard.
 	 * @param options The options defining the start-up behavior.
 	 */
-	start(options: ShardHandlerStartOptions): Promise<void> | void;
+	start(options: ClusterHandlerStartOptions): Promise<void> | void;
 
 	/**
 	 * Closes the shard and terminates the communication with the client.
@@ -51,30 +51,30 @@ export interface IShardHandler<ShardOptions = NonNullObject> {
 	 * Restarts the shard handler, may call {@link start} and then {@link close}.
 	 * @param options The options defining the respawn behavior.
 	 */
-	restart(options: ShardHandlerRestartOptions): Promise<void>;
+	restart(options: ClusterHandlerRestartOptions): Promise<void>;
 }
 
-export interface ShardHandlerSendOptions {
+export interface ClusterHandlerSendOptions {
 	id?: number;
 	reply?: boolean;
 	opcode?: MessageOp;
 }
 
-export interface ShardHandlerStartOptions {
+export interface ClusterHandlerStartOptions {
 	timeout?: number | undefined;
 }
 
-export interface ShardHandlerRestartOptions {
+export interface ClusterHandlerRestartOptions {
 	delay: number;
 	timeout: number;
 }
 
-export interface IShardHandlerConstructor<ResolvedOptions extends NonNullObject = NonNullObject> {
+export interface IClusterHandlerConstructor<ResolvedOptions extends NonNullObject = NonNullObject> {
 	new (
 		ids: readonly number[],
 		manager: ShardingManager<ResolvedOptions>,
 		messageBuilder: IMessageHandlerConstructor,
-	): IShardHandler<ResolvedOptions>;
+	): IClusterHandler<ResolvedOptions>;
 
 	/**
 	 * Sets up the shard handler for subsequent runs.

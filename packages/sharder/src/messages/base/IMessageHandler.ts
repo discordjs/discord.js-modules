@@ -1,4 +1,6 @@
 export interface IMessageHandler<SerializedType = string | Buffer> {
+	get name(): string;
+
 	serialize(data: unknown, op?: MessageOp, id?: number): SerializedData<SerializedType>;
 	deserialize(data: SerializedType): DeserializedData;
 

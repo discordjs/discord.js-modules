@@ -1,4 +1,4 @@
-import { createDeferredPromise, DeferredPromise } from '../utils/utils';
+import { createDeferredPromise, DeferredPromise } from '../../server/utils/utils';
 import type { DeserializedData, IMessageHandler, MessageOp, SerializedData } from './IMessageHandler';
 
 export abstract class BaseMessageHandler<SerializedType = string | Buffer> implements IMessageHandler<SerializedType> {
@@ -7,6 +7,8 @@ export abstract class BaseMessageHandler<SerializedType = string | Buffer> imple
 
 	public abstract serialize(data: unknown, op?: MessageOp, id?: number): SerializedData<SerializedType>;
 	public abstract deserialize(data: SerializedType): DeserializedData;
+
+	public abstract get name(): string;
 
 	protected get nextId() {
 		return this.lastId++;

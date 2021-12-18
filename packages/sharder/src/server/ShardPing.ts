@@ -1,16 +1,16 @@
-import { MessageOp } from '../messages/IMessageHandler';
-import type { IShardHandler } from '../shards/IShardHandler';
-import type { NonNullObject } from './types';
+import { MessageOp } from '../messages/base/IMessageHandler';
+import type { IClusterHandler } from './clusters/base/IClusterHandler';
+import type { NonNullObject } from '../utils/types';
 
 export class ShardPing<ShardOptions = NonNullObject> {
 	public lastSentTimestamp = -1;
 	public lastReceivedTimestamp = -1;
 	public lastLatency = -1;
-	public readonly shard: IShardHandler<ShardOptions>;
+	public readonly shard: IClusterHandler<ShardOptions>;
 
 	private timeout: NodeJS.Timer | null = null;
 
-	public constructor(shard: IShardHandler<ShardOptions>) {
+	public constructor(shard: IClusterHandler<ShardOptions>) {
 		this.shard = shard;
 	}
 

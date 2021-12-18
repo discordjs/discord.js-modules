@@ -1,21 +1,25 @@
 import { REST } from '@discordjs/rest';
 import { chunk } from '@sapphire/utilities';
 import { EventEmitter } from 'node:events';
+import { cpus } from 'node:os';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { z } from 'zod';
-import type { IMessageHandlerConstructor } from './messages/IMessageHandler';
+import type { IMessageHandlerConstructor } from './messages/base/IMessageHandler';
 import { JsonMessageHandler } from './messages/JsonMessageHandler';
-import type { BaseProcessShardHandlerOptions } from './shards/BaseProcessShardHandler';
-import { ForkProcessShardHandler } from './shards/ForkProcessShardHandler';
-import type { IShardHandler, IShardHandlerConstructor, ShardHandlerSendOptions } from './shards/IShardHandler';
-import type { ShardPingOptions } from './utils/ShardPing';
-import type { NonNullObject } from './utils/types';
+import type { BaseProcessClusterHandlerOptions } from './server/clusters/process/BaseProcessClusterHandler';
+import { ForkProcessClusterHandler } from './server/clusters/process/ForkProcessClusterHandler';
+import type {
+	IClusterHandler,
+	IClusterHandlerConstructor,
+	ClusterHandlerSendOptions,
+} from './server/clusters/base/IClusterHandler';
+import type { ShardPingOptions } from './server/ShardPing';
 import {
 	fetchRecommendedShards,
 	FetchRecommendedShardsOptions,
 	fetchRecommendedShardsOptionsPredicate,
-} from './utils/utils';
-import { cpus } from 'node:os';
+} from './server/utils/utils';
+import type { NonNullObject } from './utils/types';
 
 const shardingManagerOptionsPredicate = z.strictObject({
 	shardList: z.literal('auto').or(z.array(z.number().positive().int()).nonempty()).default('auto'),
@@ -33,7 +37,7 @@ const shardingManagerOptionsPredicate = z.strictObject({
 		delay: z.number().int().gte(1).or(z.literal(-1)).or(z.literal(Infinity)).default(45_000),
 		delaySinceReceived: z.boolean().default(false),
 	}),
-	ShardHandler: z.object({ spawn: z.function(), validate: z.function(), isPrimary: z.boolean() }).optional(),
+	ClusterHandler: z.object({ spawn: z.function(), validate: z.function(), isPrimary: z.boolean() }).optional(),
 	MessageHandler: z.object({ build: z.function() }).optional(),
 });
 
@@ -55,7 +59,7 @@ const shardingManagerRespawnAllOptions = z.strictObject({
  * The ShardingManager is an utility class that makes multi-thread sharding of a bot a much simpler experience.
  *
  * It works by spawning shards that will create a channel to a different thread, process, or server, defined by the
- * implementation of the defined {@link IShardHandler}, and sends messages between the primary process (the one that
+ * implementation of the defined {@link IClusterHandler}, and sends messages between the primary process (the one that
  * spawns the shards) with the shards using a message queue and message format as defined by {@link IMessageHandler}.
  *
  * Furthermore, this utility has several useful methods that allow managing the lifetimes of the shards as well as
@@ -88,16 +92,16 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	public readonly rest: REST;
 
 	/**
-	 * The shard options validated by {@link IShardHandlerConstructor.validate}.
+	 * The shard options validated by {@link IClusterHandlerConstructor.validate}.
 	 */
 	public readonly options: ShardOptions;
 
 	public readonly pingOptions: Required<ShardPingOptions>;
 
 	/**
-	 * The {@link IShardHandler} constructor.
+	 * The {@link IClusterHandler} constructor.
 	 */
-	public readonly ShardHandler: IShardHandlerConstructor<ShardOptions>;
+	public readonly ClusterHandler: IClusterHandlerConstructor<ShardOptions>;
 
 	/**
 	 * The {@link IMessageHandler} constructor.
@@ -109,7 +113,7 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	 */
 	public readonly token: string | null;
 
-	public readonly shards: IShardHandler<ShardOptions>[] = [];
+	public readonly shards: IClusterHandler<ShardOptions>[] = [];
 
 	public constructor(options: ShardingManagerOptions<ShardOptions> = {}) {
 		super();
@@ -122,10 +126,10 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 		this.token = resolved.token?.replace(/^Bot\s*/i, '') ?? null;
 		this.rest = resolved.rest ?? new REST().setToken(this.token!);
 
-		this.ShardHandler = options.ShardHandler ?? (ForkProcessShardHandler as any);
-		this.options = this.ShardHandler.validate(options.shardOptions);
+		this.ClusterHandler = options.ClusterHandler ?? (ForkProcessClusterHandler as any);
+		this.options = this.ClusterHandler.validate(options.shardOptions);
 		this.pingOptions = resolved.pingOptions;
-		this.ShardHandler.setup(this.options);
+		this.ClusterHandler.setup(this.options);
 
 		this.MessageHandler = options.MessageHandler ?? JsonMessageHandler;
 	}
@@ -134,13 +138,13 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	 * Whether or not the process is a primary one.
 	 */
 	public get isPrimary() {
-		return this.ShardHandler.isPrimary;
+		return this.ClusterHandler.isPrimary;
 	}
 
 	/**
 	 * Spawns all shards given the options and that the process is not primary.
 	 * @param options The spawn options.
-	 * @returns Whether or not the spawn has happened. Will always be the opposite of {@link IShardHandlerConstructor.isPrimary}.
+	 * @returns Whether or not the spawn has happened. Will always be the opposite of {@link IClusterHandlerConstructor.isPrimary}.
 	 */
 	public async spawn(options: ShardingManagerSpawnOptions): Promise<boolean> {
 		if (this.isPrimary) return false;
@@ -176,7 +180,7 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	}
 
 	public async spawnShard(shardIds: readonly number[]) {
-		const shard = new this.ShardHandler(shardIds, this, this.MessageHandler);
+		const shard = new this.ClusterHandler(shardIds, this, this.MessageHandler);
 		await shard.start({ timeout: 0 });
 
 		this.shards.push(shard);
@@ -204,17 +208,17 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	/**
 	 * Sends a message to all shards.
 	 * @param data The data to be sent to the shards.
-	 * @param options The options to be passed to each {@link IShardHandler.send}.
-	 * @returns An array of the resolved values from {@link IShardHandler.send}.
+	 * @param options The options to be passed to each {@link IClusterHandler.send}.
+	 * @returns An array of the resolved values from {@link IClusterHandler.send}.
 	 */
-	public broadcast(data: unknown, options: ShardHandlerSendOptions): Promise<unknown[]> {
+	public broadcast(data: unknown, options: ClusterHandlerSendOptions): Promise<unknown[]> {
 		const promises = [];
 		for (const shard of this.shards.values()) promises.push(shard.send(data, options));
 		return Promise.all(promises);
 	}
 }
 
-export interface ShardingManagerOptions<ShardOptions extends NonNullObject = BaseProcessShardHandlerOptions> {
+export interface ShardingManagerOptions<ShardOptions extends NonNullObject = BaseProcessClusterHandlerOptions> {
 	/**
 	 * Number of total shards of all shard managers or "auto".
 	 * @default 'auto'
@@ -240,10 +244,10 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject = Bas
 	respawns?: number;
 
 	/**
-	 * The {@link IShardHandler} builder.
-	 * @default ForkProcessShardHandler
+	 * The {@link IClusterHandler} builder.
+	 * @default ForkProcessClusterHandler
 	 */
-	ShardHandler?: IShardHandlerConstructor<ShardOptions>;
+	ClusterHandler?: IClusterHandlerConstructor<ShardOptions>;
 
 	/**
 	 * The shard options.

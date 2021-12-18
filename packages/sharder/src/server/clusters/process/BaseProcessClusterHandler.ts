@@ -2,21 +2,21 @@ import type { ChildProcess } from 'node:child_process';
 import type { Worker } from 'node:cluster';
 import { once } from 'node:events';
 import { z } from 'zod';
-import type { IMessageHandlerConstructor } from '../messages/IMessageHandler';
-import type { ShardingManager } from '../ShardingManager';
-import { createDeferredPromise } from '../utils/utils';
-import { BaseShardHandler } from './BaseShardHandler';
-import type { ShardHandlerStartOptions } from './IShardHandler';
+import type { IMessageHandlerConstructor } from '../../../messages/base/IMessageHandler';
+import type { ShardingManager } from '../../../ShardingManager';
+import { createDeferredPromise } from '../../utils/utils';
+import { BaseClusterHandler } from '../base/BaseClusterHandler';
+import type { ClusterHandlerStartOptions } from '../base/IClusterHandler';
 
-const baseProcessShardHandlerOptionsPredicate = z.strictObject({
+const baseProcessClusterHandlerOptionsPredicate = z.strictObject({
 	shardArgs: z.string().array().default([]),
 	execArgv: z.string().array().default([]),
 });
 
-export abstract class BaseProcessShardHandler<
+export abstract class BaseProcessClusterHandler<
 	Process extends ChildProcess | Worker,
-	ShardOptions = BaseProcessShardHandlerOptions,
-> extends BaseShardHandler<ShardOptions> {
+	ClusterOptions = BaseProcessClusterHandlerOptions,
+> extends BaseClusterHandler<ClusterOptions> {
 	/**
 	 * Environment variables for the shard's process.
 	 */
@@ -28,7 +28,7 @@ export abstract class BaseProcessShardHandler<
 
 	public constructor(
 		ids: readonly number[],
-		manager: ShardingManager<ShardOptions>,
+		manager: ShardingManager<ClusterOptions>,
 		messageBuilder: IMessageHandlerConstructor,
 	) {
 		super(ids, manager, messageBuilder);
@@ -36,13 +36,17 @@ export abstract class BaseProcessShardHandler<
 		this.env = {
 			...process.env,
 			SHARDING_MANAGER: 'true',
+			SHARDING_MANAGER_CLUSTER_STRATEGY: Reflect.get(this, 'name') as string,
+			SHARDING_MANAGER_MESSAGE_STRATEGY: this.messages.name,
 			SHARDS: JSON.stringify(this.ids),
 			SHARD_COUNT: this.manager.totalShards.toString(),
 		};
 		if (this.manager.token) this.env.DISCORD_TOKEN = this.manager.token;
 	}
 
-	public async start({ timeout = 30_000 }: ShardHandlerStartOptions = {}): Promise<void> {
+	public abstract get name(): string;
+
+	public async start({ timeout = 30_000 }: ClusterHandlerStartOptions = {}): Promise<void> {
 		if (this.process !== null) throw new Error('The process was already started.');
 
 		this._exitListener = this._handleStop.bind(this);
@@ -111,12 +115,12 @@ export abstract class BaseProcessShardHandler<
 		if (options.respawn ?? this._consumeRespawn()) await this.start({ timeout: options.timeout });
 	}
 
-	public static override validate(value: unknown): Required<BaseProcessShardHandlerOptions> {
-		return baseProcessShardHandlerOptionsPredicate.parse(value);
+	public static override validate(value: unknown): Required<BaseProcessClusterHandlerOptions> {
+		return baseProcessClusterHandlerOptionsPredicate.parse(value);
 	}
 }
 
-export interface BaseProcessShardHandlerOptions {
+export interface BaseProcessClusterHandlerOptions {
 	/**
 	 * Arguments to pass to the shard script when spawning.
 	 */
