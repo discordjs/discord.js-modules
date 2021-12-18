@@ -1,25 +1,38 @@
 import { REST } from '@discordjs/rest';
+import { chunk } from '@sapphire/utilities';
 import { EventEmitter } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { z } from 'zod';
 import type { IMessageHandlerConstructor } from './messages/IMessageHandler';
 import { JsonMessageHandler } from './messages/JsonMessageHandler';
+import type { BaseProcessShardHandlerOptions } from './shards/BaseProcessShardHandler';
 import { ForkProcessShardHandler } from './shards/ForkProcessShardHandler';
 import type { IShardHandler, IShardHandlerConstructor, ShardHandlerSendOptions } from './shards/IShardHandler';
+import type { ShardPingOptions } from './utils/ShardPing';
 import type { NonNullObject } from './utils/types';
 import {
 	fetchRecommendedShards,
 	FetchRecommendedShardsOptions,
 	fetchRecommendedShardsOptionsPredicate,
 } from './utils/utils';
+import { cpus } from 'node:os';
 
 const shardingManagerOptionsPredicate = z.strictObject({
 	shardList: z.literal('auto').or(z.array(z.number().positive().int()).nonempty()).default('auto'),
 	totalShards: z.literal('auto').or(z.number().int().gte(1)).default('auto'),
+	clusterCount: z
+		.number()
+		.int()
+		.gte(1)
+		.default(() => cpus().length),
 	token: z.string().nonempty().nullish().default(null),
 	rest: z.instanceof(REST).optional(),
 	respawns: z.number().int().positive().or(z.literal(-1)).or(z.literal(Infinity)).default(-1),
 	shardOptions: z.object({}).default({}),
+	pingOptions: z.strictObject({
+		delay: z.number().int().gte(1).or(z.literal(-1)).or(z.literal(Infinity)).default(45_000),
+		delaySinceReceived: z.boolean().default(false),
+	}),
 	ShardHandler: z.object({ spawn: z.function(), validate: z.function(), isPrimary: z.boolean() }).optional(),
 	MessageHandler: z.object({ build: z.function() }).optional(),
 });
@@ -30,7 +43,7 @@ const shardingManagerSpawnOptions = z
 		delay: z.number().int().positive().default(5500),
 		timeout: z.number().int().positive().default(30_000),
 	})
-	.and(fetchRecommendedShardsOptionsPredicate);
+	.merge(fetchRecommendedShardsOptionsPredicate);
 
 const shardingManagerRespawnAllOptions = z.strictObject({
 	shardDelay: z.number().int().positive().default(5000),
@@ -60,6 +73,11 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	public totalShards: number | 'auto';
 
 	/**
+	 * The number of clusters to create.
+	 */
+	public clusterCount: number;
+
+	/**
 	 * Whether or not the shards should respawn.
 	 */
 	public readonly respawns: number;
@@ -73,6 +91,8 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	 * The shard options validated by {@link IShardHandlerConstructor.validate}.
 	 */
 	public readonly options: ShardOptions;
+
+	public readonly pingOptions: Required<ShardPingOptions>;
 
 	/**
 	 * The {@link IShardHandler} constructor.
@@ -89,7 +109,7 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	 */
 	public readonly token: string | null;
 
-	public readonly shards = new Map<number, IShardHandler<ShardOptions>>();
+	public readonly shards: IShardHandler<ShardOptions>[] = [];
 
 	public constructor(options: ShardingManagerOptions<ShardOptions> = {}) {
 		super();
@@ -97,12 +117,14 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 		const resolved = shardingManagerOptionsPredicate.parse(options);
 		this.shardList = resolved.shardList;
 		this.totalShards = resolved.totalShards;
+		this.clusterCount = resolved.clusterCount;
 		this.respawns = resolved.respawns;
 		this.token = resolved.token?.replace(/^Bot\s*/i, '') ?? null;
 		this.rest = resolved.rest ?? new REST().setToken(this.token!);
 
 		this.ShardHandler = options.ShardHandler ?? (ForkProcessShardHandler as any);
 		this.options = this.ShardHandler.validate(options.shardOptions);
+		this.pingOptions = resolved.pingOptions;
 		this.ShardHandler.setup(this.options);
 
 		this.MessageHandler = options.MessageHandler ?? JsonMessageHandler;
@@ -130,7 +152,7 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 			amount = await fetchRecommendedShards(this.rest, resolved);
 		}
 
-		if (this.shards.size >= amount) throw new Error('Shards have already spawned.');
+		if (this.shards.length >= amount) throw new Error('Shards have already spawned.');
 		if (this.shardList === 'auto' || this.totalShards === 'auto' || this.totalShards !== amount) {
 			this.shardList = [...Array(amount).keys()] as [number, ...number[]];
 		}
@@ -139,24 +161,25 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 			this.totalShards = amount;
 		}
 
-		const shardIds = z.number().int().gte(0).lt(amount).array().parse(this.shardList);
+		const shards = z.number().int().gte(0).lt(amount).array().parse(this.shardList);
+		const clusterIds = chunk(shards, Math.ceil(shards.length / this.clusterCount));
 
 		// Spawn the shards
-		for (const shardId of shardIds) {
+		for (const shardIds of clusterIds) {
 			await Promise.all([
-				this.spawnShard(shardId),
-				resolved.delay > 0 && this.shards.size !== shardIds.length ? sleep(resolved.delay) : Promise.resolve(),
+				this.spawnShard(shardIds),
+				resolved.delay > 0 && this.shards.length !== clusterIds.length ? sleep(resolved.delay) : Promise.resolve(),
 			]);
 		}
 
 		return true;
 	}
 
-	public async spawnShard(shardId: number) {
-		const shard = new this.ShardHandler(shardId, this, this.MessageHandler);
+	public async spawnShard(shardIds: readonly number[]) {
+		const shard = new this.ShardHandler(shardIds, this, this.MessageHandler);
 		await shard.start({ timeout: 0 });
 
-		this.shards.set(shard.id, shard);
+		this.shards.push(shard);
 
 		this.emit('shardCreate', shard);
 		return shard;
@@ -170,10 +193,10 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 		const resolved = shardingManagerRespawnAllOptions.parse(options);
 
 		let s = 0;
-		for (const shard of this.shards.values()) {
+		for (const shard of this.shards) {
 			await Promise.all([
 				shard.restart({ delay: resolved.respawnDelay, timeout: resolved.timeout }),
-				++s < this.shards.size && resolved.shardDelay > 0 ? sleep(resolved.shardDelay) : Promise.resolve(),
+				++s < this.shards.length && resolved.shardDelay > 0 ? sleep(resolved.shardDelay) : Promise.resolve(),
 			]);
 		}
 	}
@@ -191,7 +214,7 @@ export class ShardingManager<ShardOptions = NonNullObject> extends EventEmitter 
 	}
 }
 
-export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
+export interface ShardingManagerOptions<ShardOptions extends NonNullObject = BaseProcessShardHandlerOptions> {
 	/**
 	 * Number of total shards of all shard managers or "auto".
 	 * @default 'auto'
@@ -203,6 +226,12 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 	 * @default 'auto'
 	 */
 	shardList?: [number, ...number[]] | 'auto';
+
+	/**
+	 * The number of clusters to create, defaults to the number of cores.
+	 * @default
+	 */
+	clusters?: number;
 
 	/**
 	 * The amount of times to respawn shards (`-1` or `Infinity` for no limitless)
@@ -221,6 +250,12 @@ export interface ShardingManagerOptions<ShardOptions extends NonNullObject> {
 	 * @default {}
 	 */
 	shardOptions?: ShardOptions;
+
+	/**
+	 * The options for the shard pinging.
+	 * @default {}
+	 */
+	pingOptions?: ShardPingOptions;
 
 	/**
 	 * The {@link IMessageHandler} builder.

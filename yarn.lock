@@ -2192,6 +2192,11 @@
   resolved "https://registry.yarnpkg.com/@sapphire/snowflake/-/snowflake-2.1.2.tgz#39c9b387ce2f5983a80400e32b9a5e193ad68490"
   integrity sha512-BPT2FwukBDVCviNLr45ePnMCdr7ZfjHB5ysWzDzWEY6fPGEkOUN/Hl/XS9jKrJB7SN2U1JFQdZGvpRtSqHo2AQ==
 
+"@sapphire/utilities@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@sapphire/utilities/-/utilities-3.1.0.tgz#50f18c8ae10535c4fde6b2c68c2a45262c45756f"
+  integrity sha512-Vwsd567hZ1LPDh791r4DHwxlO1EzUefjYhNj+kwbliHWK2TVPhMvF5v1eZKtUCgdBmobqa8CBPwCwymHstuj5w==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"

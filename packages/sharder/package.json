@@ -46,6 +46,7 @@
 	"homepage": "https://github.com/discordjs/discord.js-modules/tree/main/packages/sharder",
 	"dependencies": {
 		"@discordjs/rest": "^0.1.1-canary.0",
+		"@sapphire/utilities": "^3.1.0",
 		"discord-api-types": "^0.25.2",
 		"tslib": "^2.3.1",
 		"zod": "^3.11.6"

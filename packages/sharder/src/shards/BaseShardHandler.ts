@@ -2,6 +2,7 @@ import { EventEmitter } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { IMessageHandler, IMessageHandlerConstructor, MessageOp } from '../messages/IMessageHandler';
 import type { ShardingManager, ShardingManagerRespawnAllOptions } from '../ShardingManager';
+import { ShardPing } from '../utils/ShardPing';
 import type { NonNullObject } from '../utils/types';
 import type {
 	IShardHandler,
@@ -14,9 +15,11 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 	extends EventEmitter
 	implements IShardHandler<ShardOptions>
 {
-	public readonly id: number;
+	public readonly ids: readonly number[];
 
 	public readonly manager: ShardingManager<ShardOptions>;
+
+	public readonly ping: ShardPing<ShardOptions>;
 
 	/**
 	 * Whether or not the shard's client is ready.
@@ -27,22 +30,27 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 
 	protected readonly messages: IMessageHandler;
 
-	public constructor(id: number, manager: ShardingManager<ShardOptions>, MessageHandler: IMessageHandlerConstructor) {
+	public constructor(
+		ids: readonly number[],
+		manager: ShardingManager<ShardOptions>,
+		MessageHandler: IMessageHandlerConstructor,
+	) {
 		super();
-		this.id = id;
+		this.ids = ids;
 		this.manager = manager;
 		this.respawnsLeft = this.manager.respawns;
+		this.ping = new ShardPing(this);
 		this.messages = new MessageHandler();
 	}
 
 	public async send(data: unknown, options: ShardHandlerSendOptions = {}): Promise<unknown> {
-		const serialized = this.messages.serialize(data, MessageOp.Message);
+		const serialized = this.messages.serialize(data, options.opcode ?? MessageOp.Message);
 		const reply = options.reply ?? true;
 
 		if (reply) this.messages.track(serialized.id);
 
 		try {
-			await this.sendMessage(serialized.data);
+			await this.sendMessage(serialized.body);
 		} catch (error) {
 			this.messages.untrack(serialized.id);
 			throw error;
@@ -79,8 +87,13 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 
 	protected _handleMessage(message: string) {
 		const deserialized = this.messages.deserialize(message);
+		this.messages.handle(deserialized.id, deserialized.data);
 
 		switch (deserialized.op) {
+			case MessageOp.Ping: {
+				this.ping.receive(deserialized.data as number);
+				break;
+			}
 			case MessageOp.Ready: {
 				this.ready = true;
 				this.respawnsLeft = this.manager.respawns;
@@ -108,12 +121,19 @@ export abstract class BaseShardHandler<ShardOptions = NonNullObject>
 				break;
 			}
 			case MessageOp.Message: {
-				this.messages.handle(deserialized.id, deserialized.data);
 				this.manager.emit('shardMessage', this);
 				this.emit('message');
 				break;
 			}
 		}
+	}
+
+	protected _handleStart() {
+		this.ping.start();
+	}
+
+	protected _handleStop() {
+		this.ping.stop();
 	}
 
 	public static setup(options: NonNullObject): void;

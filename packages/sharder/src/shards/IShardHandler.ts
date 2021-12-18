@@ -1,4 +1,4 @@
-import type { IMessageHandlerConstructor } from '../messages/IMessageHandler';
+import type { IMessageHandlerConstructor, MessageOp } from '../messages/IMessageHandler';
 import type { ShardingManager } from '../ShardingManager';
 import type { NonNullObject } from '../utils/types';
 
@@ -20,9 +20,9 @@ import type { NonNullObject } from '../utils/types';
  */
 export interface IShardHandler<ShardOptions = NonNullObject> {
 	/**
-	 * The ID of the shard.
+	 * The shard IDs.
 	 */
-	readonly id: number;
+	readonly ids: readonly number[];
 
 	/**
 	 * The manager that instantiated the shard handler.
@@ -57,6 +57,7 @@ export interface IShardHandler<ShardOptions = NonNullObject> {
 export interface ShardHandlerSendOptions {
 	id?: number;
 	reply?: boolean;
+	opcode?: MessageOp;
 }
 
 export interface ShardHandlerStartOptions {
@@ -70,7 +71,7 @@ export interface ShardHandlerRestartOptions {
 
 export interface IShardHandlerConstructor<ResolvedOptions extends NonNullObject = NonNullObject> {
 	new (
-		id: number,
+		ids: readonly number[],
 		manager: ShardingManager<ResolvedOptions>,
 		messageBuilder: IMessageHandlerConstructor,
 	): IShardHandler<ResolvedOptions>;

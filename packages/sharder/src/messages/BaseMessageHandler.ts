@@ -2,10 +2,15 @@ import { createDeferredPromise, DeferredPromise } from '../utils/utils';
 import type { DeserializedData, IMessageHandler, MessageOp, SerializedData } from './IMessageHandler';
 
 export abstract class BaseMessageHandler<SerializedType = string | Buffer> implements IMessageHandler<SerializedType> {
+	private lastId = 0;
 	private readonly tracked = new Map<number, DeferredPromise>();
 
 	public abstract serialize(data: unknown, op?: MessageOp, id?: number): SerializedData<SerializedType>;
 	public abstract deserialize(data: SerializedType): DeserializedData;
+
+	protected get nextId() {
+		return this.lastId++;
+	}
 
 	public handle(id: number, data: unknown): void {
 		const deferred = this.tracked.get(id);

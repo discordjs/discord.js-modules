@@ -26,13 +26,17 @@ export abstract class BaseProcessShardHandler<
 
 	private _exitListener: ((options: HandleExitOptions) => void) | null = null;
 
-	public constructor(id: number, manager: ShardingManager<ShardOptions>, messageBuilder: IMessageHandlerConstructor) {
-		super(id, manager, messageBuilder);
+	public constructor(
+		ids: readonly number[],
+		manager: ShardingManager<ShardOptions>,
+		messageBuilder: IMessageHandlerConstructor,
+	) {
+		super(ids, manager, messageBuilder);
 
 		this.env = {
 			...process.env,
 			SHARDING_MANAGER: 'true',
-			SHARDS: this.id.toString(),
+			SHARDS: JSON.stringify(this.ids),
 			SHARD_COUNT: this.manager.totalShards.toString(),
 		};
 		if (this.manager.token) this.env.DISCORD_TOKEN = this.manager.token;
@@ -41,7 +45,7 @@ export abstract class BaseProcessShardHandler<
 	public async start({ timeout = 30_000 }: ShardHandlerStartOptions = {}): Promise<void> {
 		if (this.process !== null) throw new Error('The process was already started.');
 
-		this._exitListener = this._handleExit.bind(this);
+		this._exitListener = this._handleStop.bind(this);
 
 		this.process = this.createProcess();
 
@@ -49,13 +53,12 @@ export abstract class BaseProcessShardHandler<
 		this.process.on('exit', this._exitListener);
 
 		if (timeout === -1 || timeout === Infinity) {
-			this.manager.emit('shardSpawn', this);
-			this.emit('spawn');
+			this._handleStart();
 			return;
 		}
 
 		const abortController = new AbortController();
-		const timer = setTimeout(() => abortController.abort(), timeout);
+		const timer = setTimeout(() => abortController.abort(), timeout).unref();
 
 		try {
 			await once(this.process, 'spawn', { signal: abortController.signal });
@@ -64,8 +67,7 @@ export abstract class BaseProcessShardHandler<
 			clearTimeout(timer);
 		}
 
-		this.manager.emit('shardSpawn', this);
-		this.emit('spawn');
+		this._handleStart();
 	}
 
 	public async close(): Promise<void> {
@@ -74,7 +76,7 @@ export abstract class BaseProcessShardHandler<
 		this.process.off('exit', this._exitListener!);
 		this.process.kill();
 
-		await this._handleExit({ respawn: false });
+		await this._handleStop({ respawn: false });
 	}
 
 	protected sendMessage(data: string | Buffer): Promise<void> {
@@ -91,11 +93,15 @@ export abstract class BaseProcessShardHandler<
 
 	protected abstract createProcess(): Process;
 
-	public static override validate(value: unknown): Required<BaseProcessShardHandlerOptions> {
-		return baseProcessShardHandlerOptionsPredicate.parse(value);
+	protected override _handleStart() {
+		super._handleStart();
+
+		this.manager.emit('shardSpawn', this);
+		this.emit('spawn');
 	}
 
-	private async _handleExit(options: HandleExitOptions = {}) {
+	protected override async _handleStop(options: HandleExitOptions = {}) {
+		super._handleStop();
 		this.manager.emit('shardDeath', this);
 		this.emit('death');
 
@@ -103,6 +109,10 @@ export abstract class BaseProcessShardHandler<
 		this.process = null;
 
 		if (options.respawn ?? this._consumeRespawn()) await this.start({ timeout: options.timeout });
+	}
+
+	public static override validate(value: unknown): Required<BaseProcessShardHandlerOptions> {
+		return baseProcessShardHandlerOptionsPredicate.parse(value);
 	}
 }
 

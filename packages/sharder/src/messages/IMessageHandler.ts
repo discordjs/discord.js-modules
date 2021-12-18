@@ -12,6 +12,7 @@ export interface IMessageHandler<SerializedType = string | Buffer> {
 }
 
 export const enum MessageOp {
+	Ping,
 	Ready,
 	Disconnected,
 	Reconnecting,
@@ -21,8 +22,7 @@ export const enum MessageOp {
 
 export interface SerializedData<SerializedType = string | Buffer> {
 	id: number;
-	op: MessageOp;
-	data: SerializedType;
+	body: SerializedType;
 }
 
 export interface DeserializedData {
