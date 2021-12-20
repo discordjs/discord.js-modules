@@ -17,6 +17,11 @@ export interface DiscordErrorData {
 	errors?: DiscordError;
 }
 
+export interface OAuthErrorData {
+	error: string;
+	error_description?: string;
+}
+
 export interface RequestBody {
 	attachments: RawAttachment[] | undefined;
 	json: unknown | undefined;
@@ -46,8 +51,8 @@ export class DiscordAPIError extends Error {
 	 * @param bodyData The unparsed data for the request that errored
 	 */
 	public constructor(
-		public rawError: DiscordErrorData,
-		public code: number,
+		public rawError: DiscordErrorData | OAuthErrorData,
+		public code: number | string,
 		public status: number,
 		public method: string,
 		public url: string,
@@ -65,14 +70,17 @@ export class DiscordAPIError extends Error {
 		return `${DiscordAPIError.name}[${this.code}]`;
 	}
 
-	private static getMessage(error: DiscordErrorData) {
+	private static getMessage(error: DiscordErrorData | OAuthErrorData) {
 		let flattened = '';
-		if (error.errors) {
-			flattened = [...this.flattenDiscordError(error.errors)].join('\n');
+		if ('code' in error) {
+			if (error.errors) {
+				flattened = [...this.flattenDiscordError(error.errors)].join('\n');
+			}
+			return error.message && flattened
+				? `${error.message}\n${flattened}`
+				: error.message || flattened || 'Unknown Error';
 		}
-		return error.message && flattened
-			? `${error.message}\n${flattened}`
-			: error.message || flattened || 'Unknown Error';
+		return error.error_description ?? 'No Description';
 	}
 
 	private static *flattenDiscordError(obj: DiscordError, key = ''): IterableIterator<string> {
