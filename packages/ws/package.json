@@ -5,7 +5,8 @@
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: run tests from root\" && exit 1",
-		"build": "tsup && tsc --emitDeclarationOnly"
+		"build": "tsup && tsc --emitDeclarationOnly --incremental",
+		"lint": "eslint src --ext mjs,js,ts --fix"
 	},
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",

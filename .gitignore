@@ -23,3 +23,4 @@ docs/
 .tmp/
 coverage/
 tsconfig.tsbuildinfo
+.turbo
