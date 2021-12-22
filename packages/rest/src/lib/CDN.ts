@@ -61,7 +61,7 @@ export class CDN {
 
 	/**
 	 * Generates a banner URL, e.g. for a user or a guild.
-	 * @param id The id that has the banner splash
+	 * @param id The id that has the banner
 	 * @param bannerHash The hash provided by Discord for this banner
 	 * @param options Optional options for the banner
 	 */
