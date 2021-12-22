@@ -3,15 +3,13 @@
 	"description": "A powerful library for interacting with the Discord API",
 	"private": true,
 	"scripts": {
-		"pretest": "yarn build",
-		"test": "jest --pass-with-no-tests",
+		"test": "yarn build && jest --collect-coverage",
 		"test:ci": "jest --no-stack-trace --verbose --pass-with-no-tests",
-		"prebuild": "yarn clean",
-		"build": "turbo run build",
-		"clean": "rimraf packages/**/dist packages/**/*.tsbuildinfo",
+		"build": "yarn clean && tsc --build packages/core packages/rest packages/ws --force",
+		"clean": "rimraf \"packages/**/dist\" \"packages/**/*.tsbuildinfo\"",
 		"lint": "turbo run lint",
-		"format": "prettier --write **/*.{ts,js,json,yml,yaml}",
-		"update": "yarn upgrade-interactive --latest",
+		"format": "prettier --write \"**/*.{ts,js,json,yml,yaml}\"",
+		"update": "yarn upgrade-interactive",
 		"prepare": "husky install",
 		"lerna": "env-cmd lerna",
 		"canary-release": "env-cmd lerna publish --conventional-prerelease --pre-dist-tag canary --preid \"canary\"",
@@ -93,5 +91,6 @@
 				"outputs": []
 			}
 		}
-	}
+	},
+	"packageManager": "yarn@3.1.1"
 }
