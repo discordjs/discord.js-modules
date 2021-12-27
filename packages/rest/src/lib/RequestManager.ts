@@ -8,6 +8,7 @@ import type { IHandler } from './handlers/IHandler';
 import { SequentialHandler } from './handlers/SequentialHandler';
 import type { RESTOptions, RestEvents } from './REST';
 import { DefaultRestOptions, DefaultUserAgent } from './utils/constants';
+import './global';
 
 let agent: Agent | null = null;
 
